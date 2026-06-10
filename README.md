@@ -1,2 +1,0 @@
-# creeper-notes
-notes、desktop
