@@ -208,6 +208,14 @@ component: () => import("@/views/Bootstrap/index.vue")
 - 大量状态处理
 - Tauri invoke 细节
 
+页面样式必须通过同级 `index.scss` 引入：
+
+```vue
+<style lang="scss" scoped src="./index.scss"></style>
+```
+
+不允许在页面 `index.vue` 中直接编写大量内联样式。
+
 #### hook.ts
 
 负责：
@@ -229,10 +237,75 @@ export const useBootstrap = () => {
 
 负责页面样式。
 
-`index.vue` 中统一引入：
+页面样式必须和页面入口同级：
+
+```text
+src/views/Bootstrap/
+├─ index.vue
+├─ index.scss
+└─ hook.ts
+```
+
+### 命名规范
+
+#### 组件名
+
+组件名必须使用 `h` 前缀。
+
+推荐格式：
+
+```text
+HWindowTitleBar
+HAppLayout
+HNoteList
+HBootstrap
+```
+
+不推荐：
+
+```text
+WindowTitleBar
+AppLayout
+NoteList
+BootstrapView
+```
+
+#### class 类名
+
+样式类名必须使用 `h_` 前缀，并使用下划线连接。
+
+推荐格式：
+
+```text
+h_bootstrap
+h_bootstrap_title
+h_window_title_bar
+h_window_title_bar_action
+```
+
+不允许：
+
+```text
+bootstrap-page
+window-title-bar
+windowTitleBar
+h-window-title-bar
+```
+
+页面根节点类名建议和页面目录保持一致：
 
 ```vue
-<style lang="scss" scoped src="./index.scss"></style>
+<template>
+  <div class="h_bootstrap"></div>
+</template>
+```
+
+组件根节点类名建议和组件目录保持一致：
+
+```vue
+<template>
+  <div class="h_window_title_bar"></div>
+</template>
 ```
 
 ### 组件目录规范
@@ -298,8 +371,10 @@ src-tauri/src/
 - 页面级组件放入 `views`。
 - 布局组件放入 `layouts`。
 - 页面必须使用目录模式：`index.vue`、`index.scss`、`hook.ts`。
+- 页面样式必须通过同级 `index.scss` 引入。
 - 复杂公共逻辑放入 `stores`，页面复杂逻辑放入页面 `hook.ts`。
-- 页面样式统一放入同级 `index.scss`。
+- 页面样式类名必须使用 `h_` 前缀和下划线连接。
+- 组件名必须使用 `h` 前缀。
 
 ### Rust / Tauri
 
