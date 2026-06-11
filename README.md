@@ -10,6 +10,7 @@
 - Tauri 2
 - Rust
 - pnpm
+- SCSS
 
 ## 环境准备
 
@@ -59,6 +60,14 @@ Desktop development with C++
 
 ```bash
 pnpm install
+```
+
+项目使用 SCSS，依赖由 `sass` 提供。
+
+如需手动安装：
+
+```bash
+pnpm add -D sass
 ```
 
 ## 开发启动
@@ -146,6 +155,100 @@ src/
 └─ main.ts
 ```
 
+### 页面目录规范
+
+页面必须使用目录模式。
+
+```text
+src/views/
+└─ Bootstrap/
+   ├─ index.vue         # 页面模板和组件组合
+   ├─ index.scss        # 页面样式
+   └─ hook.ts           # 页面状态和页面逻辑
+```
+
+禁止使用单文件页面命名：
+
+```text
+src/views/Bootstrap.vue
+src/views/Home.vue
+src/views/Settings.vue
+```
+
+新增页面时统一使用：
+
+```text
+src/views/PageName/
+├─ index.vue
+├─ index.scss
+└─ hook.ts
+```
+
+路由中引用页面目录入口：
+
+```ts
+component: () => import("@/views/Bootstrap/index.vue")
+```
+
+### 页面文件职责
+
+#### index.vue
+
+负责：
+
+- 页面模板
+- 组件引用
+- 事件绑定
+- 状态展示
+
+不负责：
+
+- 复杂业务逻辑
+- 数据转换
+- 大量状态处理
+- Tauri invoke 细节
+
+#### hook.ts
+
+负责：
+
+- 页面状态
+- 页面事件
+- 页面生命周期
+- 页面级数据组装
+
+命名格式：
+
+```ts
+export const useBootstrap = () => {
+  return {};
+};
+```
+
+#### index.scss
+
+负责页面样式。
+
+`index.vue` 中统一引入：
+
+```vue
+<style lang="scss" scoped src="./index.scss"></style>
+```
+
+### 组件目录规范
+
+复杂组件也使用目录模式。
+
+```text
+src/components/
+└─ WindowTitleBar/
+   ├─ index.vue
+   ├─ index.scss
+   └─ hook.ts
+```
+
+简单组件允许单文件，但需要保持职责单一。
+
 ### Tauri 目录建议
 
 ```text
@@ -194,7 +297,9 @@ src-tauri/src/
 - 通用组件放入 `components`。
 - 页面级组件放入 `views`。
 - 布局组件放入 `layouts`。
-- 复杂公共逻辑放入 `stores`，页面复杂逻辑放入页面 `hook`。
+- 页面必须使用目录模式：`index.vue`、`index.scss`、`hook.ts`。
+- 复杂公共逻辑放入 `stores`，页面复杂逻辑放入页面 `hook.ts`。
+- 页面样式统一放入同级 `index.scss`。
 
 ### Rust / Tauri
 
