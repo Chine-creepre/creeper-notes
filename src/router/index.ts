@@ -4,7 +4,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/",
     name: "Bootstrap",
-    component: () => import("@/views/Bootstrap.vue"),
+    component: () => import("@/views/Bootstrap/index.vue"),
   },
 ];
 

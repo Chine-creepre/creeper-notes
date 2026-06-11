@@ -1,10 +1,7 @@
-<script setup lang="ts">
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <div class="bootstrap-page">
-    creeper-notes
-  </div>
+  <div class="bootstrap-page">creeper-notes</div>
 </template>
 
 <style scoped>
