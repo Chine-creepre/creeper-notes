@@ -1,4 +1,5 @@
 mod commands;
+mod models;
 mod services;
 
 use commands::{get_data_path, start_dragging_window};
