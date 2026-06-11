@@ -1,9 +1,13 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import HAppLayout from "@/layouts/HAppLayout/index.vue";
+</script>
 
 <template>
-  <div class="h_bootstrap-container">creeper-notes</div>
+  <HAppLayout>
+    <div class="h_bootstrap">
+      creeper-notes
+    </div>
+  </HAppLayout>
 </template>
 
-<style scoped lang="scss">
-@use "./index.scss";
-</style>
+<style lang="scss" scoped src="./index.scss"></style>
