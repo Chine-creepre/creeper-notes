@@ -23,10 +23,10 @@ Var HAutoStartState
     Abort
   ${EndIf}
 
-  ${NSD_CreateLabel} 0 0 100% 24u "推荐开启开机自启，creeper-notes 会在你进入系统后自动准备好笔记环境。"
+  ${NSD_CreateLabel} 0 0 100% 24u "登录 Windows 后自动启动 creeper-notes。推荐开启，可更快访问你的笔记和工作内容。"
   Pop $0
 
-  ${NSD_CreateCheckbox} 0 34u 100% 16u "强烈建议开启：登录 Windows 后自动启动 creeper-notes"
+  ${NSD_CreateCheckbox} 0 34u 100% 16u "登录 Windows 后自动启动 creeper-notes"
   Pop $HAutoStartCheckbox
   ${NSD_Check} $HAutoStartCheckbox
 
