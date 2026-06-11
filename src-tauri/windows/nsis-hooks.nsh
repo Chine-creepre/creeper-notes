@@ -1,7 +1,22 @@
 !include LogicLib.nsh
 
-Var HAutoStartCheckbox
 Var HAutoStartState
+
+!macro NSIS_HOOK_PREINSTALL
+  MessageBox MB_YESNO|MB_ICONQUESTION "是否登录 Windows 后自动启动 creeper-notes？$$
+$$
+推荐开启，可更快访问你的笔记和工作内容。" IDYES enable_auto_start IDNO disable_auto_start
+
+  enable_auto_start:
+    StrCpy $HAutoStartState 1
+    Goto auto_start_done
+
+  disable_auto_start:
+    StrCpy $HAutoStartState 0
+    Goto auto_start_done
+
+  auto_start_done:
+!macroend
 
 !macro NSIS_HOOK_POSTINSTALL
   ${If} $HAutoStartState == 1
@@ -13,24 +28,4 @@ Var HAutoStartState
 
 !macro NSIS_HOOK_PREUNINSTALL
   DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
-!macroend
-
-!macro NSIS_HOOK_COMPONENTS_PAGE
-  nsDialogs::Create 1018
-  Pop $0
-
-  ${If} $0 == error
-    Abort
-  ${EndIf}
-
-  ${NSD_CreateLabel} 0 0 100% 24u "登录 Windows 后自动启动 creeper-notes。推荐开启，可更快访问你的笔记和工作内容。"
-  Pop $0
-
-  ${NSD_CreateCheckbox} 0 34u 100% 16u "登录 Windows 后自动启动 creeper-notes"
-  Pop $HAutoStartCheckbox
-  ${NSD_Check} $HAutoStartCheckbox
-
-  nsDialogs::Show
-
-  ${NSD_GetState} $HAutoStartCheckbox $HAutoStartState
 !macroend
