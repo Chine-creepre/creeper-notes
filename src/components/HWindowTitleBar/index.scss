@@ -1,0 +1,48 @@
+.h_window_title_bar {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 36px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #ffffff;
+  user-select: none;
+}
+
+.h_window_title_bar_drag {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+}
+
+.h_window_title_bar_title {
+  font-size: 13px;
+  line-height: 1;
+  color: #1f2328;
+}
+
+.h_window_title_bar_actions {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.h_window_title_bar_action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 100%;
+  font-size: 14px;
+  color: #1f2328;
+}
+
+.h_window_title_bar_action:hover {
+  background: #f3f4f6;
+}
+
+.h_window_title_bar_action_close:hover {
+  color: #ffffff;
+  background: #e81123;
+}
