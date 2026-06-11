@@ -1,17 +1,7 @@
-<template>
-  <div class=""></div>
-</template>
-
 <script setup lang="ts">
-import { reactive } from "vue";
-
-interface Props {}
-
-interface Views {}
-
-const props = withDefaults(defineProps<Props>(), {});
-
-const views = reactive<Views>({});
+import { RouterView } from "vue-router";
 </script>
 
-<style lang="scss" scoped></style>
+<template>
+  <RouterView></RouterView>
+</template>
