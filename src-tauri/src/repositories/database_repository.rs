@@ -1,22 +1,12 @@
 use std::fs;
 use std::path::PathBuf;
 
+use rusqlite::Connection;
+
 use crate::models::app_paths::AppPaths;
+use crate::repositories::tables::notes_table;
 
 const DATABASE_FILE_NAME: &str = "notes.db";
-
-const INIT_NOTES_TABLE_SQL: &str = r#"
-CREATE TABLE IF NOT EXISTS notes (
-    id TEXT PRIMARY KEY,
-    title TEXT NOT NULL,
-    describe TEXT,
-    content TEXT,
-    readonly INTEGER NOT NULL DEFAULT 0,
-    created_at INTEGER NOT NULL,
-    updated_at INTEGER NOT NULL,
-    deleted INTEGER NOT NULL DEFAULT 0
-);
-"#;
 
 pub fn get_database_file_path(app_paths: &AppPaths) -> PathBuf {
     app_paths.database_dir.join(DATABASE_FILE_NAME)
@@ -30,12 +20,10 @@ pub fn initialize_database(app_paths: &AppPaths) -> Result<PathBuf, String> {
             .map_err(|error| error.to_string())?;
     }
 
-    let database = sqlite::open(&database_file_path)
+    let connection = Connection::open(&database_file_path)
         .map_err(|error| error.to_string())?;
 
-    database
-        .execute(INIT_NOTES_TABLE_SQL)
-        .map_err(|error| error.to_string())?;
+    notes_table::initialize(&connection)?;
 
     Ok(database_file_path)
 }
