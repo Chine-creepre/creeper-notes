@@ -3,9 +3,7 @@
 Var HAutoStartState
 
 !macro NSIS_HOOK_PREINSTALL
-  MessageBox MB_YESNO|MB_ICONQUESTION "是否登录 Windows 后自动启动 creeper-notes？$$
-$$
-推荐开启，可更快访问你的笔记和工作内容。" IDYES enable_auto_start IDNO disable_auto_start
+  MessageBox MB_YESNO|MB_ICONQUESTION "是否登录 Windows 后自动启动 creeper-notes？推荐开启，可更快访问你的笔记和工作内容。" IDYES enable_auto_start IDNO disable_auto_start
 
   enable_auto_start:
     StrCpy $HAutoStartState 1
