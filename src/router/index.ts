@@ -3,8 +3,8 @@ import { createRouter, createWebHashHistory, type RouteRecordRaw } from "vue-rou
 const routes: RouteRecordRaw[] = [
   {
     path: "/",
-    name: "Home",
-    component: () => import("@/views/HomeView.vue"),
+    name: "Bootstrap",
+    component: () => import("@/views/BootstrapView.vue"),
   },
 ];
 
