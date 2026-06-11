@@ -15,17 +15,13 @@ pub fn get_app_data_path(app: &AppHandle) -> Result<AppPaths, String> {
     let attachments_dir = root_dir.join("attachments");
     let cache_dir = root_dir.join("cache");
 
-    fs::create_dir_all(&database_dir)
-        .map_err(|error| error.to_string())?;
+    fs::create_dir_all(&database_dir).map_err(|error| error.to_string())?;
 
-    fs::create_dir_all(&config_dir)
-        .map_err(|error| error.to_string())?;
+    fs::create_dir_all(&config_dir).map_err(|error| error.to_string())?;
 
-    fs::create_dir_all(&attachments_dir)
-        .map_err(|error| error.to_string())?;
+    fs::create_dir_all(&attachments_dir).map_err(|error| error.to_string())?;
 
-    fs::create_dir_all(&cache_dir)
-        .map_err(|error| error.to_string())?;
+    fs::create_dir_all(&cache_dir).map_err(|error| error.to_string())?;
 
     Ok(AppPaths {
         root_dir,
