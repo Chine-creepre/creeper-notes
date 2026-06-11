@@ -1,10 +1,8 @@
-import { getCurrentWindow } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api/core";
 
 export const useHWindowTitleBar = () => {
-  const appWindow = getCurrentWindow();
-
   const startDragWindow = async (): Promise<void> => {
-    await appWindow.startDragging();
+    await invoke("start_dragging_window");
   };
 
   return {
