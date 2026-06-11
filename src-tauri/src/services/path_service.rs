@@ -1,12 +1,15 @@
 use std::fs;
 
+use tauri::{AppHandle, Manager};
+
 use crate::models::app_paths::AppPaths;
 
-pub fn get_app_data_path() -> Result<AppPaths, String> {
-    let data_dir = dirs::data_dir()
-        .ok_or_else(|| "failed to resolve data directory".to_string())?;
+pub fn get_app_data_path(app: &AppHandle) -> Result<AppPaths, String> {
+    let root_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|error| error.to_string())?;
 
-    let root_dir = data_dir.join("creeper-notes");
     let database_dir = root_dir.join("database");
     let config_dir = root_dir.join("config");
     let attachments_dir = root_dir.join("attachments");
