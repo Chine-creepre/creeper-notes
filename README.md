@@ -194,7 +194,7 @@ src-tauri/src/
 - 通用组件放入 `components`。
 - 页面级组件放入 `views`。
 - 布局组件放入 `layouts`。
-- 复杂业务逻辑放入 `services` 或 `stores`。
+- 复杂公共逻辑放入 `stores`，页面复杂逻辑放入页面 `hook`。
 
 ### Rust / Tauri
 
