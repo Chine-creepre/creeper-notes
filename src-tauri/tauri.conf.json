@@ -13,10 +13,10 @@
     "windows": [
       {
         "title": "creeper-notes",
-        "width": 800,
-        "height": 600,
-        "minWidth": 800,
-        "minHeight": 600,
+        "width": 450,
+        "height": 550,
+        "minWidth": 450,
+        "minHeight": 550,
         "decorations": false,
         "dragDropEnabled": false
       }
