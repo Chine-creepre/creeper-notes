@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 
 pub struct AppPaths {
-    pub root: PathBuf,
-    pub database: PathBuf,
-    pub config: PathBuf,
-    pub attachments: PathBuf,
-    pub cache: PathBuf,
+    pub root_dir: PathBuf,
+    pub database_dir: PathBuf,
+    pub config_dir: PathBuf,
+    pub attachments_dir: PathBuf,
+    pub cache_dir: PathBuf,
 }
