@@ -3,10 +3,9 @@ use std::path::PathBuf;
 
 use rusqlite::Connection;
 
+use crate::constants::database_constants::DATABASE_FILE_NAME;
 use crate::models::app_paths::AppPaths;
 use crate::repositories::tables::notes_table;
-
-const DATABASE_FILE_NAME: &str = "notes.db";
 
 pub fn get_database_file_path(app_paths: &AppPaths) -> PathBuf {
     app_paths.database_dir.join(DATABASE_FILE_NAME)
