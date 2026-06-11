@@ -2,8 +2,8 @@ body {
   font-family: var(--h_font_family);
   line-height: 1.5;
   font-weight: 400;
-  color: var(--h_color_text);
-  background: var(--h_color_background);
+  /* color: var(--h_color_text); */
+  /* background: var(--h_color_background); */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
