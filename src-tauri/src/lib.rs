@@ -19,7 +19,7 @@ use commands::{
     update_config,
     update_note,
 };
-use services::{config_service, database_service};
+use services::{config_service, database_service, shortcut_service};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -27,11 +27,15 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
+        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(|app| {
             database_service::initialize_database(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             config_service::initialize_config(app.handle())
+                .map_err(Box::<dyn std::error::Error>::from)?;
+
+            shortcut_service::initialize_shortcuts(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             Ok(())
