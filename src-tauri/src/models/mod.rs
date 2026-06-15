@@ -1,3 +1,4 @@
+pub mod app_config;
 pub mod app_paths;
 pub mod note;
 pub mod note_query;
