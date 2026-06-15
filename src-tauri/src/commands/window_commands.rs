@@ -13,6 +13,21 @@ pub fn close_search_window(app: AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn toggle_search_window(app: AppHandle) -> Result<(), String> {
+    window_service::toggle_search_window(&app)
+}
+
+#[tauri::command]
 pub fn show_main_window(app: AppHandle) -> Result<(), String> {
     window_service::show_main_window(&app)
+}
+
+#[tauri::command]
+pub fn hide_main_window(app: AppHandle) -> Result<(), String> {
+    window_service::hide_main_window(&app)
+}
+
+#[tauri::command]
+pub fn toggle_main_window(app: AppHandle) -> Result<(), String> {
+    window_service::toggle_main_window(&app)
 }
