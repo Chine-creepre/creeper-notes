@@ -8,10 +8,12 @@ use commands::{
     create_note,
     delete_note,
     find_note_by_id,
+    get_config,
     get_data_path,
     list_notes,
     search_notes,
     start_dragging_window,
+    update_config,
     update_note,
 };
 use services::{config_service, database_service};
@@ -34,6 +36,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             start_dragging_window,
             get_data_path,
+            get_config,
+            update_config,
             create_note,
             find_note_by_id,
             list_notes,
