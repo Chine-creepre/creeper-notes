@@ -5,6 +5,8 @@ use tauri::AppHandle;
 use uuid::Uuid;
 
 use crate::models::note::{CreateNotePayload, Note, UpdateNotePayload};
+use crate::models::note_query::NoteQuery;
+use crate::models::page_result::PageResult;
 use crate::repositories::{database_repository, note_repository};
 use crate::services::path_service;
 
@@ -50,16 +52,16 @@ pub fn find_note_by_id(app: &AppHandle, id: &str) -> Result<Option<Note>, String
     note_repository::find_note_by_id(&connection, id)
 }
 
-pub fn list_notes(app: &AppHandle) -> Result<Vec<Note>, String> {
+pub fn list_notes(app: &AppHandle, query: NoteQuery) -> Result<PageResult<Note>, String> {
     let connection = get_connection(app)?;
 
-    note_repository::list_notes(&connection)
+    note_repository::list_notes(&connection, &query)
 }
 
-pub fn search_notes(app: &AppHandle, keyword: &str) -> Result<Vec<Note>, String> {
+pub fn search_notes(app: &AppHandle, query: NoteQuery) -> Result<PageResult<Note>, String> {
     let connection = get_connection(app)?;
 
-    note_repository::search_notes(&connection, keyword)
+    note_repository::search_notes(&connection, &query)
 }
 
 pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<(), String> {
