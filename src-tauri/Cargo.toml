@@ -28,3 +28,4 @@ rusqlite = { version = "0.32", features = ["bundled"] }
 uuid = { version = "1", features = ["v4"] }
 [target.'cfg(windows)'.dependencies]
 winreg = "0.52"
+tauri-plugin-global-shortcut = "2"
