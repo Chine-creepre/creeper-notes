@@ -1,0 +1,18 @@
+use tauri::AppHandle;
+
+use crate::services::window_service;
+
+#[tauri::command]
+pub fn open_search_window(app: AppHandle) -> Result<(), String> {
+    window_service::open_search_window(&app)
+}
+
+#[tauri::command]
+pub fn close_search_window(app: AppHandle) -> Result<(), String> {
+    window_service::close_search_window(&app)
+}
+
+#[tauri::command]
+pub fn show_main_window(app: AppHandle) -> Result<(), String> {
+    window_service::show_main_window(&app)
+}
