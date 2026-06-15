@@ -14,7 +14,7 @@ use commands::{
     start_dragging_window,
     update_note,
 };
-use services::database_service;
+use services::{config_service, database_service};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -24,6 +24,9 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::default().build())
         .setup(|app| {
             database_service::initialize_database(app.handle())
+                .map_err(Box::<dyn std::error::Error>::from)?;
+
+            config_service::initialize_config(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             Ok(())
