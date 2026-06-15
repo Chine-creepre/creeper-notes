@@ -8,7 +8,7 @@ use crate::constants::config_constants::{
 };
 use crate::models::app_config::AppConfig;
 use crate::repositories::config_repository;
-use crate::services::path_service;
+use crate::services::{auto_start_service, path_service};
 
 fn create_default_config(app: &AppHandle) -> Result<AppConfig, String> {
     let app_paths = path_service::get_app_data_path(app)?;
@@ -36,6 +36,7 @@ pub fn get_config(app: &AppHandle) -> Result<AppConfig, String> {
 pub fn update_config(app: &AppHandle, app_config: AppConfig) -> Result<AppConfig, String> {
     let app_paths = path_service::get_app_data_path(app)?;
 
+    auto_start_service::sync_auto_start(app, app_config.auto_start_enabled)?;
     config_repository::write_config(&app_paths, &app_config)?;
 
     Ok(app_config)
