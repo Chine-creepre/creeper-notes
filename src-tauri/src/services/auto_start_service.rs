@@ -1,14 +1,10 @@
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 
 const AUTO_START_REGISTRY_KEY_PATH: &str = "Software\\Microsoft\\Windows\\CurrentVersion\\Run";
 const AUTO_START_REGISTRY_VALUE_NAME: &str = "creeper-notes";
 
 #[cfg(windows)]
-fn get_app_exe_path(app: &AppHandle) -> Result<String, String> {
-    app.path()
-        .app_local_data_dir()
-        .map_err(|error| error.to_string())?;
-
+fn get_app_exe_path() -> Result<String, String> {
     let exe_path = std::env::current_exe()
         .map_err(|error| error.to_string())?;
 
@@ -16,11 +12,11 @@ fn get_app_exe_path(app: &AppHandle) -> Result<String, String> {
 }
 
 #[cfg(windows)]
-pub fn enable_auto_start(app: &AppHandle) -> Result<(), String> {
+pub fn enable_auto_start(_app: &AppHandle) -> Result<(), String> {
     use winreg::enums::HKEY_CURRENT_USER;
     use winreg::RegKey;
 
-    let exe_path = get_app_exe_path(app)?;
+    let exe_path = get_app_exe_path()?;
     let current_user = RegKey::predef(HKEY_CURRENT_USER);
     let (run_key, _) = current_user
         .create_subkey(AUTO_START_REGISTRY_KEY_PATH)
