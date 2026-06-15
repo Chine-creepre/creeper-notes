@@ -1,6 +1,8 @@
 <template>
   <div class="h_search">
     <div class="h_search_panel">
+      <div class="h_search_drag_region" @mousedown.left="startDragWindow"></div>
+
       <input
         ref="inputRef"
         v-model="keyword"
@@ -50,6 +52,7 @@ const {
   moveActiveSuggestion,
   selectActiveSuggestion,
   selectSuggestion,
+  startDragWindow,
   suggestions,
 } = useHSearch();
 </script>
