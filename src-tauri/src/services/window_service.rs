@@ -2,6 +2,7 @@ use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
 
 const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
+const SEARCH_WINDOW_URL: &str = "/#/search";
 
 pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SEARCH_WINDOW_LABEL) {
@@ -14,7 +15,7 @@ pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     WebviewWindowBuilder::new(
         app,
         SEARCH_WINDOW_LABEL,
-        WebviewUrl::App("/search".into()),
+        WebviewUrl::App(SEARCH_WINDOW_URL.into()),
     )
     .title("Search")
     .decorations(false)
