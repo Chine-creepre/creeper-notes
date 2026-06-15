@@ -23,6 +23,7 @@ body,
 }
 
 .h_search_panel {
+  position: relative;
   width: 100%;
   overflow: hidden;
   border: 1px solid rgba(255, 255, 255, 0.16);
@@ -32,9 +33,15 @@ body,
   backdrop-filter: blur(20px);
 }
 
+.h_search_drag_region {
+  width: 100%;
+  height: 14px;
+  cursor: grab;
+}
+
 .h_search_input {
   width: 100%;
-  height: 64px;
+  height: 56px;
   padding: 0 24px;
   border: 0;
   outline: none;
@@ -42,7 +49,7 @@ body,
   background: transparent;
   color: #ffffff;
   font-size: 20px;
-  line-height: 64px;
+  line-height: 56px;
 }
 
 .h_search_input::placeholder {
