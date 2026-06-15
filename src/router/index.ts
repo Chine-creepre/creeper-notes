@@ -6,6 +6,11 @@ const routes: RouteRecordRaw[] = [
     name: "Bootstrap",
     component: () => import("@/views/Bootstrap/index.vue"),
   },
+  {
+    path: "/search",
+    name: "Search",
+    component: () => import("@/views/Search/index.vue"),
+  },
 ];
 
 export const router = createRouter({
