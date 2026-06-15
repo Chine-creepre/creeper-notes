@@ -5,13 +5,16 @@ mod repositories;
 mod services;
 
 use commands::{
+    close_search_window,
     create_note,
     delete_note,
     find_note_by_id,
     get_config,
     get_data_path,
     list_notes,
+    open_search_window,
     search_notes,
+    show_main_window,
     start_dragging_window,
     update_config,
     update_note,
@@ -38,6 +41,9 @@ pub fn run() {
             get_data_path,
             get_config,
             update_config,
+            open_search_window,
+            close_search_window,
+            show_main_window,
             create_note,
             find_note_by_id,
             list_notes,
