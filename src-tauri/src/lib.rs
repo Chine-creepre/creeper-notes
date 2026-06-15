@@ -15,6 +15,7 @@ use commands::{
     open_search_window,
     search_notes,
     show_main_window,
+    start_dragging_search_window,
     start_dragging_window,
     update_config,
     update_note,
@@ -42,6 +43,7 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             start_dragging_window,
+            start_dragging_search_window,
             get_data_path,
             get_config,
             update_config,
