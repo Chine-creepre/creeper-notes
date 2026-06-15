@@ -34,6 +34,10 @@ export const useHSearch = () => {
     await invoke("close_search_window");
   };
 
+  const startDragWindow = async (): Promise<void> => {
+    await invoke("start_dragging_search_window");
+  };
+
   const searchNotes = async (): Promise<void> => {
     const trimmedKeyword = keyword.value.trim();
 
@@ -103,6 +107,7 @@ export const useHSearch = () => {
     moveActiveSuggestion,
     selectActiveSuggestion,
     selectSuggestion,
+    startDragWindow,
     suggestions,
   };
 };
