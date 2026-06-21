@@ -68,7 +68,7 @@
 .h_bootstrap_search button,
 .h_bootstrap_quick_actions button,
 .h_bootstrap_note_item,
-.h_bootstrap_editor_tools button {
+.h_bootstrap_note_actions button {
   border: 0;
   font-family: inherit;
   cursor: pointer;
@@ -167,6 +167,7 @@
 }
 
 .h_bootstrap_note_item {
+  position: relative;
   display: flex;
   flex: 0 0 auto;
   flex-direction: column;
@@ -191,7 +192,7 @@
 
 .h_bootstrap_note_item strong,
 .h_bootstrap_note_item em,
-.h_bootstrap_note_item span {
+.h_bootstrap_note_item > span:not(.h_bootstrap_note_actions) {
   display: block;
   overflow: hidden;
   max-width: 100%;
@@ -214,11 +215,51 @@
   line-height: 15px;
 }
 
-.h_bootstrap_note_item span {
+.h_bootstrap_note_item > span:not(.h_bootstrap_note_actions) {
   margin-top: 5px;
+  padding-right: 86px;
   color: #8ea7b3;
   font-size: 11px;
   line-height: 16px;
+}
+
+.h_bootstrap_note_actions {
+  position: absolute;
+  right: 12px;
+  bottom: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: calc(100% - 24px);
+  padding: 3px;
+  border: 1px solid rgba(38, 58, 70, 0.82);
+  border-radius: 10px;
+  background: rgba(11, 17, 24, 0.72);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  backdrop-filter: blur(10px);
+}
+
+.h_bootstrap_note_actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #8ea7b3;
+}
+
+.h_bootstrap_note_actions button:hover {
+  background: #152330;
+  color: #eaf4f8;
+}
+
+.h_bootstrap_note_actions svg {
+  width: 13px;
+  height: 13px;
 }
 
 .h_bootstrap_empty {
@@ -247,10 +288,6 @@
 }
 
 .h_bootstrap_note_header {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  align-items: start;
-  gap: 18px;
   flex: 0 0 auto;
   margin-bottom: 18px;
   padding-bottom: 16px;
@@ -259,36 +296,6 @@
 
 .h_bootstrap_note_fields {
   min-width: 0;
-}
-
-.h_bootstrap_editor_tools {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 0;
-  padding-top: 4px;
-}
-
-.h_bootstrap_editor_tools button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border-radius: 9px;
-  background: transparent;
-  color: #6f8794;
-}
-
-.h_bootstrap_editor_tools button:hover {
-  background: #152330;
-  color: #eaf4f8;
-}
-
-.h_bootstrap_editor_tools svg {
-  width: 15px;
-  height: 15px;
 }
 
 .h_bootstrap_title_input,
@@ -388,13 +395,5 @@
 
   .h_bootstrap_editor_panel {
     min-height: 520px;
-  }
-
-  .h_bootstrap_note_header {
-    grid-template-columns: 1fr;
-  }
-
-  .h_bootstrap_editor_tools {
-    padding-top: 0;
   }
 }
