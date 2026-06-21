@@ -44,6 +44,11 @@ fn validate_folder_id(connection: &Connection, folder_id: &Option<String>) -> Re
     Ok(())
 }
 
+fn find_required_note_by_id(connection: &Connection, id: &str) -> Result<Note, String> {
+    note_repository::find_note_by_id(connection, id)?
+        .ok_or_else(|| "note not found".to_string())
+}
+
 pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, String> {
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
@@ -67,8 +72,7 @@ pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, 
 
     note_repository::create_note(&connection, &note)?;
 
-    note_repository::find_note_by_id(&connection, &note_id)?
-        .ok_or_else(|| "created note not found".to_string())
+    find_required_note_by_id(&connection, &note_id)
 }
 
 pub fn find_note_by_id(app: &AppHandle, id: &str) -> Result<Option<Note>, String> {
@@ -89,10 +93,11 @@ pub fn search_notes(app: &AppHandle, query: NoteQuery) -> Result<PageResult<Note
     note_repository::search_notes(&connection, &query)
 }
 
-pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<(), String> {
+pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<Note, String> {
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
     let folder_id = normalize_folder_id(payload.folder_id);
+    let note_id = payload.id.clone();
 
     validate_folder_id(&connection, &folder_id)?;
 
@@ -105,7 +110,26 @@ pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<(), St
         folder_id,
     };
 
-    note_repository::update_note(&connection, &payload, timestamp)
+    note_repository::update_note(&connection, &payload, timestamp)?;
+
+    find_required_note_by_id(&connection, &note_id)
+}
+
+pub fn move_note_to_folder(
+    app: &AppHandle,
+    id: &str,
+    folder_id: Option<String>,
+) -> Result<Note, String> {
+    let connection = get_connection(app)?;
+    let timestamp = get_current_timestamp()?;
+    let folder_id = normalize_folder_id(folder_id);
+
+    validate_folder_id(&connection, &folder_id)?;
+    find_required_note_by_id(&connection, id)?;
+
+    note_repository::move_note_to_folder(&connection, id, &folder_id, timestamp)?;
+
+    find_required_note_by_id(&connection, id)
 }
 
 pub fn delete_note(app: &AppHandle, id: &str) -> Result<(), String> {
