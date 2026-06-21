@@ -18,7 +18,11 @@ const {} = useHAppLayout();
 
 <template>
   <div class="h_app_layout">
-    <HWindowTitleBar :right-text="titleRightText" :title="title" />
+    <HWindowTitleBar :right-text="titleRightText" :title="title">
+      <template #right>
+        <slot name="title-right"></slot>
+      </template>
+    </HWindowTitleBar>
 
     <main class="h_app_layout_content">
       <slot></slot>
