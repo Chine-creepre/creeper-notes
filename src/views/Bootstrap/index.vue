@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
+import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
@@ -14,10 +15,13 @@ const {
   getNoteDescription,
   keyword,
   loadingNotes,
+  newNoteFolderId,
+  newNoteFolderTreeNodes,
   notes,
   saveCurrentNote,
   saving,
   searchCurrentNotes,
+  selectNewNoteFolder,
   selectNote,
   selectedNote,
   statusMessage,
@@ -45,10 +49,14 @@ const {
             <Icon icon="lucide:plus" />
             <span>新建笔记</span>
           </button>
-          <button type="button">
-            <Icon icon="lucide:folder" />
-            <span>分类 / 目录</span>
-          </button>
+
+          <HSelectTree
+            v-model="newNoteFolderId"
+            :nodes="newNoteFolderTreeNodes"
+            root-label="根目录"
+            empty-text="暂无目录"
+            @select="selectNewNoteFolder"
+          />
         </div>
 
         <div class="h_bootstrap_note_list">
