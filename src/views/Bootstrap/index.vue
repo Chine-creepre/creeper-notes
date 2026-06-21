@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
-import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
@@ -11,12 +10,10 @@ const {
   createNewNote,
   deleteCurrentNote,
   draft,
-  folderTreeNodes,
   formatNoteTime,
   getNoteDescription,
   keyword,
   loadingNotes,
-  moveCurrentNoteToFolder,
   notes,
   saveCurrentNote,
   saving,
@@ -28,7 +25,7 @@ const {
 </script>
 
 <template>
-  <HAppLayout>
+  <HAppLayout :title="selectedNote?.title || ''">
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
         <div class="h_bootstrap_search">
@@ -87,27 +84,10 @@ const {
               <button type="button" title="只读" @click="draft.readonly = !draft.readonly">
                 <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
               </button>
-              <span></span>
-              <button type="button" title="筛选">
-                <Icon icon="lucide:funnel" />
-              </button>
-              <button type="button" title="更多">
-                <Icon icon="lucide:ellipsis" />
-              </button>
             </div>
           </header>
 
           <main class="h_bootstrap_editor_body">
-            <div class="h_bootstrap_editor_topline">
-              <HSelectTree
-                v-model="draft.folderId"
-                :nodes="folderTreeNodes.slice(2)"
-                root-label="根目录"
-                empty-text="暂无目录"
-                @select="moveCurrentNoteToFolder(draft.folderId)"
-              />
-            </div>
-
             <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="未命名笔记" />
             <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述 / 摘要" />
 
