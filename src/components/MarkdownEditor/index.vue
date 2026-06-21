@@ -26,7 +26,10 @@
       :value="modelValue"
       :readonly="readonly"
       placeholder="使用 Markdown 记录内容..."
+      @blur="focused = false"
+      @focus="focused = true"
       @input="handleInput"
+      @keydown="handleKeydown"
     ></textarea>
 
     <article v-else class="h_markdown_editor_preview" v-html="previewHtml"></article>
@@ -42,18 +45,22 @@ const props = withDefaults(
   defineProps<{
     modelValue: string;
     readonly?: boolean;
+    dirty?: boolean;
   }>(),
   {
     readonly: false,
+    dirty: false,
   },
 );
 
 const emit = defineEmits<{
   "update:modelValue": [value: string];
+  save: [];
 }>();
 
 const mode = ref<"edit" | "preview">("edit");
 const textareaRef = ref<HTMLTextAreaElement>();
+const focused = ref(false);
 
 const toolbarActions = [
   { icon: "lucide:heading-1", mark: "# ", title: "标题" },
@@ -102,6 +109,15 @@ const handleInput = (event: Event): void => {
   const target = event.target as HTMLTextAreaElement | null;
 
   emit("update:modelValue", target?.value ?? "");
+};
+
+const handleKeydown = (event: KeyboardEvent): void => {
+  if (!focused.value || !props.dirty) return;
+  if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "s") return;
+
+  event.preventDefault();
+  event.stopPropagation();
+  emit("save");
 };
 
 const insertMarkdown = async (mark: string): Promise<void> => {
