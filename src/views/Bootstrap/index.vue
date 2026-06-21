@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
@@ -16,7 +17,6 @@ const {
   keyword,
   loadingNotes,
   moveCurrentNoteToFolder,
-  noteCountText,
   notes,
   saveCurrentNote,
   saving,
@@ -31,13 +31,6 @@ const {
   <HAppLayout>
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
-        <header class="h_bootstrap_notes_header">
-          <div>
-            <h1>Notes</h1>
-            <p>{{ noteCountText }}</p>
-          </div>
-        </header>
-
         <div class="h_bootstrap_search">
           <Icon icon="lucide:search" />
           <input
@@ -113,18 +106,12 @@ const {
                 empty-text="暂无目录"
                 @select="moveCurrentNoteToFolder(draft.folderId)"
               />
-              <span>{{ saving ? '保存中...' : '自动保存关闭' }}</span>
             </div>
 
             <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="未命名笔记" />
             <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述 / 摘要" />
 
-            <textarea
-              v-model="draft.content"
-              class="h_bootstrap_content_input"
-              :readonly="draft.readonly"
-              placeholder="开始记录..."
-            ></textarea>
+            <HMarkdownEditor v-model="draft.content" :readonly="draft.readonly" />
           </main>
         </template>
 
