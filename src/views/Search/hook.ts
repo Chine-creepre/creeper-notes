@@ -21,10 +21,13 @@ export const useHSearch = () => {
   const trimmedKeyword = computed(() => keyword.value.trim());
   const hasKeyword = computed(() => Boolean(trimmedKeyword.value));
   const hasSuggestions = computed(() => suggestions.value.length > 0);
-  const isEmptyInitial = computed(() => !hasKeyword.value && !searching.value);
   const isEmptyResult = computed(
     () => hasKeyword.value && searched.value && !searching.value && !hasSuggestions.value,
   );
+
+  const resizeSearchWindow = async (expanded: boolean): Promise<void> => {
+    await invoke("resize_search_window", { expanded });
+  };
 
   const focusInput = async (): Promise<void> => {
     await nextTick();
@@ -45,9 +48,11 @@ export const useHSearch = () => {
       suggestions.value = [];
       activeIndex.value = 0;
       searched.value = false;
+      await resizeSearchWindow(false);
       return;
     }
 
+    await resizeSearchWindow(true);
     searching.value = true;
 
     try {
@@ -101,10 +106,16 @@ export const useHSearch = () => {
   });
 
   onMounted(async () => {
+    await resizeSearchWindow(false);
     await focusInput();
 
-    unlistenFocusSearchInput = await listen(FOCUS_SEARCH_INPUT_EVENT, () => {
-      focusInput();
+    unlistenFocusSearchInput = await listen(FOCUS_SEARCH_INPUT_EVENT, async () => {
+      keyword.value = "";
+      suggestions.value = [];
+      activeIndex.value = 0;
+      searched.value = false;
+      await resizeSearchWindow(false);
+      await focusInput();
     });
   });
 
@@ -122,7 +133,6 @@ export const useHSearch = () => {
     hasKeyword,
     hasSuggestions,
     inputRef,
-    isEmptyInitial,
     isEmptyResult,
     keyword,
     moveActiveSuggestion,
