@@ -201,3 +201,15 @@ pub fn toggle_main_window(app: &AppHandle) -> Result<(), String> {
 
     Ok(())
 }
+
+pub fn toggle_main_window_fullscreen(app: &AppHandle) -> Result<(), String> {
+    let window = app
+        .get_webview_window(MAIN_WINDOW_LABEL)
+        .ok_or_else(|| "main window not found".to_string())?;
+
+    let fullscreen = window.is_fullscreen().map_err(|error| error.to_string())?;
+
+    window
+        .set_fullscreen(!fullscreen)
+        .map_err(|error| error.to_string())
+}
