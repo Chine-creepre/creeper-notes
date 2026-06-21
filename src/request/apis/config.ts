@@ -11,7 +11,7 @@ export interface AppConfig {
 export const getConfig = (): Promise<AppConfig> => invoke("get_config");
 
 export const updateConfig = (appConfig: AppConfig): Promise<AppConfig> =>
-  invoke("update_config", { appConfig });
+  invoke("update_config", { app_config: appConfig });
 
 export const openSettingsWindow = (): Promise<void> => invoke("open_settings_window");
 
