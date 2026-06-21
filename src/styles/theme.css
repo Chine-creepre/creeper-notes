@@ -98,6 +98,20 @@
   --h_window_shadow: rgba(0, 0, 0, 0.38);
 }
 
+:root {
+  --h_dark_background_start: var(--h_window_background_start);
+  --h_dark_background_end: var(--h_window_background_end);
+  --h_dark_surface: var(--h_window_surface);
+  --h_dark_surface_muted: var(--h_window_surface_muted);
+  --h_dark_surface_deep: var(--h_window_surface_deep);
+  --h_dark_border: var(--h_window_border);
+  --h_dark_border_strong: var(--h_window_border_strong);
+  --h_dark_text: var(--h_window_text);
+  --h_dark_text_secondary: var(--h_window_text_secondary);
+  --h_dark_text_muted: var(--h_window_text_muted);
+  --h_dark_shadow: var(--h_window_shadow);
+}
+
 html {
   scrollbar-color: var(--h_color_scrollbar_thumb) var(--h_color_scrollbar_track);
   scrollbar-width: thin;
