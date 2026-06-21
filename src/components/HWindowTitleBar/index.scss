@@ -16,7 +16,7 @@
   flex: 1;
   min-width: 0;
   height: 100%;
-  padding: 0 18px;
+  padding: 0 10px 0 18px;
   box-sizing: border-box;
 }
 
@@ -53,4 +53,34 @@
   font-weight: 650;
   line-height: 1;
   white-space: nowrap;
+}
+
+.h_window_title_bar_window_action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--h_window_text_muted);
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.h_window_title_bar_window_action:hover {
+  background: color-mix(in srgb, var(--h_color_primary) 14%, transparent);
+  color: var(--h_color_primary);
+}
+
+.h_window_title_bar_window_action_close:hover {
+  background: var(--h_color_danger_weak);
+  color: var(--h_color_danger);
+}
+
+.h_window_title_bar_window_action svg {
+  width: 14px;
+  height: 14px;
 }
