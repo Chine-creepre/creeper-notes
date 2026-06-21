@@ -17,7 +17,7 @@ const DEFAULT_FOLDER_NAME = "新建分类";
 
 type ShortcutField = "toggle_shortcut" | "search_shortcut";
 
-const CONTROL_KEYS = new Set([
+const MODIFIER_KEYS = new Set([
   "Control",
   "Shift",
   "Alt",
@@ -60,9 +60,7 @@ const getShortcutFromKeyboardEvent = (event: KeyboardEvent): string => {
   if (event.shiftKey) keys.push("Shift");
   if (event.altKey) keys.push("Alt");
 
-  if (!CONTROL_KEYS.has(event.key)) {
-    keys.push(formatShortcutKey(event.key));
-  }
+  keys.push(formatShortcutKey(event.key));
 
   return keys.join("+");
 };
@@ -129,9 +127,13 @@ export const useHSettings = () => {
       return;
     }
 
+    if (MODIFIER_KEYS.has(event.key)) {
+      return;
+    }
+
     const shortcut = getShortcutFromKeyboardEvent(event);
 
-    if (!shortcut || shortcut === "CommandOrControl" || shortcut === "Shift" || shortcut === "Alt") {
+    if (!shortcut) {
       return;
     }
 
