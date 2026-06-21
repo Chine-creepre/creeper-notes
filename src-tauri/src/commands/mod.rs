@@ -35,6 +35,7 @@ pub use window_commands::{
     hide_main_window,
     open_search_window,
     open_settings_window,
+    resize_search_window,
     show_main_window,
     toggle_main_window,
     toggle_search_window,
