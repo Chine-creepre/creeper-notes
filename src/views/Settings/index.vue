@@ -29,9 +29,9 @@
           <label class="h_settings_field">
             <span>主题</span>
             <select v-model="themeDraft" class="h_settings_control">
-              <option value="system">跟随系统</option>
-              <option value="light">亮色</option>
-              <option value="dark">暗色</option>
+              <option v-for="themeOption in themeOptions" :key="themeOption.value" :value="themeOption.value">
+                {{ themeOption.label }}
+              </option>
             </select>
           </label>
           <label class="h_settings_checkbox">
@@ -112,5 +112,6 @@ const {
   startListenShortcut,
   successMessage,
   themeDraft,
+  themeOptions,
 } = useHSettings();
 </script>
