@@ -1,5 +1,5 @@
 <template>
-  <section class="h_markdown_editor">
+  <section class="h_markdown_editor" @focusin="enterEditMode">
     <header class="h_markdown_editor_toolbar">
       <button
         v-for="action in toolbarActions"
@@ -11,16 +11,16 @@
         <Icon :icon="action.icon" />
       </button>
       <span></span>
-      <button type="button" title="编辑模式" :class="{ h_markdown_editor_toolbar_active: mode === 'edit' }" @click="mode = 'edit'">
+      <button type="button" title="编辑模式" :class="{ h_markdown_editor_toolbar_active: editorMode === 'edit' }" @click="setEditorMode('edit')">
         <Icon icon="lucide:pencil" />
       </button>
-      <button type="button" title="预览模式" :class="{ h_markdown_editor_toolbar_active: mode === 'preview' }" @click="mode = 'preview'">
+      <button type="button" title="预览模式" :class="{ h_markdown_editor_toolbar_active: editorMode === 'preview' }" @click="setEditorMode('preview')">
         <Icon icon="lucide:eye" />
       </button>
     </header>
 
     <textarea
-      v-if="mode === 'edit'"
+      v-if="editorMode === 'edit'"
       ref="textareaRef"
       class="h_markdown_editor_input"
       :value="modelValue"
@@ -32,35 +32,44 @@
       @keydown="handleKeydown"
     ></textarea>
 
-    <article v-else class="h_markdown_editor_preview" v-html="previewHtml"></article>
+    <article v-else class="h_markdown_editor_preview" tabindex="0" @focus="enterEditMode" @click="enterEditMode" v-html="previewHtml"></article>
   </section>
 </template>
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed, nextTick, ref } from "vue";
+import { computed, nextTick, ref, watch } from "vue";
 import "./index.scss";
+
+type MarkdownEditorMode = "edit" | "preview";
 
 const props = withDefaults(
   defineProps<{
     modelValue: string;
     readonly?: boolean;
     dirty?: boolean;
+    mode?: MarkdownEditorMode;
   }>(),
   {
     readonly: false,
     dirty: false,
+    mode: "preview",
   },
 );
 
 const emit = defineEmits<{
   "update:modelValue": [value: string];
+  "update:mode": [value: MarkdownEditorMode];
   save: [];
 }>();
 
-const mode = ref<"edit" | "preview">("edit");
 const textareaRef = ref<HTMLTextAreaElement>();
 const focused = ref(false);
+
+const editorMode = computed<MarkdownEditorMode>({
+  get: () => props.mode,
+  set: (value) => emit("update:mode", value),
+});
 
 const toolbarActions = [
   { icon: "lucide:heading-1", mark: "# ", title: "标题" },
@@ -105,6 +114,26 @@ const previewHtml = computed(() => {
     .join("");
 });
 
+const focusTextarea = async (): Promise<void> => {
+  await nextTick();
+  textareaRef.value?.focus();
+};
+
+const setEditorMode = async (mode: MarkdownEditorMode): Promise<void> => {
+  editorMode.value = mode;
+
+  if (mode === "edit" && !props.readonly) {
+    await focusTextarea();
+  }
+};
+
+const enterEditMode = async (): Promise<void> => {
+  if (props.readonly) return;
+  if (editorMode.value === "edit") return;
+
+  await setEditorMode("edit");
+};
+
 const handleInput = (event: Event): void => {
   const target = event.target as HTMLTextAreaElement | null;
 
@@ -123,7 +152,7 @@ const handleKeydown = (event: KeyboardEvent): void => {
 const insertMarkdown = async (mark: string): Promise<void> => {
   if (props.readonly) return;
 
-  mode.value = "edit";
+  editorMode.value = "edit";
   await nextTick();
 
   const textarea = textareaRef.value;
@@ -140,4 +169,13 @@ const insertMarkdown = async (mark: string): Promise<void> => {
   textarea.focus();
   textarea.setSelectionRange(start + mark.length, start + mark.length);
 };
+
+watch(
+  () => props.mode,
+  async (mode) => {
+    if (mode === "edit" && !props.readonly) {
+      await focusTextarea();
+    }
+  },
+);
 </script>
