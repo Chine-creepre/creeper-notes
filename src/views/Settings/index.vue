@@ -28,7 +28,7 @@
           <h2 class="h_settings_panel_title">主题设置</h2>
           <label class="h_settings_field">
             <span>主题</span>
-            <select v-if="config" v-model="config.theme" class="h_settings_control">
+            <select v-model="themeDraft" class="h_settings_control">
               <option value="system">跟随系统</option>
               <option value="light">亮色</option>
               <option value="dark">暗色</option>
@@ -38,7 +38,7 @@
             <input v-if="config" v-model="config.auto_start_enabled" type="checkbox" />
             <span>开机自启动</span>
           </label>
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存设置" }}</button>
+          <button class="h_settings_primary" type="button" :disabled="saving" @click="confirmTheme">{{ saving ? "更新中" : "确认更新" }}</button>
         </div>
 
         <div v-else-if="activeDrawer === 'mainShortcut'" class="h_settings_panel">
@@ -97,6 +97,7 @@ const {
   captureShortcut,
   closeWindow,
   config,
+  confirmTheme,
   createRootFolder,
   errorMessage,
   flatFolders,
@@ -110,5 +111,6 @@ const {
   startDragWindow,
   startListenShortcut,
   successMessage,
+  themeDraft,
 } = useHSettings();
 </script>
