@@ -18,7 +18,13 @@ import {
   SETTINGS_ERROR_MESSAGE_RULES,
   SETTINGS_MESSAGES,
 } from "@/constants/message";
-import { applyTheme, type AppTheme } from "@/services/theme";
+import {
+  APP_THEME_OPTIONS,
+  DEFAULT_APP_THEME,
+  applyTheme,
+  isAppTheme,
+  type AppTheme,
+} from "@/services/theme";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
 
@@ -40,9 +46,6 @@ const KEY_NAME_MAP: Record<string, string> = {
   ArrowUp: "ArrowUp",
   Escape: "Esc",
 };
-
-const isAppTheme = (theme: string): theme is AppTheme =>
-  theme === "system" || theme === "light" || theme === "dark";
 
 const normalizeErrorMessage = (error: unknown): string => {
   const message = error instanceof Error ? error.message : String(error || "");
@@ -89,7 +92,7 @@ export const useHSettings = () => {
   const saving = ref(false);
   const errorMessage = ref("");
   const successMessage = ref("");
-  const themeDraft = ref<AppTheme>("system");
+  const themeDraft = ref<AppTheme>(DEFAULT_APP_THEME);
   const listeningShortcutField = ref<ShortcutField | null>(null);
   const folderName = ref(DEFAULT_FOLDER_NAME);
   const folderParentId = ref<string | null>(null);
@@ -101,7 +104,7 @@ export const useHSettings = () => {
   const syncThemeDraft = (): void => {
     if (!config.value) return;
 
-    themeDraft.value = isAppTheme(config.value.theme) ? config.value.theme : "system";
+    themeDraft.value = isAppTheme(config.value.theme) ? config.value.theme : DEFAULT_APP_THEME;
   };
 
   const loadConfig = async (): Promise<void> => {
@@ -289,5 +292,6 @@ export const useHSettings = () => {
     stopListenShortcut,
     successMessage,
     themeDraft,
+    themeOptions: APP_THEME_OPTIONS,
   };
 };
