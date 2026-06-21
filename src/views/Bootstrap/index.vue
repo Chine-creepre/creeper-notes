@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import HTree from "@/components/Tree/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
+import HTree from "@/components/Tree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
@@ -16,6 +16,7 @@ const {
   formatNoteTime,
   getNoteDescription,
   keyword,
+  loadFolders,
   loadingNotes,
   moveCurrentNoteToFolder,
   noteCountText,
@@ -92,23 +93,24 @@ const {
           <div v-if="loadingNotes" class="h_bootstrap_empty">加载中...</div>
           <div v-else-if="!notes.length" class="h_bootstrap_empty">暂无笔记</div>
 
-          <button
-            v-for="note in notes"
-            v-else
-            :key="note.id"
-            :class="['h_bootstrap_note_item', { h_bootstrap_note_item_active: note.id === activeNoteId }]"
-            type="button"
-            @click="selectNote(note)"
-          >
-            <span class="h_bootstrap_note_icon">
-              <Icon icon="lucide:file-text" />
-            </span>
-            <span class="h_bootstrap_note_content">
-              <strong>{{ note.title }}</strong>
-              <em>{{ getNoteDescription(note) }}</em>
-              <small>{{ formatNoteTime(note.updated_at) }}</small>
-            </span>
-          </button>
+          <template v-else>
+            <button
+              v-for="note in notes"
+              :key="note.id"
+              :class="['h_bootstrap_note_item', { h_bootstrap_note_item_active: note.id === activeNoteId }]"
+              type="button"
+              @click="selectNote(note)"
+            >
+              <span class="h_bootstrap_note_icon">
+                <Icon icon="lucide:file-text" />
+              </span>
+              <span class="h_bootstrap_note_content">
+                <strong>{{ note.title }}</strong>
+                <em>{{ getNoteDescription(note) }}</em>
+                <small>{{ formatNoteTime(note.updated_at) }}</small>
+              </span>
+            </button>
+          </template>
         </div>
       </section>
 
