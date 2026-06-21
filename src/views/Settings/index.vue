@@ -3,7 +3,7 @@
     <header class="h_settings_header" @mousedown.left="startDragWindow">
       <div>
         <h1 class="h_settings_title">设置中心</h1>
-        <p class="h_settings_subtitle">主题、快捷键与分类管理</p>
+        <p class="h_settings_subtitle">主题、快捷键与系统设置</p>
       </div>
 
       <div class="h_settings_header_actions" @mousedown.stop>
@@ -19,6 +19,13 @@
           <span>
             <strong>主题设置</strong>
             <em>界面颜色方案</em>
+          </span>
+        </button>
+        <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'startup' }]" type="button" @click="activeDrawer = 'startup'">
+          <span class="h_settings_nav_icon">⏻</span>
+          <span>
+            <strong>启动设置</strong>
+            <em>开机自启动</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'mainShortcut' }]" type="button" @click="activeDrawer = 'mainShortcut'">
@@ -73,13 +80,28 @@
             </button>
           </div>
 
-          <label class="h_settings_switch">
-            <input v-if="config" v-model="config.auto_start_enabled" type="checkbox" />
-            <span></span>
-            <em>开机自启动</em>
-          </label>
-
           <button class="h_settings_primary" type="button" :disabled="saving" @click="confirmTheme">{{ saving ? "更新中" : "确认更新" }}</button>
+        </article>
+
+        <article v-else-if="activeDrawer === 'startup'" class="h_settings_drawer">
+          <div class="h_settings_drawer_header">
+            <span class="h_settings_drawer_badge">Startup</span>
+            <h2>启动设置</h2>
+            <p>管理应用是否随系统开机自动启动。</p>
+          </div>
+
+          <div class="h_settings_setting_card">
+            <div>
+              <strong>开机自启动</strong>
+              <p>开启后，系统启动时会自动运行 Creeper Notes。</p>
+            </div>
+            <label class="h_settings_switch">
+              <input v-if="config" v-model="config.auto_start_enabled" type="checkbox" />
+              <span></span>
+            </label>
+          </div>
+
+          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveStartupSettings">{{ saving ? "保存中" : "保存启动设置" }}</button>
         </article>
 
         <article v-else-if="activeDrawer === 'mainShortcut'" class="h_settings_drawer">
@@ -160,6 +182,7 @@ const {
   removeFolder,
   resetSettings,
   saveConfig,
+  saveStartupSettings,
   saving,
   startDragWindow,
   startListenShortcut,
