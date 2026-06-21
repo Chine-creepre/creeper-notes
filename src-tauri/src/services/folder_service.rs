@@ -135,12 +135,33 @@ fn assert_folder_parent_is_not_descendant(
     Ok(())
 }
 
+fn assert_sibling_folder_name_unique(
+    connection: &Connection,
+    parent_id: &Option<String>,
+    name: &str,
+    excluded_id: Option<&str>,
+) -> Result<(), String> {
+    let exists = folder_repository::exists_sibling_folder_by_name(
+        connection,
+        parent_id,
+        name,
+        excluded_id,
+    )?;
+
+    if exists {
+        return Err("sibling folder name already exists".to_string());
+    }
+
+    Ok(())
+}
+
 pub fn create_folder(app: &AppHandle, payload: CreateFolderPayload) -> Result<Folder, String> {
     validate_folder_name(&payload.name)?;
 
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
     let parent_id = normalize_parent_id(payload.parent_id);
+    let name = payload.name.trim().to_string();
 
     if let Some(parent_id) = &parent_id {
         let parent_folder = folder_repository::find_folder_by_id(&connection, parent_id)?;
@@ -150,10 +171,12 @@ pub fn create_folder(app: &AppHandle, payload: CreateFolderPayload) -> Result<Fo
         }
     }
 
+    assert_sibling_folder_name_unique(&connection, &parent_id, &name, None)?;
+
     let folder = Folder {
         id: Uuid::new_v4().to_string(),
         parent_id,
-        name: payload.name.trim().to_string(),
+        name,
         sort_order: payload.sort_order.unwrap_or(0),
         created_at: timestamp,
         updated_at: timestamp,
@@ -188,6 +211,7 @@ pub fn update_folder(app: &AppHandle, payload: UpdateFolderPayload) -> Result<()
     validate_folder_name(&payload.name)?;
 
     let parent_id = normalize_parent_id(payload.parent_id);
+    let name = payload.name.trim().to_string();
 
     if parent_id.as_deref() == Some(payload.id.as_str()) {
         return Err("folder cannot be its own parent".to_string());
@@ -213,10 +237,12 @@ pub fn update_folder(app: &AppHandle, payload: UpdateFolderPayload) -> Result<()
         assert_folder_parent_is_not_descendant(&folders, &payload.id, parent_id)?;
     }
 
+    assert_sibling_folder_name_unique(&connection, &parent_id, &name, Some(&payload.id))?;
+
     let payload = UpdateFolderPayload {
         id: payload.id,
         parent_id,
-        name: payload.name.trim().to_string(),
+        name,
         sort_order: payload.sort_order,
     };
 
