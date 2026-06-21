@@ -1,4 +1,4 @@
-use rusqlite::{params, Connection};
+use rusqlite::{params, params_from_iter, Connection, ToSql};
 
 use crate::constants::note_constants::NOTES_TABLE_NAME;
 use crate::models::note::{Note, UpdateNotePayload};
@@ -12,10 +12,34 @@ fn map_note_row(row: &rusqlite::Row) -> rusqlite::Result<Note> {
         describe: row.get(2)?,
         content: row.get(3)?,
         readonly: row.get(4)?,
-        created_at: row.get(5)?,
-        updated_at: row.get(6)?,
-        deleted: row.get(7)?,
+        folder_id: row.get(5)?,
+        created_at: row.get(6)?,
+        updated_at: row.get(7)?,
+        deleted: row.get(8)?,
     })
+}
+
+fn append_folder_filter(
+    query: &NoteQuery,
+    conditions: &mut Vec<String>,
+    values: &mut Vec<Box<dyn ToSql>>,
+) {
+    if let Some(folder_id) = query.get_folder_id() {
+        conditions.push("folder_id = ?".to_string());
+        values.push(Box::new(folder_id));
+        return;
+    }
+
+    if query.is_root_only() {
+        conditions.push("folder_id IS NULL".to_string());
+    }
+}
+
+fn get_value_refs(values: &[Box<dyn ToSql>]) -> Vec<&dyn ToSql> {
+    values
+        .iter()
+        .map(|value| value.as_ref() as &dyn ToSql)
+        .collect()
 }
 
 pub fn create_note(connection: &Connection, note: &Note) -> Result<(), String> {
@@ -27,10 +51,11 @@ pub fn create_note(connection: &Connection, note: &Note) -> Result<(), String> {
             describe,
             content,
             readonly,
+            folder_id,
             created_at,
             updated_at,
             deleted
-        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8)
+        ) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)
         "#,
         NOTES_TABLE_NAME,
     );
@@ -44,6 +69,7 @@ pub fn create_note(connection: &Connection, note: &Note) -> Result<(), String> {
                 note.describe,
                 note.content,
                 note.readonly,
+                note.folder_id,
                 note.created_at,
                 note.updated_at,
                 note.deleted,
@@ -63,6 +89,7 @@ pub fn find_note_by_id(connection: &Connection, id: &str) -> Result<Option<Note>
             describe,
             content,
             readonly,
+            folder_id,
             created_at,
             updated_at,
             deleted
@@ -92,19 +119,31 @@ pub fn list_notes(connection: &Connection, query: &NoteQuery) -> Result<PageResu
     let page = query.get_page();
     let page_size = query.get_page_size();
     let offset = query.get_offset();
+    let mut conditions = vec!["deleted = 0".to_string()];
+    let mut count_values: Vec<Box<dyn ToSql>> = Vec::new();
 
+    append_folder_filter(query, &mut conditions, &mut count_values);
+
+    let where_sql = conditions.join(" AND ");
     let count_sql = format!(
         r#"
         SELECT COUNT(*)
         FROM {}
-        WHERE deleted = 0
+        WHERE {}
         "#,
         NOTES_TABLE_NAME,
+        where_sql,
     );
+    let count_value_refs = get_value_refs(&count_values);
 
     let total = connection
-        .query_row(&count_sql, [], |row| row.get::<_, u64>(0))
+        .query_row(&count_sql, params_from_iter(count_value_refs), |row| row.get::<_, u64>(0))
         .map_err(|error| error.to_string())?;
+
+    let mut list_values: Vec<Box<dyn ToSql>> = Vec::new();
+    append_folder_filter(query, &mut Vec::new(), &mut list_values);
+    list_values.push(Box::new(page_size));
+    list_values.push(Box::new(offset));
 
     let sql = format!(
         r#"
@@ -114,24 +153,27 @@ pub fn list_notes(connection: &Connection, query: &NoteQuery) -> Result<PageResu
             describe,
             content,
             readonly,
+            folder_id,
             created_at,
             updated_at,
             deleted
         FROM {}
-        WHERE deleted = 0
+        WHERE {}
         ORDER BY updated_at DESC
-        LIMIT ?1
-        OFFSET ?2
+        LIMIT ?
+        OFFSET ?
         "#,
         NOTES_TABLE_NAME,
+        where_sql,
     );
 
     let mut statement = connection
         .prepare(&sql)
         .map_err(|error| error.to_string())?;
+    let list_value_refs = get_value_refs(&list_values);
 
     let items = statement
-        .query_map(params![page_size, offset], map_note_row)
+        .query_map(params_from_iter(list_value_refs), map_note_row)
         .map_err(|error| error.to_string())?
         .collect::<Result<Vec<Note>, rusqlite::Error>>()
         .map_err(|error| error.to_string())?;
@@ -145,34 +187,50 @@ pub fn list_notes(connection: &Connection, query: &NoteQuery) -> Result<PageResu
 }
 
 pub fn search_notes(connection: &Connection, query: &NoteQuery) -> Result<PageResult<Note>, String> {
-    let keyword = query.keyword.clone().unwrap_or_default();
-
-    if keyword.trim().is_empty() {
+    let Some(keyword) = query.get_keyword() else {
         return list_notes(connection, query);
-    }
+    };
 
     let page = query.get_page();
     let page_size = query.get_page_size();
     let offset = query.get_offset();
-    let like_keyword = format!("%{}%", keyword.trim());
+    let like_keyword = format!("%{}%", keyword);
+    let mut conditions = vec![
+        "deleted = 0".to_string(),
+        "(title LIKE ? OR describe LIKE ? OR content LIKE ?)".to_string(),
+    ];
+    let mut count_values: Vec<Box<dyn ToSql>> = vec![
+        Box::new(like_keyword.clone()),
+        Box::new(like_keyword.clone()),
+        Box::new(like_keyword.clone()),
+    ];
 
+    append_folder_filter(query, &mut conditions, &mut count_values);
+
+    let where_sql = conditions.join(" AND ");
     let count_sql = format!(
         r#"
         SELECT COUNT(*)
         FROM {}
-        WHERE deleted = 0
-          AND (
-            title LIKE ?1
-            OR describe LIKE ?1
-            OR content LIKE ?1
-          )
+        WHERE {}
         "#,
         NOTES_TABLE_NAME,
+        where_sql,
     );
+    let count_value_refs = get_value_refs(&count_values);
 
     let total = connection
-        .query_row(&count_sql, params![like_keyword], |row| row.get::<_, u64>(0))
+        .query_row(&count_sql, params_from_iter(count_value_refs), |row| row.get::<_, u64>(0))
         .map_err(|error| error.to_string())?;
+
+    let mut list_values: Vec<Box<dyn ToSql>> = vec![
+        Box::new(like_keyword.clone()),
+        Box::new(like_keyword.clone()),
+        Box::new(like_keyword),
+    ];
+    append_folder_filter(query, &mut Vec::new(), &mut list_values);
+    list_values.push(Box::new(page_size));
+    list_values.push(Box::new(offset));
 
     let sql = format!(
         r#"
@@ -182,29 +240,27 @@ pub fn search_notes(connection: &Connection, query: &NoteQuery) -> Result<PageRe
             describe,
             content,
             readonly,
+            folder_id,
             created_at,
             updated_at,
             deleted
         FROM {}
-        WHERE deleted = 0
-          AND (
-            title LIKE ?1
-            OR describe LIKE ?1
-            OR content LIKE ?1
-          )
+        WHERE {}
         ORDER BY updated_at DESC
-        LIMIT ?2
-        OFFSET ?3
+        LIMIT ?
+        OFFSET ?
         "#,
         NOTES_TABLE_NAME,
+        where_sql,
     );
 
     let mut statement = connection
         .prepare(&sql)
         .map_err(|error| error.to_string())?;
+    let list_value_refs = get_value_refs(&list_values);
 
     let items = statement
-        .query_map(params![like_keyword, page_size, offset], map_note_row)
+        .query_map(params_from_iter(list_value_refs), map_note_row)
         .map_err(|error| error.to_string())?
         .collect::<Result<Vec<Note>, rusqlite::Error>>()
         .map_err(|error| error.to_string())?;
@@ -230,7 +286,8 @@ pub fn update_note(
             describe = ?3,
             content = ?4,
             readonly = ?5,
-            updated_at = ?6
+            folder_id = ?6,
+            updated_at = ?7
         WHERE id = ?1
           AND deleted = 0
         "#,
@@ -246,6 +303,7 @@ pub fn update_note(
                 payload.describe,
                 payload.content,
                 payload.readonly,
+                payload.folder_id,
                 updated_at,
             ],
         )
