@@ -1,4 +1,3 @@
-import { storeToRefs } from "pinia";
 import { computed, onMounted, ref, watch } from "vue";
 import {
   closeSettingsWindow,
@@ -28,10 +27,10 @@ import {
   isAppTheme,
   type AppTheme,
 } from "@/services/theme";
-import { useSystemStore } from "@/stores/modules/system";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
 const FOLDER_TREE_ICON = "lucide:folder";
+const APP_VERSION_TEXT = `v${__APP_VERSION__}`;
 
 type ShortcutField = "toggle_shortcut" | "search_shortcut";
 
@@ -107,8 +106,7 @@ const getShortcutFromKeyboardEvent = (event: KeyboardEvent): string => {
 };
 
 export const useHSettings = () => {
-  const systemStore = useSystemStore();
-  const { appVersionText } = storeToRefs(systemStore);
+  const appVersionText = ref(APP_VERSION_TEXT);
   const config = ref<AppConfig>();
   const folders = ref<FolderTreeNode[]>([]);
   const activeDrawer = ref("theme");
