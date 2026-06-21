@@ -7,6 +7,7 @@ pub struct Note {
     pub describe: Option<String>,
     pub content: Option<String>,
     pub readonly: bool,
+    pub folder_id: Option<String>,
     pub created_at: i64,
     pub updated_at: i64,
     pub deleted: bool,
@@ -18,6 +19,7 @@ pub struct CreateNotePayload {
     pub describe: Option<String>,
     pub content: Option<String>,
     pub readonly: bool,
+    pub folder_id: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -27,4 +29,5 @@ pub struct UpdateNotePayload {
     pub describe: Option<String>,
     pub content: Option<String>,
     pub readonly: bool,
+    pub folder_id: Option<String>,
 }
