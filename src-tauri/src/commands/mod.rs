@@ -3,6 +3,7 @@ mod folder_commands;
 mod get_data_path;
 mod note_commands;
 mod start_dragging_search_window;
+mod start_dragging_settings_window;
 mod start_dragging_window;
 mod window_commands;
 
@@ -26,6 +27,7 @@ pub use note_commands::{
     update_note,
 };
 pub use start_dragging_search_window::start_dragging_search_window;
+pub use start_dragging_settings_window::start_dragging_settings_window;
 pub use start_dragging_window::start_dragging_window;
 pub use window_commands::{
     close_search_window,
