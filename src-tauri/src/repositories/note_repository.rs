@@ -330,6 +330,31 @@ pub fn update_note(
     Ok(())
 }
 
+pub fn move_note_to_folder(
+    connection: &Connection,
+    id: &str,
+    folder_id: &Option<String>,
+    updated_at: i64,
+) -> Result<(), String> {
+    let sql = format!(
+        r#"
+        UPDATE {}
+        SET
+            folder_id = ?2,
+            updated_at = ?3
+        WHERE id = ?1
+          AND deleted = 0
+        "#,
+        NOTES_TABLE_NAME,
+    );
+
+    connection
+        .execute(&sql, params![id, folder_id, updated_at])
+        .map_err(|error| error.to_string())?;
+
+    Ok(())
+}
+
 pub fn delete_note(connection: &Connection, id: &str, updated_at: i64) -> Result<(), String> {
     let sql = format!(
         r#"
