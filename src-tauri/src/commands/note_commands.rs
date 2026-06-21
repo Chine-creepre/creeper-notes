@@ -26,8 +26,17 @@ pub fn search_notes(app: AppHandle, query: NoteQuery) -> Result<PageResult<Note>
 }
 
 #[tauri::command]
-pub fn update_note(app: AppHandle, payload: UpdateNotePayload) -> Result<(), String> {
+pub fn update_note(app: AppHandle, payload: UpdateNotePayload) -> Result<Note, String> {
     note_service::update_note(&app, payload)
+}
+
+#[tauri::command]
+pub fn move_note_to_folder(
+    app: AppHandle,
+    id: String,
+    folder_id: Option<String>,
+) -> Result<Note, String> {
+    note_service::move_note_to_folder(&app, &id, folder_id)
 }
 
 #[tauri::command]
