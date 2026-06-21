@@ -6,7 +6,7 @@ import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
 const {
-  activeFolderKey,
+  activeFolderId,
   activeNoteId,
   appVersionText,
   clearSearch,
@@ -57,7 +57,7 @@ const {
 
         <div class="h_bootstrap_quick_actions">
           <HSelectTree
-            v-model="activeFolderKey"
+            v-model="activeFolderId"
             :nodes="folderTreeNodes"
             root-label="根目录"
             empty-text="暂无目录"
