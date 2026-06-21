@@ -29,6 +29,7 @@ const {
   selectNote,
   selectedNote,
   statusMessage,
+  toggleCurrentNoteReadonly,
   windowTitle,
 } = useBootstrap();
 </script>
@@ -89,7 +90,7 @@ const {
                 <button class="h_bootstrap_note_action_delete" type="button" title="删除" @click="deleteCurrentNote">
                   <Icon icon="lucide:trash-2" />
                 </button>
-                <button :class="['h_bootstrap_note_action_readonly', { h_bootstrap_note_action_readonly_active: draft.readonly }]" type="button" title="只读" @click="draft.readonly = !draft.readonly">
+                <button :class="['h_bootstrap_note_action_readonly', { h_bootstrap_note_action_readonly_active: draft.readonly }]" type="button" title="只读" :disabled="saving" @click="toggleCurrentNoteReadonly">
                   <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
                 </button>
               </span>
