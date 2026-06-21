@@ -99,7 +99,7 @@
 
 .h_bootstrap_quick_actions {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) 36px;
   align-items: center;
   flex: 0 0 auto;
   gap: 10px;
@@ -126,9 +126,25 @@
   box-shadow: 0 12px 24px color-mix(in srgb, var(--h_color_primary) 24%, transparent);
 }
 
+.h_bootstrap_settings_entry {
+  width: 36px;
+  padding: 0;
+  box-shadow: inset 0 0 0 1px var(--h_main_border);
+}
+
+.h_bootstrap_settings_entry:hover {
+  background: color-mix(in srgb, var(--h_color_primary) 16%, var(--h_main_surface));
+  color: var(--h_color_primary);
+}
+
 .h_bootstrap_quick_actions svg {
   width: 14px;
   height: 14px;
+}
+
+.h_bootstrap_settings_entry svg {
+  width: 15px;
+  height: 15px;
 }
 
 .h_bootstrap_quick_actions :deep(.h_select_tree) {
