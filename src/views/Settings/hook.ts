@@ -2,6 +2,7 @@ import { computed, onMounted, ref } from "vue";
 import {
   closeSettingsWindow,
   getConfig,
+  resetConfig,
   startDraggingSettingsWindow,
   updateConfig,
   type AppConfig,
@@ -107,6 +108,21 @@ export const useHSettings = () => {
     }
   };
 
+  const resetSettings = async (): Promise<void> => {
+    saving.value = true;
+    clearMessage();
+    stopListenShortcut();
+
+    try {
+      config.value = await resetConfig();
+      successMessage.value = "已重置设置";
+    } catch (error) {
+      errorMessage.value = error instanceof Error ? error.message : String(error);
+    } finally {
+      saving.value = false;
+    }
+  };
+
   const startListenShortcut = (field: ShortcutField): void => {
     listeningShortcutField.value = field;
     clearMessage();
@@ -188,6 +204,7 @@ export const useHSettings = () => {
     listeningShortcutField,
     loadFolders,
     removeFolder,
+    resetSettings,
     saveConfig,
     saving,
     startDragWindow,
