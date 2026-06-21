@@ -1,6 +1,6 @@
 use tauri::AppHandle;
 
-use crate::models::folder::{CreateFolderPayload, Folder, UpdateFolderPayload};
+use crate::models::folder::{CreateFolderPayload, Folder, FolderTreeNode, UpdateFolderPayload};
 use crate::services::folder_service;
 
 #[tauri::command]
@@ -16,6 +16,11 @@ pub fn find_folder_by_id(app: AppHandle, id: String) -> Result<Option<Folder>, S
 #[tauri::command]
 pub fn list_folders(app: AppHandle) -> Result<Vec<Folder>, String> {
     folder_service::list_folders(&app)
+}
+
+#[tauri::command]
+pub fn list_folder_tree(app: AppHandle) -> Result<Vec<FolderTreeNode>, String> {
+    folder_service::list_folder_tree(&app)
 }
 
 #[tauri::command]

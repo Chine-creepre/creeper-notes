@@ -3,7 +3,7 @@ use tauri::AppHandle;
 use crate::services::{config_service, window_service};
 
 #[cfg(windows)]
-pub fn initialize_shortcuts(app: &AppHandle) -> Result<(), String> {
+fn register_shortcuts(app: &AppHandle) -> Result<(), String> {
     use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut, ShortcutState};
 
     let app_config = config_service::get_config(app)?;
@@ -41,7 +41,28 @@ pub fn initialize_shortcuts(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+#[cfg(windows)]
+pub fn initialize_shortcuts(app: &AppHandle) -> Result<(), String> {
+    register_shortcuts(app)
+}
+
+#[cfg(windows)]
+pub fn reload_shortcuts(app: &AppHandle) -> Result<(), String> {
+    use tauri_plugin_global_shortcut::GlobalShortcutExt;
+
+    app.global_shortcut()
+        .unregister_all()
+        .map_err(|error| error.to_string())?;
+
+    register_shortcuts(app)
+}
+
 #[cfg(not(windows))]
 pub fn initialize_shortcuts(_app: &AppHandle) -> Result<(), String> {
+    Ok(())
+}
+
+#[cfg(not(windows))]
+pub fn reload_shortcuts(_app: &AppHandle) -> Result<(), String> {
     Ok(())
 }

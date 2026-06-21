@@ -4,6 +4,8 @@ const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
 const SEARCH_WINDOW_URL: &str = "/search";
 const SEARCH_WINDOW_FOCUS_EVENT: &str = "focus-search-input";
+const SETTINGS_WINDOW_LABEL: &str = "settings";
+const SETTINGS_WINDOW_URL: &str = "/settings";
 
 fn focus_search_window_input(app: &AppHandle) -> Result<(), String> {
     app.emit_to(SEARCH_WINDOW_LABEL, SEARCH_WINDOW_FOCUS_EVENT, ())
@@ -61,6 +63,54 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
     }
 
     open_search_window(app)
+}
+
+pub fn open_settings_window(app: &AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
+        window.show().map_err(|error| error.to_string())?;
+        window.set_focus().map_err(|error| error.to_string())?;
+
+        return Ok(());
+    }
+
+    WebviewWindowBuilder::new(
+        app,
+        SETTINGS_WINDOW_LABEL,
+        WebviewUrl::App(SETTINGS_WINDOW_URL.into()),
+    )
+    .title("Settings")
+    .decorations(false)
+    .transparent(false)
+    .resizable(false)
+    .inner_size(900.0, 520.0)
+    .center()
+    .build()
+    .map_err(|error| error.to_string())?;
+
+    Ok(())
+}
+
+pub fn close_settings_window(app: &AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
+        window.hide().map_err(|error| error.to_string())?;
+    }
+
+    Ok(())
+}
+
+pub fn toggle_settings_window(app: &AppHandle) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
+        if window.is_visible().map_err(|error| error.to_string())? {
+            window.hide().map_err(|error| error.to_string())?;
+        } else {
+            window.show().map_err(|error| error.to_string())?;
+            window.set_focus().map_err(|error| error.to_string())?;
+        }
+
+        return Ok(());
+    }
+
+    open_settings_window(app)
 }
 
 pub fn show_main_window(app: &AppHandle) -> Result<(), String> {
