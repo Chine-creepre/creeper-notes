@@ -11,6 +11,7 @@ pub use folder_commands::{
     create_folder,
     delete_folder,
     find_folder_by_id,
+    list_folder_tree,
     list_folders,
     update_folder,
 };
