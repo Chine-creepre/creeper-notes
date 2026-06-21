@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { computed, reactive, ref, watch } from "vue";
+import { computed, reactive, ref } from "vue";
 import type { HTreeNode } from "@/components/Tree/types";
 import {
   createNote,
@@ -17,7 +17,6 @@ const NOTE_PAGE_SIZE = 50;
 const DEFAULT_NOTE_TITLE = "未命名笔记";
 const FOLDER_TREE_ICON = "lucide:folder";
 
-type NoteEditorState = "empty" | "clean" | "dirty" | "saving" | "saved" | "readonly";
 type MarkdownEditorMode = "edit" | "preview";
 
 interface DraftSnapshot {
@@ -28,13 +27,9 @@ interface DraftSnapshot {
   folderId: string | null;
 }
 
-const NOTE_EDITOR_STATE_LABELS: Record<NoteEditorState, string> = {
-  empty: "未选择",
-  clean: "已同步",
-  dirty: "未保存",
-  saving: "保存中",
-  saved: "已保存",
-  readonly: "只读",
+const NOTE_EDITOR_MODE_LABELS: Record<MarkdownEditorMode, string> = {
+  edit: "编辑中",
+  preview: "预览中",
 };
 
 const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
@@ -78,7 +73,6 @@ export const useSystemStore = defineStore("system", () => {
   const saving = ref(false);
   const keyword = ref("");
   const statusMessage = ref("");
-  const noteEditorState = ref<NoteEditorState>("empty");
   const markdownEditorMode = ref<MarkdownEditorMode>("preview");
   const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
 
@@ -97,7 +91,8 @@ export const useSystemStore = defineStore("system", () => {
   const selectedNote = computed(() => notes.value.find((note) => note.id === activeNoteId.value) ?? null);
   const noteCountText = computed(() => `${notes.value.length} 条笔记`);
   const hasDraftChanged = computed(() => !isSameDraftSnapshot(draft, savedDraftSnapshot.value));
-  const noteEditorStateLabel = computed(() => NOTE_EDITOR_STATE_LABELS[noteEditorState.value]);
+  const noteEditorState = computed<MarkdownEditorMode>(() => markdownEditorMode.value);
+  const noteEditorStateLabel = computed(() => NOTE_EDITOR_MODE_LABELS[markdownEditorMode.value]);
   const windowTitle = computed(() => {
     const title = selectedNote.value?.title || draft.title || DEFAULT_NOTE_TITLE;
 
@@ -137,25 +132,6 @@ export const useSystemStore = defineStore("system", () => {
     statusTimer = window.setTimeout(clearStatusMessage, 1800);
   };
 
-  const transitionNoteEditorState = (): void => {
-    if (!selectedNote.value) {
-      noteEditorState.value = "empty";
-      return;
-    }
-
-    if (saving.value) {
-      noteEditorState.value = "saving";
-      return;
-    }
-
-    if (draft.readonly) {
-      noteEditorState.value = "readonly";
-      return;
-    }
-
-    noteEditorState.value = hasDraftChanged.value ? "dirty" : "clean";
-  };
-
   const syncDraft = (note: Note | null): void => {
     const snapshot = createDraftSnapshot(note);
 
@@ -166,7 +142,6 @@ export const useSystemStore = defineStore("system", () => {
     draft.folderId = snapshot.folderId;
     savedDraftSnapshot.value = snapshot;
     markdownEditorMode.value = "preview";
-    transitionNoteEditorState();
   };
 
   const loadFolders = async (): Promise<void> => {
@@ -233,7 +208,6 @@ export const useSystemStore = defineStore("system", () => {
     notes.value = [note, ...notes.value];
     selectNote(note);
     markdownEditorMode.value = "edit";
-    noteEditorState.value = "saved";
     showStatusMessage("已新建笔记");
   };
 
@@ -243,7 +217,6 @@ export const useSystemStore = defineStore("system", () => {
     if (!currentNote || !hasDraftChanged.value) return;
 
     saving.value = true;
-    transitionNoteEditorState();
 
     try {
       const updatedNote = await updateNote({
@@ -258,13 +231,9 @@ export const useSystemStore = defineStore("system", () => {
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
       markdownEditorMode.value = "preview";
-      noteEditorState.value = "saved";
       showStatusMessage("已保存");
     } finally {
       saving.value = false;
-      if (noteEditorState.value !== "saved") {
-        transitionNoteEditorState();
-      }
     }
   };
 
@@ -316,11 +285,6 @@ export const useSystemStore = defineStore("system", () => {
 
     selectNote(note);
   };
-
-  watch(
-    () => [draft.title, draft.describe, draft.content, draft.readonly, draft.folderId] as const,
-    transitionNoteEditorState,
-  );
 
   return {
     activeFolderId,
