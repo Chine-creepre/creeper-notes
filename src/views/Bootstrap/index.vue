@@ -31,6 +31,14 @@ const {
   statusMessage,
   windowTitle,
 } = useBootstrap();
+
+const openSettingsPage = async (): Promise<void> => {
+  try {
+    await openSettingsWindow();
+  } catch (error) {
+    console.error("open settings window failed", error);
+  }
+};
 </script>
 
 <template>
@@ -64,7 +72,7 @@ const {
             @select="selectNewNoteFolder"
           />
 
-          <button class="h_bootstrap_settings_entry" type="button" title="设置" @click="openSettingsWindow">
+          <button class="h_bootstrap_settings_entry" type="button" title="设置" @click="openSettingsPage">
             <Icon icon="lucide:settings" />
           </button>
         </div>
