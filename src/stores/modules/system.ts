@@ -73,7 +73,6 @@ export const useSystemStore = defineStore("system", () => {
   const activeNoteId = ref<string | null>(null);
   const loadingNotes = ref(false);
   const saving = ref(false);
-  const keyword = ref("");
   const statusMessage = ref("");
   const markdownEditorMode = ref<MarkdownEditorMode>("preview");
   const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
@@ -154,21 +153,12 @@ export const useSystemStore = defineStore("system", () => {
     loadingNotes.value = true;
 
     try {
-      const trimmedKeyword = keyword.value.trim();
-      const query = trimmedKeyword
-        ? {
-            keyword: trimmedKeyword,
-            page: 1,
-            page_size: NOTE_PAGE_SIZE,
-          }
-        : {
-            folder_id: activeFolderId.value,
-            root_only: activeFolderId.value === null,
-            page: 1,
-            page_size: NOTE_PAGE_SIZE,
-          };
-
-      const result = await listNotes(query);
+      const result = await listNotes({
+        folder_id: activeFolderId.value,
+        root_only: activeFolderId.value === null,
+        page: 1,
+        page_size: NOTE_PAGE_SIZE,
+      });
       notes.value = result.items;
 
       if (!notes.value.some((note) => note.id === activeNoteId.value)) {
@@ -188,7 +178,6 @@ export const useSystemStore = defineStore("system", () => {
   const selectFolder = async (node: HTreeNode | null): Promise<void> => {
     activeFolderId.value = node?.id ?? null;
     activeNoteId.value = null;
-    keyword.value = "";
     await loadNotes();
   };
 
@@ -289,23 +278,12 @@ export const useSystemStore = defineStore("system", () => {
     showStatusMessage("已移动笔记");
   };
 
-  const searchCurrentNotes = async (): Promise<void> => {
-    activeNoteId.value = null;
-    await loadNotes();
-  };
-
-  const clearSearch = async (): Promise<void> => {
-    keyword.value = "";
-    await loadNotes();
-  };
-
   const openNoteById = async (id: string): Promise<void> => {
     const note = await findNoteById(id);
 
     if (!note) return;
 
     activeFolderId.value = note.folder_id;
-    keyword.value = "";
     await loadNotes();
 
     if (!notes.value.some((item) => item.id === note.id)) {
@@ -320,7 +298,6 @@ export const useSystemStore = defineStore("system", () => {
     activeNoteId,
     appVersion,
     appVersionText,
-    clearSearch,
     createNewNote,
     deleteCurrentNote,
     draft,
@@ -329,7 +306,6 @@ export const useSystemStore = defineStore("system", () => {
     getNoteDescription,
     hasDraftChanged,
     initializeSystemData,
-    keyword,
     loadFolders,
     loadNotes,
     loadingNotes,
@@ -342,7 +318,6 @@ export const useSystemStore = defineStore("system", () => {
     openNoteById,
     saveCurrentNote,
     saving,
-    searchCurrentNotes,
     selectFolder,
     selectNote,
     selectedNote,
