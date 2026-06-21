@@ -77,6 +77,9 @@ export const updateFolder = (payload: UpdateFolderPayload): Promise<void> =>
 
 export const deleteFolder = (id: string): Promise<void> => invoke("delete_folder", { id });
 
+export const findNoteById = (id: string): Promise<Note | null> =>
+  invoke("find_note_by_id", { id });
+
 export const listNotes = (query: NoteQuery): Promise<PageResult<Note>> =>
   invoke("list_notes", { query });
 
@@ -91,3 +94,5 @@ export const updateNote = (payload: UpdateNotePayload): Promise<Note> =>
 
 export const moveNoteToFolder = (id: string, folderId: string | null): Promise<Note> =>
   invoke("move_note_to_folder", { id, folder_id: folderId });
+
+export const deleteNote = (id: string): Promise<void> => invoke("delete_note", { id });
