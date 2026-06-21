@@ -15,6 +15,7 @@ import {
   type FolderTreeNode,
 } from "@/request/apis/notes";
 import type { HTreeNode } from "@/components/Tree/types";
+import { APP_EVENTS } from "@/constants/events";
 import {
   MESSAGE_VISIBLE_DURATION,
   SETTINGS_ERROR_MESSAGE_RULES,
@@ -125,6 +126,10 @@ export const useHSettings = () => {
 
   const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
   const isEditingFolder = computed(() => Boolean(editingFolderId.value));
+
+  const emitFoldersChanged = (): void => {
+    window.dispatchEvent(new CustomEvent(APP_EVENTS.foldersChanged));
+  };
 
   const syncThemeDraft = (): void => {
     if (!config.value) return;
@@ -275,6 +280,7 @@ export const useHSettings = () => {
       folderName.value = DEFAULT_FOLDER_NAME;
       folderParentId.value = null;
       await loadFolders();
+      emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderCreated);
     } catch (error) {
       showErrorMessage(error);
@@ -315,6 +321,7 @@ export const useHSettings = () => {
 
       resetFolderEditState();
       await loadFolders();
+      emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderUpdated);
     } catch (error) {
       showErrorMessage(error);
@@ -333,6 +340,7 @@ export const useHSettings = () => {
     try {
       await deleteFolder(id);
       await loadFolders();
+      emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderDeleted);
     } catch (error) {
       showErrorMessage(error);
