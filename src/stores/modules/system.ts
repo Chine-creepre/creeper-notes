@@ -70,6 +70,7 @@ const normalizeDraftTitle = (title: string): string => {
 };
 
 export const useSystemStore = defineStore("system", () => {
+  const appVersion = ref(__APP_VERSION__);
   const folders = ref<FolderTreeNode[]>([]);
   const notes = ref<Note[]>([]);
   const activeFolderKey = ref<string>(ALL_NOTES_KEY);
@@ -92,6 +93,7 @@ export const useSystemStore = defineStore("system", () => {
 
   let statusTimer: number | undefined;
 
+  const appVersionText = computed(() => `v${appVersion.value}`);
   const folderTreeNodes = computed<HTreeNode[]>(() => [
     {
       id: ALL_NOTES_KEY,
@@ -351,6 +353,8 @@ export const useSystemStore = defineStore("system", () => {
   return {
     activeFolderKey,
     activeNoteId,
+    appVersion,
+    appVersionText,
     clearSearch,
     createNewNote,
     deleteCurrentNote,
