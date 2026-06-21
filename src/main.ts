@@ -6,10 +6,11 @@ import "@/styles/variable.css";
 import "@/styles/theme.css";
 
 import { router } from "@/router";
-import { initializeTheme } from "@/services/theme";
+import { initializeTheme, listenAppConfigChanged } from "@/services/theme";
 import { store } from "@/stores";
 
 initializeTheme();
+listenAppConfigChanged();
 
 createApp(App)
   .use(store)
