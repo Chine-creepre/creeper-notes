@@ -66,6 +66,9 @@ const getNextSortOrder = (folders: FolderTreeNode[]): number => {
   return Math.max(...folders.map((folder) => folder.sort_order)) + 1;
 };
 
+const flattenFolders = (folders: FolderTreeNode[]): FolderTreeNode[] =>
+  folders.flatMap((folder) => [folder, ...flattenFolders(folder.children)]);
+
 const getFolderFromTreeNode = (node: HTreeNode): FolderTreeNode | null => {
   const folder = node.raw as FolderTreeNode | undefined;
 
@@ -296,11 +299,7 @@ export const useHSettings = () => {
 
     if (!editingFolderId.value || !name) return;
 
-    const folder = folders.value
-      .flatMap(function flatten(items): FolderTreeNode[] {
-        return items.flatMap((item) => [item, ...flatten(item.children)]);
-      })
-      .find((item) => item.id === editingFolderId.value);
+    const folder = flattenFolders(folders.value).find((item) => item.id === editingFolderId.value);
 
     if (!folder) return;
 
