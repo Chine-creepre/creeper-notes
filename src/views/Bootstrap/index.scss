@@ -207,7 +207,7 @@
   justify-content: flex-start;
   flex: 0 0 auto;
   min-width: 0;
-  margin-bottom: 18px;
+  margin-bottom: 26px;
   padding-bottom: 14px;
   border-bottom: 1px solid #1e2f3b;
 }
@@ -217,13 +217,6 @@
   align-items: center;
   gap: 8px;
   min-width: 0;
-}
-
-.h_bootstrap_editor_tools span {
-  width: 1px;
-  height: 18px;
-  margin: 0 2px;
-  background: #1e2f3b;
 }
 
 .h_bootstrap_editor_tools button {
@@ -253,29 +246,6 @@
   flex: 1;
   flex-direction: column;
   min-height: 0;
-}
-
-.h_bootstrap_editor_topline {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  flex: 0 0 auto;
-  margin-bottom: 14px;
-  color: #6f8794;
-  font-size: 11px;
-}
-
-.h_bootstrap_editor_topline :deep(.h_select_tree) {
-  width: 170px;
-}
-
-.h_bootstrap_editor_topline :deep(.h_select_tree_trigger) {
-  height: 28px;
-  border-color: #263a46;
-  background: #152330;
-  color: #8ea7b3;
-  font-size: 11px;
 }
 
 .h_bootstrap_title_input,
