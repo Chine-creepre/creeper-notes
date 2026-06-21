@@ -5,9 +5,11 @@ import { useHAppLayout } from "./hook";
 withDefaults(
   defineProps<{
     title?: string;
+    titleRightText?: string;
   }>(),
   {
     title: "",
+    titleRightText: "",
   },
 );
 
@@ -16,7 +18,7 @@ const {} = useHAppLayout();
 
 <template>
   <div class="h_app_layout">
-    <HWindowTitleBar :title="title" />
+    <HWindowTitleBar :right-text="titleRightText" :title="title" />
 
     <main class="h_app_layout_content">
       <slot></slot>
