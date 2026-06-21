@@ -89,32 +89,74 @@ pub fn exists_sibling_folder_by_name(
     name: &str,
     excluded_id: Option<&str>,
 ) -> Result<bool, String> {
-    let parent_condition = if parent_id.is_some() {
-        "parent_id = ?1"
-    } else {
-        "parent_id IS NULL"
+    let count = match (parent_id, excluded_id) {
+        (Some(parent_id), Some(excluded_id)) => {
+            let sql = format!(
+                r#"
+                SELECT COUNT(*)
+                FROM {}
+                WHERE parent_id = ?1
+                  AND name = ?2
+                  AND id <> ?3
+                  AND deleted = 0
+                "#,
+                FOLDERS_TABLE_NAME,
+            );
+
+            connection
+                .query_row(&sql, params![parent_id, name, excluded_id], |row| row.get::<_, u64>(0))
+                .map_err(|error| error.to_string())?
+        }
+        (Some(parent_id), None) => {
+            let sql = format!(
+                r#"
+                SELECT COUNT(*)
+                FROM {}
+                WHERE parent_id = ?1
+                  AND name = ?2
+                  AND deleted = 0
+                "#,
+                FOLDERS_TABLE_NAME,
+            );
+
+            connection
+                .query_row(&sql, params![parent_id, name], |row| row.get::<_, u64>(0))
+                .map_err(|error| error.to_string())?
+        }
+        (None, Some(excluded_id)) => {
+            let sql = format!(
+                r#"
+                SELECT COUNT(*)
+                FROM {}
+                WHERE parent_id IS NULL
+                  AND name = ?1
+                  AND id <> ?2
+                  AND deleted = 0
+                "#,
+                FOLDERS_TABLE_NAME,
+            );
+
+            connection
+                .query_row(&sql, params![name, excluded_id], |row| row.get::<_, u64>(0))
+                .map_err(|error| error.to_string())?
+        }
+        (None, None) => {
+            let sql = format!(
+                r#"
+                SELECT COUNT(*)
+                FROM {}
+                WHERE parent_id IS NULL
+                  AND name = ?1
+                  AND deleted = 0
+                "#,
+                FOLDERS_TABLE_NAME,
+            );
+
+            connection
+                .query_row(&sql, params![name], |row| row.get::<_, u64>(0))
+                .map_err(|error| error.to_string())?
+        }
     };
-    let excluded_condition = if excluded_id.is_some() {
-        "AND id <> ?3"
-    } else {
-        ""
-    };
-    let sql = format!(
-        r#"
-        SELECT COUNT(*)
-        FROM {}
-        WHERE {}
-          AND name = ?2
-          AND deleted = 0
-          {}
-        "#,
-        FOLDERS_TABLE_NAME,
-        parent_condition,
-        excluded_condition,
-    );
-    let count = connection
-        .query_row(&sql, params![parent_id, name, excluded_id], |row| row.get::<_, u64>(0))
-        .map_err(|error| error.to_string())?;
 
     Ok(count > 0)
 }
