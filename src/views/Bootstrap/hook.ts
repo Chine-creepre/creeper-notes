@@ -42,6 +42,7 @@ export const useBootstrap = () => {
     openNoteById: systemStore.openNoteById,
     saveCurrentNote: systemStore.saveCurrentNote,
     searchCurrentNotes: systemStore.searchCurrentNotes,
+    selectAllNotes: systemStore.selectAllNotes,
     selectFolder: systemStore.selectFolder,
     selectNewNoteFolder: systemStore.selectNewNoteFolder,
     selectNote: systemStore.selectNote,
