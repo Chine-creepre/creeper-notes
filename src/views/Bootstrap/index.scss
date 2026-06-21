@@ -2,23 +2,21 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 5px;
   height: 28px;
-  padding: 0 12px;
+  padding: 0;
   border: 0;
-  border-radius: 999px;
-  background: linear-gradient(135deg, var(--h_color_primary), color-mix(in srgb, var(--h_color_primary) 62%, #ffffff));
-  color: #ffffff;
+  background: transparent;
+  color: var(--h_color_primary);
   font-family: inherit;
   font-size: 11px;
   font-weight: 700;
   line-height: 1;
   cursor: pointer;
-  box-shadow: 0 8px 18px color-mix(in srgb, var(--h_color_primary) 22%, transparent);
 }
 
 .h_bootstrap_title_new_note:hover {
-  transform: translateY(-1px);
+  color: color-mix(in srgb, var(--h_color_primary) 72%, #ffffff);
 }
 
 .h_bootstrap_title_new_note svg {
@@ -105,7 +103,6 @@
 }
 
 .h_bootstrap_search button,
-.h_bootstrap_quick_actions button,
 .h_bootstrap_note_item,
 .h_bootstrap_note_actions button {
   border: 0;
@@ -126,45 +123,14 @@
 }
 
 .h_bootstrap_quick_actions {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
+  display: flex;
   align-items: center;
   flex: 0 0 auto;
-  gap: 10px;
-}
-
-.h_bootstrap_quick_actions button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 7px;
   min-width: 0;
-  height: 36px;
-  padding: 0 14px;
-  border-radius: 999px;
-  background: var(--h_main_surface);
-  color: var(--h_main_text_secondary);
-  font-size: 12px;
-  font-weight: 650;
-}
-
-.h_bootstrap_all_notes_entry_active {
-  background: linear-gradient(135deg, var(--h_color_primary), color-mix(in srgb, var(--h_color_primary) 62%, #ffffff)) !important;
-  color: #ffffff !important;
-  box-shadow: 0 12px 24px color-mix(in srgb, var(--h_color_primary) 24%, transparent);
-}
-
-.h_bootstrap_all_notes_entry:hover {
-  background: color-mix(in srgb, var(--h_color_primary) 16%, var(--h_main_surface));
-  color: var(--h_color_primary);
-}
-
-.h_bootstrap_quick_actions svg {
-  width: 14px;
-  height: 14px;
 }
 
 .h_bootstrap_quick_actions :deep(.h_select_tree) {
+  width: 100%;
   min-width: 0;
 }
 
