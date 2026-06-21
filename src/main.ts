@@ -6,7 +6,10 @@ import "@/styles/variable.css";
 import "@/styles/theme.css";
 
 import { router } from "@/router";
+import { initializeTheme } from "@/services/theme";
 import { store } from "@/stores";
+
+initializeTheme();
 
 createApp(App)
   .use(store)
