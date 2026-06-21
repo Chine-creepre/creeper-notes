@@ -51,3 +51,8 @@ pub fn hide_main_window(app: AppHandle) -> Result<(), String> {
 pub fn toggle_main_window(app: AppHandle) -> Result<(), String> {
     window_service::toggle_main_window(&app)
 }
+
+#[tauri::command]
+pub fn toggle_main_window_fullscreen(app: AppHandle) -> Result<(), String> {
+    window_service::toggle_main_window_fullscreen(&app)
+}
