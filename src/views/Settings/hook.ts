@@ -13,11 +13,14 @@ import {
   listFolderTree,
   type FolderTreeNode,
 } from "@/request/apis/notes";
+import {
+  MESSAGE_VISIBLE_DURATION,
+  SETTINGS_ERROR_MESSAGE_RULES,
+  SETTINGS_MESSAGES,
+} from "@/constants/message";
 import { applyTheme, type AppTheme } from "@/services/theme";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
-const MESSAGE_VISIBLE_DURATION = 1800;
-const DEFAULT_ERROR_MESSAGE = "操作失败，请重试";
 
 type ShortcutField = "toggle_shortcut" | "search_shortcut";
 
@@ -38,22 +41,14 @@ const KEY_NAME_MAP: Record<string, string> = {
   Escape: "Esc",
 };
 
-const ERROR_MESSAGE_MAP: Array<[string, string]> = [
-  ["Invalid hotkey format", "快捷键格式不合法，请重新设置"],
-  ["already registered", "快捷键已被占用，请更换组合键"],
-  ["missing required key", "参数缺失，请刷新设置页后重试"],
-  ["folder has child folders", "该分类下存在子分类，不能删除"],
-  ["folder has notes", "该分类下存在笔记，不能删除"],
-];
-
 const isAppTheme = (theme: string): theme is AppTheme =>
   theme === "system" || theme === "light" || theme === "dark";
 
 const normalizeErrorMessage = (error: unknown): string => {
   const message = error instanceof Error ? error.message : String(error || "");
-  const matchedMessage = ERROR_MESSAGE_MAP.find(([keyword]) => message.includes(keyword));
+  const matchedRule = SETTINGS_ERROR_MESSAGE_RULES.find((rule) => message.includes(rule.keyword));
 
-  return matchedMessage?.[1] ?? DEFAULT_ERROR_MESSAGE;
+  return matchedRule?.message ?? SETTINGS_MESSAGES.error.default;
 };
 
 const getNextSortOrder = (folders: FolderTreeNode[]): number => {
@@ -161,7 +156,7 @@ export const useHSettings = () => {
       config.value = await updateConfig(config.value);
       syncThemeDraft();
       applyTheme(config.value.theme);
-      showSuccessMessage("保存成功");
+      showSuccessMessage(SETTINGS_MESSAGES.success.saved);
     } catch (error) {
       showErrorMessage(error);
     } finally {
@@ -184,7 +179,7 @@ export const useHSettings = () => {
       config.value = await resetConfig();
       syncThemeDraft();
       applyTheme(config.value.theme);
-      showSuccessMessage("已重置为默认配置");
+      showSuccessMessage(SETTINGS_MESSAGES.success.reset);
     } catch (error) {
       showErrorMessage(error);
     } finally {
@@ -241,7 +236,7 @@ export const useHSettings = () => {
       folderName.value = DEFAULT_FOLDER_NAME;
       folderParentId.value = null;
       await loadFolders();
-      showSuccessMessage("新增分类成功");
+      showSuccessMessage(SETTINGS_MESSAGES.success.folderCreated);
     } catch (error) {
       showErrorMessage(error);
     }
@@ -251,7 +246,7 @@ export const useHSettings = () => {
     try {
       await deleteFolder(id);
       await loadFolders();
-      showSuccessMessage("删除分类成功");
+      showSuccessMessage(SETTINGS_MESSAGES.success.folderDeleted);
     } catch (error) {
       showErrorMessage(error);
     }
