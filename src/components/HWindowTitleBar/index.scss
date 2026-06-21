@@ -2,47 +2,67 @@
   display: flex;
   align-items: center;
   width: 100%;
-  height: 36px;
-  border-bottom: 1px solid #e5e7eb;
-  background: #ffffff;
+  height: 42px;
+  border-bottom: 1px solid #1e2f3b;
+  background: #162431;
   user-select: none;
 }
 
 .h_window_title_bar_drag {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
   flex: 1;
   align-items: center;
   height: 100%;
-  padding: 0 12px;
+  padding: 0 18px;
+  box-sizing: border-box;
+}
+
+.h_window_title_bar_dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.h_window_title_bar_dot {
+  display: inline-block;
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+}
+
+.h_window_title_bar_dot_close {
+  background: #ff5f57;
+}
+
+.h_window_title_bar_dot_minimize {
+  background: #ffbd2e;
+}
+
+.h_window_title_bar_dot_zoom {
+  background: #28c840;
 }
 
 .h_window_title_bar_title {
-  font-size: 13px;
+  overflow: hidden;
+  padding: 0 14px;
+  color: #6f8794;
+  font-size: 11px;
+  font-weight: 500;
   line-height: 1;
-  color: #1f2328;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.h_window_title_bar_actions {
-  display: flex;
+.h_window_title_bar_shortcut {
+  display: inline-flex;
   align-items: center;
-  height: 100%;
-}
-
-.h_window_title_bar_action {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 100%;
-  font-size: 14px;
-  color: #1f2328;
-}
-
-.h_window_title_bar_action:hover {
-  background: #f3f4f6;
-}
-
-.h_window_title_bar_action_close:hover {
-  color: #ffffff;
-  background: #e81123;
+  height: 22px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(215, 181, 109, 0.12);
+  color: #d7b56d;
+  font-size: 10px;
+  font-weight: 700;
 }
