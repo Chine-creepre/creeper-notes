@@ -37,7 +37,7 @@
 .h_tree_node_content {
   position: relative;
   display: grid;
-  grid-template-columns: 22px 18px minmax(0, 1fr);
+  grid-template-columns: 22px 18px minmax(0, 1fr) auto;
   align-items: center;
   gap: 6px;
   min-width: 0;
@@ -105,6 +105,49 @@
   min-width: 0;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.h_tree_node_actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-right: 6px;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+.h_tree_node_content:hover .h_tree_node_actions,
+.h_tree_node_content_active .h_tree_node_actions {
+  opacity: 1;
+}
+
+.h_tree_node_action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--h_color_text_muted);
+  cursor: pointer;
+}
+
+.h_tree_node_action:hover {
+  background: var(--h_color_primary_weak);
+  color: var(--h_color_primary);
+}
+
+.h_tree_node_action_danger:hover {
+  background: var(--h_color_danger_weak);
+  color: var(--h_color_danger);
+}
+
+.h_tree_node_action svg {
+  width: 14px;
+  height: 14px;
 }
 
 .h_tree_node_children {
