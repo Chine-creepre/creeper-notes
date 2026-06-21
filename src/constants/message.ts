@@ -5,6 +5,7 @@ export const SETTINGS_MESSAGES = {
     saved: "保存成功",
     reset: "已重置为默认配置",
     folderCreated: "新增分类成功",
+    folderUpdated: "编辑分类成功",
     folderDeleted: "删除分类成功",
   },
   error: {
