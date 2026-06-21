@@ -3,10 +3,11 @@
     <header class="h_settings_header" @mousedown.left="startDragWindow">
       <div>
         <h1 class="h_settings_title">设置中心</h1>
-        <p class="h_settings_subtitle">主题、快捷键与系统设置</p>
+        <p class="h_settings_subtitle">主题、快捷键与系统设置 · {{ appVersionText }}</p>
       </div>
 
       <div class="h_settings_header_actions" @mousedown.stop>
+        <span class="h_settings_version">{{ appVersionText }}</span>
         <button class="h_settings_secondary" type="button" :disabled="saving" @click.stop="resetSettings">重置默认配置</button>
         <button class="h_settings_close" type="button" @click.stop="closeWindow">×</button>
       </div>
@@ -138,19 +139,19 @@
           <div class="h_settings_drawer_header">
             <span class="h_settings_drawer_badge">Folder</span>
             <h2>分类 / 文件夹</h2>
-            <p>同级分类名称不能重复。</p>
+            <p>管理笔记保存目录，新建笔记时可以选择对应分类。</p>
           </div>
 
-          <div v-if="!isEditingFolder" class="h_settings_folder_form">
+          <div class="h_settings_folder_form">
             <input v-model="folderName" class="h_settings_control" placeholder="分类名称" />
             <HSelectTree v-model="folderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
-            <button class="h_settings_primary" type="button" @click="createRootFolder">新增</button>
+            <button class="h_settings_primary" type="button" @click="createRootFolder">新增分类</button>
           </div>
 
-          <div v-else class="h_settings_folder_form">
+          <div v-if="isEditingFolder" class="h_settings_folder_form">
             <input v-model="editingFolderName" class="h_settings_control" placeholder="分类名称" />
             <HSelectTree v-model="editingFolderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
-            <button class="h_settings_primary" type="button" @click="saveEditFolder">保存</button>
+            <button class="h_settings_primary" type="button" @click="saveEditFolder">保存编辑</button>
             <button class="h_settings_secondary" type="button" @click="cancelEditFolder">取消</button>
           </div>
 
@@ -159,8 +160,8 @@
               :nodes="folderTreeNodes"
               show-actions
               empty-text="暂无分类"
-              @edit="startEditFolder"
               @delete="removeFolderByNode"
+              @edit="startEditFolder"
             />
           </div>
         </article>
@@ -178,6 +179,7 @@ import { useHSettings } from "./hook";
 
 const {
   activeDrawer,
+  appVersionText,
   cancelEditFolder,
   captureShortcut,
   closeWindow,
