@@ -51,7 +51,10 @@ const normalizeErrorMessage = (error: unknown): string => {
   const message = error instanceof Error ? error.message : String(error || "");
   const matchedRule = SETTINGS_ERROR_MESSAGE_RULES.find((rule) => message.includes(rule.keyword));
 
-  return matchedRule?.message ?? SETTINGS_MESSAGES.error.default;
+  if (matchedRule) return matchedRule.message;
+  if (!message) return SETTINGS_MESSAGES.error.default;
+
+  return `${SETTINGS_MESSAGES.error.default}：${message}`;
 };
 
 const getNextSortOrder = (folders: FolderTreeNode[]): number => {
