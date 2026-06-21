@@ -27,7 +27,5 @@ pub fn get_app_data_path(app: &AppHandle) -> Result<AppPaths, String> {
         root_dir,
         database_dir,
         config_dir,
-        attachments_dir,
-        cache_dir,
     })
 }
