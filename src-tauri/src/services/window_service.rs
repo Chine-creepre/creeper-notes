@@ -1,9 +1,12 @@
-use tauri::{AppHandle, Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Emitter, LogicalSize, Manager, Size, WebviewUrl, WebviewWindowBuilder};
 
 const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
 const SEARCH_WINDOW_URL: &str = "/search";
 const SEARCH_WINDOW_FOCUS_EVENT: &str = "focus-search-input";
+const SEARCH_WINDOW_WIDTH: f64 = 960.0;
+const SEARCH_WINDOW_COLLAPSED_HEIGHT: f64 = 132.0;
+const SEARCH_WINDOW_EXPANDED_HEIGHT: f64 = 520.0;
 const SETTINGS_WINDOW_LABEL: &str = "settings";
 const SETTINGS_WINDOW_URL: &str = "/settings";
 
@@ -12,10 +15,35 @@ fn focus_search_window_input(app: &AppHandle) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
+fn set_search_window_height(app: &AppHandle, height: f64) -> Result<(), String> {
+    let window = app
+        .get_webview_window(SEARCH_WINDOW_LABEL)
+        .ok_or_else(|| "search window not found".to_string())?;
+
+    window
+        .set_size(Size::Logical(LogicalSize {
+            width: SEARCH_WINDOW_WIDTH,
+            height,
+        }))
+        .map_err(|error| error.to_string())
+}
+
+pub fn resize_search_window(app: &AppHandle, expanded: bool) -> Result<(), String> {
+    set_search_window_height(
+        app,
+        if expanded {
+            SEARCH_WINDOW_EXPANDED_HEIGHT
+        } else {
+            SEARCH_WINDOW_COLLAPSED_HEIGHT
+        },
+    )
+}
+
 pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SEARCH_WINDOW_LABEL) {
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
+        resize_search_window(app, false)?;
         focus_search_window_input(app)?;
 
         return Ok(());
@@ -31,7 +59,7 @@ pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     .transparent(true)
     .always_on_top(true)
     .resizable(false)
-    .inner_size(960.0, 680.0)
+    .inner_size(SEARCH_WINDOW_WIDTH, SEARCH_WINDOW_COLLAPSED_HEIGHT)
     .center()
     .build()
     .map_err(|error| error.to_string())?;
@@ -56,6 +84,7 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
         } else {
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
+            resize_search_window(app, false)?;
             focus_search_window_input(app)?;
         }
 
