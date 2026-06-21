@@ -9,6 +9,22 @@
 }
 
 .h_window_title_bar_drag {
+  display: flex;
+  align-items: center;
   flex: 1;
+  min-width: 0;
   height: 100%;
+  padding: 0 18px;
+  box-sizing: border-box;
+}
+
+.h_window_title_bar_current_note {
+  overflow: hidden;
+  max-width: 360px;
+  color: #8ea7b3;
+  font-size: 12px;
+  font-weight: 650;
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
