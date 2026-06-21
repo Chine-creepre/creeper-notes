@@ -1,4 +1,4 @@
-import { computed, onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import {
   closeSettingsWindow,
   getConfig,
@@ -15,6 +15,7 @@ import {
 } from "@/request/apis/notes";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
+const MESSAGE_VISIBLE_DURATION = 1800;
 
 type ShortcutField = "toggle_shortcut" | "search_shortcut";
 
@@ -77,6 +78,8 @@ export const useHSettings = () => {
   const folderName = ref(DEFAULT_FOLDER_NAME);
   const folderParentId = ref<string | null>(null);
 
+  let messageTimer: number | undefined;
+
   const flatFolders = computed(() => flattenFolderTree(folders.value));
 
   const loadConfig = async (): Promise<void> => {
@@ -88,8 +91,34 @@ export const useHSettings = () => {
   };
 
   const clearMessage = (): void => {
+    if (messageTimer) {
+      window.clearTimeout(messageTimer);
+      messageTimer = undefined;
+    }
+
     errorMessage.value = "";
     successMessage.value = "";
+  };
+
+  const showSuccessMessage = (message: string): void => {
+    clearMessage();
+    successMessage.value = message;
+
+    messageTimer = window.setTimeout(clearMessage, MESSAGE_VISIBLE_DURATION);
+  };
+
+  const showErrorMessage = (error: unknown): void => {
+    clearMessage();
+    errorMessage.value = error instanceof Error ? error.message : String(error);
+
+    messageTimer = window.setTimeout(clearMessage, MESSAGE_VISIBLE_DURATION);
+  };
+
+  const resetPageState = (): void => {
+    clearMessage();
+    stopListenShortcut();
+    folderName.value = DEFAULT_FOLDER_NAME;
+    folderParentId.value = null;
   };
 
   const saveConfig = async (): Promise<void> => {
@@ -100,9 +129,9 @@ export const useHSettings = () => {
 
     try {
       config.value = await updateConfig(config.value);
-      successMessage.value = "保存成功";
+      showSuccessMessage("保存成功");
     } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : String(error);
+      showErrorMessage(error);
     } finally {
       saving.value = false;
     }
@@ -110,14 +139,13 @@ export const useHSettings = () => {
 
   const resetSettings = async (): Promise<void> => {
     saving.value = true;
-    clearMessage();
-    stopListenShortcut();
+    resetPageState();
 
     try {
       config.value = await resetConfig();
-      successMessage.value = "已重置设置";
+      showSuccessMessage("已重置为默认配置");
     } catch (error) {
-      errorMessage.value = error instanceof Error ? error.message : String(error);
+      showErrorMessage(error);
     } finally {
       saving.value = false;
     }
@@ -128,9 +156,9 @@ export const useHSettings = () => {
     clearMessage();
   };
 
-  const stopListenShortcut = (): void => {
+  function stopListenShortcut(): void {
     listeningShortcutField.value = null;
-  };
+  }
 
   const captureShortcut = (event: KeyboardEvent): void => {
     if (!config.value || !listeningShortcutField.value) return;
@@ -162,20 +190,30 @@ export const useHSettings = () => {
 
     if (!name) return;
 
-    await createFolder({
-      parent_id: folderParentId.value,
-      name,
-      sort_order: getNextSortOrder(folders.value),
-    });
+    try {
+      await createFolder({
+        parent_id: folderParentId.value,
+        name,
+        sort_order: getNextSortOrder(folders.value),
+      });
 
-    folderName.value = DEFAULT_FOLDER_NAME;
-    folderParentId.value = null;
-    await loadFolders();
+      folderName.value = DEFAULT_FOLDER_NAME;
+      folderParentId.value = null;
+      await loadFolders();
+      showSuccessMessage("新增分类成功");
+    } catch (error) {
+      showErrorMessage(error);
+    }
   };
 
   const removeFolder = async (id: string): Promise<void> => {
-    await deleteFolder(id);
-    await loadFolders();
+    try {
+      await deleteFolder(id);
+      await loadFolders();
+      showSuccessMessage("删除分类成功");
+    } catch (error) {
+      showErrorMessage(error);
+    }
   };
 
   const closeWindow = async (): Promise<void> => {
@@ -185,6 +223,8 @@ export const useHSettings = () => {
   const startDragWindow = async (): Promise<void> => {
     await startDraggingSettingsWindow();
   };
+
+  watch(activeDrawer, resetPageState);
 
   onMounted(async () => {
     await Promise.all([loadConfig(), loadFolders()]);
