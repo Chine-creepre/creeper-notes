@@ -18,6 +18,7 @@ const DEFAULT_NOTE_TITLE = "未命名笔记";
 const FOLDER_TREE_ICON = "lucide:folder";
 
 type MarkdownEditorMode = "edit" | "preview";
+type NoteEditorState = MarkdownEditorMode | "readonly";
 
 interface DraftSnapshot {
   title: string;
@@ -27,9 +28,10 @@ interface DraftSnapshot {
   folderId: string | null;
 }
 
-const NOTE_EDITOR_MODE_LABELS: Record<MarkdownEditorMode, string> = {
+const NOTE_EDITOR_STATE_LABELS: Record<NoteEditorState, string> = {
   edit: "编辑中",
   preview: "预览中",
+  readonly: "只读",
 };
 
 const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
@@ -91,8 +93,8 @@ export const useSystemStore = defineStore("system", () => {
   const selectedNote = computed(() => notes.value.find((note) => note.id === activeNoteId.value) ?? null);
   const noteCountText = computed(() => `${notes.value.length} 条笔记`);
   const hasDraftChanged = computed(() => !isSameDraftSnapshot(draft, savedDraftSnapshot.value));
-  const noteEditorState = computed<MarkdownEditorMode>(() => markdownEditorMode.value);
-  const noteEditorStateLabel = computed(() => NOTE_EDITOR_MODE_LABELS[markdownEditorMode.value]);
+  const noteEditorState = computed<NoteEditorState>(() => (draft.readonly ? "readonly" : markdownEditorMode.value));
+  const noteEditorStateLabel = computed(() => NOTE_EDITOR_STATE_LABELS[noteEditorState.value]);
   const windowTitle = computed(() => {
     const title = selectedNote.value?.title || draft.title || DEFAULT_NOTE_TITLE;
 
