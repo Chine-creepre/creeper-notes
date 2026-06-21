@@ -14,6 +14,7 @@ export const SETTINGS_MESSAGES = {
     missingRequiredKey: "参数缺失，请刷新设置页后重试",
     folderHasChildren: "该分类下存在子分类，不能删除",
     folderHasNotes: "该分类下存在笔记，不能删除",
+    duplicateFolderName: "同级分类不能重名",
   },
 } as const;
 
@@ -40,5 +41,9 @@ export const SETTINGS_ERROR_MESSAGE_RULES: Array<{
   {
     keyword: "folder has notes",
     message: SETTINGS_MESSAGES.error.folderHasNotes,
+  },
+  {
+    keyword: "sibling folder name already exists",
+    message: SETTINGS_MESSAGES.error.duplicateFolderName,
   },
 ];
