@@ -86,6 +86,7 @@ fn build_folder_tree(folders: Vec<Folder>) -> Vec<FolderTreeNode> {
     child_nodes.sort_by(|current, next| current.sort_order.cmp(&next.sort_order));
 
     while !child_nodes.is_empty() {
+        let unresolved_count = child_nodes.len();
         let mut next_child_nodes = Vec::new();
         let current_child_nodes = child_nodes;
 
@@ -97,7 +98,7 @@ fn build_folder_tree(folders: Vec<Folder>) -> Vec<FolderTreeNode> {
             }
         }
 
-        if next_child_nodes.len() == child_nodes.len() {
+        if next_child_nodes.len() == unresolved_count {
             root_nodes.extend(next_child_nodes);
             break;
         }
