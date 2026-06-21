@@ -38,6 +38,7 @@ pub use window_commands::{
     resize_search_window,
     show_main_window,
     toggle_main_window,
+    toggle_main_window_fullscreen,
     toggle_search_window,
     toggle_settings_window,
 };
