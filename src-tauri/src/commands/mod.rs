@@ -21,6 +21,7 @@ pub use note_commands::{
     delete_note,
     find_note_by_id,
     list_notes,
+    move_note_to_folder,
     search_notes,
     update_note,
 };
