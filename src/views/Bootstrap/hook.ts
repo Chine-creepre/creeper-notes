@@ -51,6 +51,7 @@ export const useBootstrap = () => {
   const notes = ref<Note[]>([]);
   const activeFolderKey = ref<string>(ALL_NOTES_KEY);
   const activeNoteId = ref<string | null>(null);
+  const newNoteFolderId = ref<string | null>(null);
   const loadingNotes = ref(false);
   const saving = ref(false);
   const keyword = ref("");
@@ -83,6 +84,7 @@ export const useBootstrap = () => {
     ...folders.value.map(mapFolderToTreeNode),
   ]);
 
+  const newNoteFolderTreeNodes = computed<HTreeNode[]>(() => folders.value.map(mapFolderToTreeNode));
   const selectedNote = computed(() => notes.value.find((note) => note.id === activeNoteId.value) ?? null);
   const noteCountText = computed(() => `${notes.value.length} 条笔记`);
   const activeFolderId = computed(() => {
@@ -157,6 +159,13 @@ export const useBootstrap = () => {
     await loadNotes();
   };
 
+  const selectNewNoteFolder = async (): Promise<void> => {
+    activeFolderKey.value = newNoteFolderId.value ?? ROOT_FOLDER_KEY;
+    activeNoteId.value = null;
+    keyword.value = "";
+    await loadNotes();
+  };
+
   const selectNote = (note: Note): void => {
     activeNoteId.value = note.id;
     syncDraft(note);
@@ -168,9 +177,10 @@ export const useBootstrap = () => {
       describe: null,
       content: "",
       readonly: false,
-      folder_id: typeof activeFolderId.value === "string" ? activeFolderId.value : null,
+      folder_id: newNoteFolderId.value,
     });
 
+    activeFolderKey.value = note.folder_id ?? ROOT_FOLDER_KEY;
     notes.value = [note, ...notes.value];
     selectNote(note);
     showStatusMessage("已新建笔记");
@@ -240,6 +250,7 @@ export const useBootstrap = () => {
     if (!note) return;
 
     activeFolderKey.value = note.folder_id ?? ROOT_FOLDER_KEY;
+    newNoteFolderId.value = note.folder_id;
     keyword.value = "";
     await loadNotes();
 
@@ -295,12 +306,15 @@ export const useBootstrap = () => {
     loadFolders,
     loadingNotes,
     moveCurrentNoteToFolder,
+    newNoteFolderId,
+    newNoteFolderTreeNodes,
     noteCountText,
     notes,
     saveCurrentNote,
     saving,
     searchCurrentNotes,
     selectFolder,
+    selectNewNoteFolder,
     selectNote,
     selectedNote,
     statusMessage,
