@@ -1,6 +1,7 @@
 <template>
   <div ref="selectTreeRef" class="h_select_tree">
     <button class="h_select_tree_trigger" type="button" @click="toggleOpen">
+      <Icon v-if="triggerIcon" class="h_select_tree_trigger_icon" :icon="triggerIcon" />
       <span>{{ selectedLabel }}</span>
       <Icon :icon="open ? 'lucide:chevron-up' : 'lucide:chevron-down'" />
     </button>
@@ -12,7 +13,7 @@
       </button>
       <HTree
         :nodes="nodes"
-        :selected-key="modelValue"
+        :selected-key="modelValue ?? null"
         :default-expanded="defaultExpanded"
         :empty-text="emptyText"
         @select="handleSelect"
@@ -30,18 +31,21 @@ import type { HTreeNode, HTreeSelectedKey } from "@/components/Tree/types";
 
 const props = withDefaults(
   defineProps<{
-    modelValue: HTreeSelectedKey;
+    modelValue?: HTreeSelectedKey;
     nodes: HTreeNode[];
     placeholder?: string;
     rootLabel?: string;
     emptyText?: string;
     defaultExpanded?: boolean;
+    triggerIcon?: string;
   }>(),
   {
+    modelValue: null,
     placeholder: "请选择",
     rootLabel: "根目录",
     emptyText: "暂无分类",
     defaultExpanded: true,
+    triggerIcon: "",
   },
 );
 
