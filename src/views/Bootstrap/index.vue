@@ -19,6 +19,7 @@ const {
   hasDraftChanged,
   keyword,
   loadingNotes,
+  markdownEditorMode,
   noteEditorState,
   notes,
   saveCurrentNote,
@@ -111,6 +112,7 @@ const {
 
             <HMarkdownEditor
               v-model="draft.content"
+              v-model:mode="markdownEditorMode"
               :dirty="hasDraftChanged"
               :readonly="draft.readonly"
               @save="saveCurrentNote"
