@@ -17,7 +17,7 @@ body,
   height: 100%;
   box-sizing: border-box;
   background: transparent;
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-family:
     Inter,
     "PingFang SC",
@@ -37,8 +37,8 @@ body,
   background:
     radial-gradient(circle at 8% 0%, color-mix(in srgb, var(--h_color_primary) 24%, transparent), transparent 34%),
     radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--h_color_primary) 26%, transparent), transparent 30%),
-    color-mix(in srgb, var(--h_dark_surface_deep) 90%, transparent);
-  box-shadow: 0 28px 90px var(--h_dark_shadow);
+    color-mix(in srgb, var(--h_window_surface_deep) 90%, transparent);
+  box-shadow: 0 28px 90px var(--h_window_shadow);
   backdrop-filter: blur(24px);
 }
 
@@ -59,10 +59,10 @@ body,
   min-width: 0;
   min-height: 72px;
   padding: 0 14px 0 18px;
-  border: 1px solid var(--h_dark_border_strong);
+  border: 1px solid var(--h_window_border_strong);
   border-radius: 24px;
   box-sizing: border-box;
-  background: color-mix(in srgb, var(--h_dark_surface) 72%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface) 72%, transparent);
   box-shadow: inset 0 1px 0 color-mix(in srgb, var(--h_color_primary) 10%, transparent);
   cursor: grab;
 }
@@ -86,7 +86,7 @@ body,
   outline: none;
   box-sizing: border-box;
   background: transparent;
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-family: inherit;
   font-size: clamp(20px, 3vw, 26px);
   font-weight: 650;
@@ -94,7 +94,7 @@ body,
 }
 
 .h_search_input::placeholder {
-  color: color-mix(in srgb, var(--h_dark_text_muted) 80%, transparent);
+  color: color-mix(in srgb, var(--h_window_text_muted) 80%, transparent);
   font-weight: 520;
 }
 
@@ -104,8 +104,8 @@ body,
   height: 32px;
   padding: 0 12px;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--h_dark_surface_muted) 64%, transparent);
-  color: var(--h_dark_text_muted);
+  background: color-mix(in srgb, var(--h_window_surface_muted) 64%, transparent);
+  color: var(--h_window_text_muted);
   font-size: 12px;
   white-space: nowrap;
 }
@@ -119,14 +119,14 @@ body,
   padding: 0;
   border: 0;
   border-radius: 12px;
-  background: color-mix(in srgb, var(--h_dark_surface_muted) 64%, transparent);
-  color: var(--h_dark_text_secondary);
+  background: color-mix(in srgb, var(--h_window_surface_muted) 64%, transparent);
+  color: var(--h_window_text_secondary);
   cursor: pointer;
 }
 
 .h_search_close:hover {
-  background: color-mix(in srgb, var(--h_color_primary) 18%, var(--h_dark_surface));
-  color: var(--h_dark_text);
+  background: color-mix(in srgb, var(--h_color_primary) 18%, var(--h_window_surface));
+  color: var(--h_window_text);
 }
 
 .h_search_close svg {
@@ -140,7 +140,7 @@ body,
   justify-content: space-between;
   gap: 12px;
   min-height: 44px;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   font-size: 12px;
   line-height: 18px;
 }
@@ -156,11 +156,11 @@ body,
   flex: 1;
   min-height: 0;
   padding: 12px;
-  border: 1px dashed var(--h_dark_border);
+  border: 1px dashed var(--h_window_border);
   border-radius: 22px;
   box-sizing: border-box;
   overflow: hidden;
-  background: color-mix(in srgb, var(--h_dark_surface_deep) 48%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface_deep) 48%, transparent);
 }
 
 .h_search_results {
@@ -184,7 +184,7 @@ body,
   border: 1px solid transparent;
   border-radius: 18px;
   box-sizing: border-box;
-  background: color-mix(in srgb, var(--h_dark_surface) 46%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface) 46%, transparent);
   color: inherit;
   font-family: inherit;
   text-align: left;
@@ -202,14 +202,14 @@ body,
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  color: var(--h_dark_text_secondary);
+  color: var(--h_window_text_secondary);
 }
 
 .h_search_result_icon {
   width: 38px;
   height: 38px;
   border-radius: 14px;
-  background: color-mix(in srgb, var(--h_dark_surface_muted) 60%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface_muted) 60%, transparent);
 }
 
 .h_search_result_icon svg {
@@ -238,7 +238,7 @@ body,
 }
 
 .h_search_result_content strong {
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-size: 14px;
   font-weight: 700;
   line-height: 21px;
@@ -246,7 +246,7 @@ body,
 
 .h_search_result_content em {
   margin-top: 2px;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   font-size: 12px;
   line-height: 18px;
 }
@@ -261,7 +261,7 @@ body,
   min-height: 180px;
   padding: 24px;
   box-sizing: border-box;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   text-align: center;
 }
 
@@ -274,7 +274,7 @@ body,
 
 .h_search_empty strong {
   display: block;
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-size: 15px;
   line-height: 22px;
 }
