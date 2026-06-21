@@ -51,13 +51,15 @@ pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, 
 
     validate_folder_id(&connection, &folder_id)?;
 
+    let note_id = Uuid::new_v4().to_string();
     let note = Note {
-        id: Uuid::new_v4().to_string(),
+        id: note_id.clone(),
         title: payload.title,
         describe: payload.describe,
         content: payload.content,
         readonly: payload.readonly,
         folder_id,
+        folder: None,
         created_at: timestamp,
         updated_at: timestamp,
         deleted: false,
@@ -65,7 +67,8 @@ pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, 
 
     note_repository::create_note(&connection, &note)?;
 
-    Ok(note)
+    note_repository::find_note_by_id(&connection, &note_id)?
+        .ok_or_else(|| "created note not found".to_string())
 }
 
 pub fn find_note_by_id(app: &AppHandle, id: &str) -> Result<Option<Note>, String> {
