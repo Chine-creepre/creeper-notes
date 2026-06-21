@@ -28,33 +28,6 @@
   background: rgba(10, 17, 24, 0.28);
 }
 
-.h_bootstrap_notes_header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex: 0 0 auto;
-  min-width: 0;
-}
-
-.h_bootstrap_notes_header h1,
-.h_bootstrap_notes_header p {
-  margin: 0;
-}
-
-.h_bootstrap_notes_header h1 {
-  color: #eaf4f8;
-  font-size: 18px;
-  font-weight: 760;
-  line-height: 26px;
-}
-
-.h_bootstrap_notes_header p {
-  margin-top: 2px;
-  color: #6f8794;
-  font-size: 12px;
-  line-height: 17px;
-}
-
 .h_bootstrap_search {
   display: grid;
   grid-template-columns: 18px minmax(0, 1fr) 24px;
@@ -231,10 +204,12 @@
 
 .h_bootstrap_editor_header {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;
   flex: 0 0 auto;
   min-width: 0;
   margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #1e2f3b;
 }
 
 .h_bootstrap_editor_tools {
@@ -283,7 +258,7 @@
 .h_bootstrap_editor_topline {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 12px;
   flex: 0 0 auto;
   margin-bottom: 14px;
@@ -304,8 +279,7 @@
 }
 
 .h_bootstrap_title_input,
-.h_bootstrap_desc_input,
-.h_bootstrap_content_input {
+.h_bootstrap_desc_input {
   width: 100%;
   min-width: 0;
   border: 0;
@@ -326,8 +300,7 @@
 }
 
 .h_bootstrap_title_input::placeholder,
-.h_bootstrap_desc_input::placeholder,
-.h_bootstrap_content_input::placeholder {
+.h_bootstrap_desc_input::placeholder {
   color: #526672;
 }
 
@@ -338,24 +311,6 @@
   color: #8ea7b3;
   font-size: 12px;
   line-height: 28px;
-}
-
-.h_bootstrap_content_input {
-  flex: 1;
-  min-height: 0;
-  padding: 22px;
-  border: 1px solid #1e2f3b;
-  border-radius: 14px;
-  resize: none;
-  background: rgba(21, 35, 48, 0.64);
-  color: #8ea7b3;
-  font-size: 13px;
-  line-height: 1.8;
-}
-
-.h_bootstrap_content_input:read-only {
-  color: #607783;
-  background: rgba(17, 28, 37, 0.72);
 }
 
 .h_bootstrap_editor_empty {
