@@ -1,5 +1,5 @@
 <template>
-  <div class="h_select_tree">
+  <div ref="selectTreeRef" class="h_select_tree">
     <button class="h_select_tree_trigger" type="button" @click="toggleOpen">
       <span>{{ selectedLabel }}</span>
       <Icon :icon="open ? 'lucide:chevron-up' : 'lucide:chevron-down'" />
@@ -23,7 +23,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import HTree from "@/components/Tree/index.vue";
 import "./index.scss";
 import type { HTreeNode, HTreeSelectedKey } from "@/components/Tree/types";
@@ -51,6 +51,7 @@ const emit = defineEmits<{
 }>();
 
 const open = ref(false);
+const selectTreeRef = ref<HTMLElement>();
 
 const findNodeLabel = (nodes: HTreeNode[], key: string): string | null => {
   for (const node of nodes) {
@@ -89,4 +90,23 @@ const handleSelect = (node: HTreeNode): void => {
   emit("select", node);
   close();
 };
+
+const handleDocumentPointerDown = (event: PointerEvent): void => {
+  if (!open.value) return;
+
+  const target = event.target;
+
+  if (!(target instanceof Node)) return;
+  if (selectTreeRef.value?.contains(target)) return;
+
+  close();
+};
+
+onMounted(() => {
+  document.addEventListener("pointerdown", handleDocumentPointerDown);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("pointerdown", handleDocumentPointerDown);
+});
 </script>
