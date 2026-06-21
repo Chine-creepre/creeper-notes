@@ -74,6 +74,19 @@ const {
             >
               <strong>{{ note.title }}</strong>
               <em>{{ formatNoteTime(note.updated_at) }} · {{ note.folder?.name || '根目录' }}</em>
+
+              <span v-if="note.id === activeNoteId" class="h_bootstrap_note_actions" @click.stop>
+                <button type="button" title="保存" :disabled="saving" @click="saveCurrentNote">
+                  <Icon icon="lucide:save" />
+                </button>
+                <button type="button" title="删除" @click="deleteCurrentNote">
+                  <Icon icon="lucide:trash-2" />
+                </button>
+                <button type="button" title="只读" @click="draft.readonly = !draft.readonly">
+                  <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
+                </button>
+              </span>
+
               <span>{{ getNoteDescription(note) }}</span>
             </button>
           </template>
@@ -87,18 +100,6 @@ const {
               <div class="h_bootstrap_note_fields">
                 <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="未命名笔记" />
                 <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述 / 摘要" />
-              </div>
-
-              <div class="h_bootstrap_editor_tools">
-                <button type="button" title="保存" :disabled="saving" @click="saveCurrentNote">
-                  <Icon icon="lucide:save" />
-                </button>
-                <button type="button" title="删除" @click="deleteCurrentNote">
-                  <Icon icon="lucide:trash-2" />
-                </button>
-                <button type="button" title="只读" @click="draft.readonly = !draft.readonly">
-                  <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
-                </button>
               </div>
             </div>
 
