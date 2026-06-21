@@ -8,7 +8,10 @@
         :level="0"
         :selected-key="selectedKey"
         :default-expanded="defaultExpanded"
+        :show-actions="showActions"
         @select="handleSelect"
+        @edit="handleEdit"
+        @delete="handleDelete"
       />
     </div>
   </div>
@@ -25,19 +28,31 @@ withDefaults(
     selectedKey?: HTreeSelectedKey;
     defaultExpanded?: boolean;
     emptyText?: string;
+    showActions?: boolean;
   }>(),
   {
     selectedKey: null,
     defaultExpanded: true,
     emptyText: "暂无数据",
+    showActions: false,
   },
 );
 
 const emit = defineEmits<{
   select: [node: HTreeNode];
+  edit: [node: HTreeNode];
+  delete: [node: HTreeNode];
 }>();
 
 const handleSelect = (node: HTreeNode): void => {
   emit("select", node);
+};
+
+const handleEdit = (node: HTreeNode): void => {
+  emit("edit", node);
+};
+
+const handleDelete = (node: HTreeNode): void => {
+  emit("delete", node);
 };
 </script>
