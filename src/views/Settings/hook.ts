@@ -23,7 +23,7 @@ import {
 import {
   APP_THEME_OPTIONS,
   DEFAULT_APP_THEME,
-  applyTheme,
+  applyAppConfig,
   isAppTheme,
   type AppTheme,
 } from "@/services/theme";
@@ -133,7 +133,7 @@ export const useHSettings = () => {
   const loadConfig = async (): Promise<void> => {
     config.value = await getConfig();
     syncThemeDraft();
-    applyTheme(config.value.theme);
+    applyAppConfig(config.value);
   };
 
   const loadFolders = async (): Promise<void> => {
@@ -188,7 +188,7 @@ export const useHSettings = () => {
     try {
       config.value = await updateConfig(config.value);
       syncThemeDraft();
-      applyTheme(config.value.theme);
+      applyAppConfig(config.value);
       showSuccessMessage(SETTINGS_MESSAGES.success.saved);
     } catch (error) {
       showErrorMessage(error);
@@ -215,7 +215,7 @@ export const useHSettings = () => {
     try {
       config.value = await resetConfig();
       syncThemeDraft();
-      applyTheme(config.value.theme);
+      applyAppConfig(config.value);
       showSuccessMessage(SETTINGS_MESSAGES.success.reset);
     } catch (error) {
       showErrorMessage(error);
