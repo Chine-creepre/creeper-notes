@@ -174,6 +174,10 @@ export const useHSettings = () => {
     await saveConfig();
   };
 
+  const saveStartupSettings = async (): Promise<void> => {
+    await saveConfig();
+  };
+
   const resetSettings = async (): Promise<void> => {
     saving.value = true;
     resetPageState();
@@ -286,6 +290,7 @@ export const useHSettings = () => {
     removeFolder,
     resetSettings,
     saveConfig,
+    saveStartupSettings,
     saving,
     startDragWindow,
     startListenShortcut,
