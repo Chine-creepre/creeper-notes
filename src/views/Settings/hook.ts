@@ -13,6 +13,7 @@ import {
   listFolderTree,
   type FolderTreeNode,
 } from "@/request/apis/notes";
+import type { HTreeNode } from "@/components/Tree/types";
 import {
   MESSAGE_VISIBLE_DURATION,
   SETTINGS_ERROR_MESSAGE_RULES,
@@ -27,6 +28,7 @@ import {
 } from "@/services/theme";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
+const FOLDER_TREE_ICON = "lucide:folder";
 
 type ShortcutField = "toggle_shortcut" | "search_shortcut";
 
@@ -63,11 +65,13 @@ const getNextSortOrder = (folders: FolderTreeNode[]): number => {
   return Math.max(...folders.map((folder) => folder.sort_order)) + 1;
 };
 
-const flattenFolderTree = (folders: FolderTreeNode[], level = 0): Array<FolderTreeNode & { level: number }> =>
-  folders.flatMap((folder) => [
-    { ...folder, level },
-    ...flattenFolderTree(folder.children, level + 1),
-  ]);
+const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
+  id: folder.id,
+  label: folder.name,
+  icon: FOLDER_TREE_ICON,
+  raw: folder,
+  children: folder.children.map(mapFolderToTreeNode),
+});
 
 const formatShortcutKey = (key: string): string => {
   if (KEY_NAME_MAP[key]) return KEY_NAME_MAP[key];
@@ -102,7 +106,7 @@ export const useHSettings = () => {
 
   let messageTimer: number | undefined;
 
-  const flatFolders = computed(() => flattenFolderTree(folders.value));
+  const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
 
   const syncThemeDraft = (): void => {
     if (!config.value) return;
@@ -284,9 +288,9 @@ export const useHSettings = () => {
     confirmTheme,
     createRootFolder,
     errorMessage,
-    flatFolders,
     folderName,
     folderParentId,
+    folderTreeNodes,
     folders,
     listeningShortcutField,
     loadFolders,
