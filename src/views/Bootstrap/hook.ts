@@ -31,7 +31,6 @@ export const useBootstrap = () => {
 
   return {
     ...systemRefs,
-    clearSearch: systemStore.clearSearch,
     createNewNote: systemStore.createNewNote,
     deleteCurrentNote: systemStore.deleteCurrentNote,
     formatNoteTime: systemStore.formatNoteTime,
@@ -41,7 +40,6 @@ export const useBootstrap = () => {
     moveCurrentNoteToFolder: systemStore.moveCurrentNoteToFolder,
     openNoteById: systemStore.openNoteById,
     saveCurrentNote: systemStore.saveCurrentNote,
-    searchCurrentNotes: systemStore.searchCurrentNotes,
     selectFolder: systemStore.selectFolder,
     selectNote: systemStore.selectNote,
     toggleCurrentNoteReadonly: systemStore.toggleCurrentNoteReadonly,
