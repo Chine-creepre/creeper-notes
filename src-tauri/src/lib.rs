@@ -6,12 +6,16 @@ mod services;
 
 use commands::{
     close_search_window,
+    create_folder,
     create_note,
+    delete_folder,
     delete_note,
+    find_folder_by_id,
     find_note_by_id,
     get_config,
     get_data_path,
     hide_main_window,
+    list_folders,
     list_notes,
     open_search_window,
     search_notes,
@@ -21,6 +25,7 @@ use commands::{
     toggle_main_window,
     toggle_search_window,
     update_config,
+    update_folder,
     update_note,
 };
 use services::{config_service, database_service, shortcut_service};
@@ -56,6 +61,11 @@ pub fn run() {
             show_main_window,
             hide_main_window,
             toggle_main_window,
+            create_folder,
+            find_folder_by_id,
+            list_folders,
+            update_folder,
+            delete_folder,
             create_note,
             find_note_by_id,
             list_notes,
