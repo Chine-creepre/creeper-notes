@@ -92,7 +92,7 @@ pub fn open_settings_window(app: &AppHandle) -> Result<(), String> {
 
 pub fn close_settings_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
-        window.hide().map_err(|error| error.to_string())?;
+        window.close().map_err(|error| error.to_string())?;
     }
 
     Ok(())
@@ -101,7 +101,7 @@ pub fn close_settings_window(app: &AppHandle) -> Result<(), String> {
 pub fn toggle_settings_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
         if window.is_visible().map_err(|error| error.to_string())? {
-            window.hide().map_err(|error| error.to_string())?;
+            window.close().map_err(|error| error.to_string())?;
         } else {
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
