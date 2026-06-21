@@ -8,6 +8,7 @@ import { useBootstrap } from "./hook";
 
 const {
   activeNoteId,
+  appVersionText,
   clearSearch,
   createNewNote,
   deleteCurrentNote,
@@ -33,7 +34,7 @@ const {
 </script>
 
 <template>
-  <HAppLayout :title="windowTitle">
+  <HAppLayout :title="windowTitle" :title-right-text="appVersionText">
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
         <div class="h_bootstrap_search">
