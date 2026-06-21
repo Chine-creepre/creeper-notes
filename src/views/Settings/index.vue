@@ -15,35 +15,35 @@
     <main class="h_settings_main">
       <aside class="h_settings_nav">
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'theme' }]" type="button" @click="activeDrawer = 'theme'">
-          <span class="h_settings_nav_icon">◐</span>
+          <Icon class="h_settings_nav_icon" icon="lucide:palette" />
           <span>
             <strong>主题设置</strong>
             <em>界面颜色方案</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'startup' }]" type="button" @click="activeDrawer = 'startup'">
-          <span class="h_settings_nav_icon">⏻</span>
+          <Icon class="h_settings_nav_icon" icon="lucide:power" />
           <span>
             <strong>启动设置</strong>
             <em>开机自启动</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'mainShortcut' }]" type="button" @click="activeDrawer = 'mainShortcut'">
-          <span class="h_settings_nav_icon">⌘</span>
+          <Icon class="h_settings_nav_icon" icon="lucide:keyboard" />
           <span>
             <strong>主窗口快捷键</strong>
             <em>显示或隐藏主窗口</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'searchShortcut' }]" type="button" @click="activeDrawer = 'searchShortcut'">
-          <span class="h_settings_nav_icon">⌕</span>
+          <Icon class="h_settings_nav_icon" icon="lucide:search" />
           <span>
             <strong>搜索快捷键</strong>
             <em>快速打开搜索</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'folders' }]" type="button" @click="activeDrawer = 'folders'">
-          <span class="h_settings_nav_icon">▦</span>
+          <Icon class="h_settings_nav_icon" icon="lucide:folder-tree" />
           <span>
             <strong>分类 / 文件夹</strong>
             <em>管理笔记目录</em>
@@ -143,19 +143,12 @@
 
           <div class="h_settings_folder_form">
             <input v-model="folderName" class="h_settings_control" placeholder="分类名称" />
-            <select v-model="folderParentId" class="h_settings_control">
-              <option :value="null">根目录</option>
-              <option v-for="folder in flatFolders" :key="folder.id" :value="folder.id">{{ `${'　'.repeat(folder.level)}${folder.name}` }}</option>
-            </select>
+            <HSelectTree v-model="folderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
             <button class="h_settings_primary" type="button" @click="createRootFolder">新增</button>
           </div>
 
-          <div class="h_settings_folder_list">
-            <div v-if="!flatFolders.length" class="h_settings_empty">暂无分类。</div>
-            <div v-for="folder in flatFolders" :key="folder.id" class="h_settings_folder_item">
-              <span :style="{ paddingLeft: `${folder.level * 16}px` }">{{ folder.name }}</span>
-              <button class="h_settings_danger" type="button" @click="removeFolder(folder.id)">删除</button>
-            </div>
+          <div class="h_settings_folder_tree_card">
+            <HTree :nodes="folderTreeNodes" empty-text="暂无分类" />
           </div>
         </article>
       </section>
@@ -164,6 +157,9 @@
 </template>
 
 <script setup lang="ts">
+import { Icon } from "@iconify/vue";
+import HSelectTree from "@/components/SelectTree/index.vue";
+import HTree from "@/components/Tree/index.vue";
 import "./index.scss";
 import { useHSettings } from "./hook";
 
@@ -175,11 +171,10 @@ const {
   confirmTheme,
   createRootFolder,
   errorMessage,
-  flatFolders,
   folderName,
   folderParentId,
+  folderTreeNodes,
   listeningShortcutField,
-  removeFolder,
   resetSettings,
   saveConfig,
   saveStartupSettings,
