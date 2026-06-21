@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed, useSlots } from "vue";
 import { useHWindowTitleBar } from "./hook";
 
 withDefaults(
@@ -12,6 +13,8 @@ withDefaults(
   },
 );
 
+const slots = useSlots();
+const hasRightActions = computed(() => Boolean(slots.right));
 const { startDragWindow } = useHWindowTitleBar();
 </script>
 
@@ -21,7 +24,12 @@ const { startDragWindow } = useHWindowTitleBar();
       class="h_window_title_bar_drag"
       @mousedown.left="startDragWindow">
       <span v-if="title" class="h_window_title_bar_current_note">{{ title }}</span>
-      <span v-if="rightText" class="h_window_title_bar_right_text">{{ rightText }}</span>
+
+      <div v-if="hasRightActions || rightText" class="h_window_title_bar_right" @mousedown.stop>
+        <slot name="right"></slot>
+        <span v-if="hasRightActions && rightText" class="h_window_title_bar_separator"></span>
+        <span v-if="rightText" class="h_window_title_bar_right_text">{{ rightText }}</span>
+      </div>
     </div>
   </header>
 </template>
