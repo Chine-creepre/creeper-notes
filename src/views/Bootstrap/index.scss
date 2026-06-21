@@ -65,61 +65,11 @@
   background: color-mix(in srgb, var(--h_main_surface_deep) 52%, transparent);
 }
 
-.h_bootstrap_search {
-  display: grid;
-  grid-template-columns: 18px minmax(0, 1fr) 24px;
-  align-items: center;
-  gap: 8px;
-  flex: 0 0 auto;
-  height: 36px;
-  padding: 0 10px;
-  border: 1px solid var(--h_main_border_strong);
-  border-radius: 999px;
-  box-sizing: border-box;
-  background: var(--h_main_surface);
-}
-
-.h_bootstrap_search > svg {
-  width: 15px;
-  height: 15px;
-  color: var(--h_main_text_secondary);
-}
-
-.h_bootstrap_search input {
-  width: 100%;
-  min-width: 0;
-  height: 32px;
-  padding: 0;
-  border: 0;
-  outline: none;
-  background: transparent;
-  color: var(--h_main_text);
-  font-family: inherit;
-  font-size: 12px;
-}
-
-.h_bootstrap_search input::placeholder {
-  color: var(--h_main_text_muted);
-}
-
-.h_bootstrap_search button,
 .h_bootstrap_note_item,
 .h_bootstrap_note_actions button {
   border: 0;
   font-family: inherit;
   cursor: pointer;
-}
-
-.h_bootstrap_search button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--h_main_text_secondary);
 }
 
 .h_bootstrap_quick_actions {
