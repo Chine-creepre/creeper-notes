@@ -1,13 +1,13 @@
 .h_tree {
   width: 100%;
   min-width: 0;
-  color: var(--h_dark_text_secondary);
+  color: var(--h_window_text_secondary);
   font-size: 13px;
 }
 
 .h_tree_empty {
   padding: 16px;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   text-align: center;
 }
 
@@ -27,7 +27,7 @@
   bottom: 0;
   left: var(--h_tree_line_left);
   width: 1px;
-  background: var(--h_dark_border);
+  background: var(--h_window_border);
 }
 
 .h_tree_node_leaf::before {
@@ -44,7 +44,7 @@
   min-height: 34px;
   border-radius: 11px;
   box-sizing: border-box;
-  color: var(--h_dark_text_secondary);
+  color: var(--h_window_text_secondary);
   cursor: pointer;
 }
 
@@ -55,7 +55,7 @@
   left: var(--h_tree_line_left);
   width: 12px;
   height: 1px;
-  background: var(--h_dark_border);
+  background: var(--h_window_border);
 }
 
 .h_tree_node_root > .h_tree_node_content::before {
@@ -63,7 +63,7 @@
 }
 
 .h_tree_node_content:hover {
-  background: var(--h_dark_surface_muted);
+  background: var(--h_window_surface_muted);
 }
 
 .h_tree_node_content_active {
@@ -131,7 +131,7 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   cursor: pointer;
 }
 
