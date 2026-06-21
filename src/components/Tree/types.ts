@@ -3,6 +3,8 @@ export interface HTreeNode {
   label: string;
   icon?: string;
   disabled?: boolean;
+  editable?: boolean;
+  deletable?: boolean;
   raw?: unknown;
   children?: HTreeNode[];
 }
