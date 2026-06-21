@@ -29,9 +29,12 @@ pub use start_dragging_search_window::start_dragging_search_window;
 pub use start_dragging_window::start_dragging_window;
 pub use window_commands::{
     close_search_window,
+    close_settings_window,
     hide_main_window,
     open_search_window,
+    open_settings_window,
     show_main_window,
     toggle_main_window,
     toggle_search_window,
+    toggle_settings_window,
 };
