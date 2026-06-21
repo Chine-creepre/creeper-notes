@@ -17,7 +17,6 @@ const {
   formatNoteTime,
   getNoteDescription,
   hasDraftChanged,
-  isAllNotesActive,
   keyword,
   loadingNotes,
   noteEditorState,
@@ -25,7 +24,6 @@ const {
   saveCurrentNote,
   saving,
   searchCurrentNotes,
-  selectAllNotes,
   selectFolder,
   selectNote,
   selectedNote,
@@ -58,11 +56,6 @@ const {
         </div>
 
         <div class="h_bootstrap_quick_actions">
-          <button :class="['h_bootstrap_all_notes_entry', { h_bootstrap_all_notes_entry_active: isAllNotesActive }]" type="button" @click="selectAllNotes">
-            <Icon icon="lucide:library-big" />
-            <span>全部笔记</span>
-          </button>
-
           <HSelectTree
             v-model="activeFolderKey"
             :nodes="folderTreeNodes"
