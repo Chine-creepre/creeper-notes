@@ -11,6 +11,7 @@ import {
   createFolder,
   deleteFolder,
   listFolderTree,
+  updateFolder,
   type FolderTreeNode,
 } from "@/request/apis/notes";
 import type { HTreeNode } from "@/components/Tree/types";
@@ -65,10 +66,18 @@ const getNextSortOrder = (folders: FolderTreeNode[]): number => {
   return Math.max(...folders.map((folder) => folder.sort_order)) + 1;
 };
 
+const getFolderFromTreeNode = (node: HTreeNode): FolderTreeNode | null => {
+  const folder = node.raw as FolderTreeNode | undefined;
+
+  return folder ?? null;
+};
+
 const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
   id: folder.id,
   label: folder.name,
   icon: FOLDER_TREE_ICON,
+  editable: true,
+  deletable: true,
   raw: folder,
   children: folder.children.map(mapFolderToTreeNode),
 });
@@ -103,10 +112,14 @@ export const useHSettings = () => {
   const listeningShortcutField = ref<ShortcutField | null>(null);
   const folderName = ref(DEFAULT_FOLDER_NAME);
   const folderParentId = ref<string | null>(null);
+  const editingFolderId = ref<string | null>(null);
+  const editingFolderName = ref("");
+  const editingFolderParentId = ref<string | null>(null);
 
   let messageTimer: number | undefined;
 
   const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
+  const isEditingFolder = computed(() => Boolean(editingFolderId.value));
 
   const syncThemeDraft = (): void => {
     if (!config.value) return;
@@ -148,12 +161,19 @@ export const useHSettings = () => {
     messageTimer = window.setTimeout(clearMessage, MESSAGE_VISIBLE_DURATION);
   };
 
+  const resetFolderEditState = (): void => {
+    editingFolderId.value = null;
+    editingFolderName.value = "";
+    editingFolderParentId.value = null;
+  };
+
   const resetPageState = (): void => {
     clearMessage();
     stopListenShortcut();
     syncThemeDraft();
     folderName.value = DEFAULT_FOLDER_NAME;
     folderParentId.value = null;
+    resetFolderEditState();
   };
 
   const saveConfig = async (): Promise<void> => {
@@ -256,6 +276,58 @@ export const useHSettings = () => {
     }
   };
 
+  const startEditFolder = (node: HTreeNode): void => {
+    const folder = getFolderFromTreeNode(node);
+
+    if (!folder) return;
+
+    clearMessage();
+    editingFolderId.value = folder.id;
+    editingFolderName.value = folder.name;
+    editingFolderParentId.value = folder.parent_id;
+  };
+
+  const cancelEditFolder = (): void => {
+    resetFolderEditState();
+  };
+
+  const saveEditFolder = async (): Promise<void> => {
+    const name = editingFolderName.value.trim();
+
+    if (!editingFolderId.value || !name) return;
+
+    const folder = folders.value
+      .flatMap(function flatten(items): FolderTreeNode[] {
+        return items.flatMap((item) => [item, ...flatten(item.children)]);
+      })
+      .find((item) => item.id === editingFolderId.value);
+
+    if (!folder) return;
+
+    try {
+      await updateFolder({
+        id: editingFolderId.value,
+        parent_id: editingFolderParentId.value,
+        name,
+        sort_order: folder.sort_order,
+      });
+
+      resetFolderEditState();
+      await loadFolders();
+      showSuccessMessage(SETTINGS_MESSAGES.success.folderUpdated);
+    } catch (error) {
+      showErrorMessage(error);
+    }
+  };
+
+  const removeFolderByNode = async (node: HTreeNode): Promise<void> => {
+    const folder = getFolderFromTreeNode(node);
+
+    if (!folder) return;
+
+    await removeFolder(folder.id);
+  };
+
   const removeFolder = async (id: string): Promise<void> => {
     try {
       await deleteFolder(id);
@@ -282,24 +354,32 @@ export const useHSettings = () => {
 
   return {
     activeDrawer,
+    cancelEditFolder,
     captureShortcut,
     closeWindow,
     config,
     confirmTheme,
     createRootFolder,
+    editingFolderId,
+    editingFolderName,
+    editingFolderParentId,
     errorMessage,
     folderName,
     folderParentId,
     folderTreeNodes,
     folders,
+    isEditingFolder,
     listeningShortcutField,
     loadFolders,
     removeFolder,
+    removeFolderByNode,
     resetSettings,
     saveConfig,
+    saveEditFolder,
     saveStartupSettings,
     saving,
     startDragWindow,
+    startEditFolder,
     startListenShortcut,
     stopListenShortcut,
     successMessage,
