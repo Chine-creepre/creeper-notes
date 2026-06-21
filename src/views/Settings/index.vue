@@ -35,7 +35,10 @@
             <input v-if="config" v-model="config.auto_start_enabled" type="checkbox" />
             <span>开机自启动</span>
           </label>
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存设置" }}</button>
+          <div class="h_settings_actions">
+            <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存设置" }}</button>
+            <button class="h_settings_secondary" type="button" :disabled="saving" @click="resetSettings">重置设置</button>
+          </div>
         </div>
 
         <div v-else-if="activeDrawer === 'mainShortcut'" class="h_settings_panel">
@@ -47,7 +50,10 @@
             </button>
           </div>
           <p class="h_settings_tip">点击上方区域后直接按快捷键组合，保存后立即生效。</p>
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+          <div class="h_settings_actions">
+            <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+            <button class="h_settings_secondary" type="button" :disabled="saving" @click="resetSettings">重置设置</button>
+          </div>
         </div>
 
         <div v-else-if="activeDrawer === 'searchShortcut'" class="h_settings_panel">
@@ -59,7 +65,10 @@
             </button>
           </div>
           <p class="h_settings_tip">点击上方区域后直接按快捷键组合，保存后立即生效。</p>
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+          <div class="h_settings_actions">
+            <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+            <button class="h_settings_secondary" type="button" :disabled="saving" @click="resetSettings">重置设置</button>
+          </div>
         </div>
 
         <div v-else class="h_settings_panel">
@@ -101,6 +110,7 @@ const {
   folderParentId,
   listeningShortcutField,
   removeFolder,
+  resetSettings,
   saveConfig,
   saving,
   startDragWindow,
