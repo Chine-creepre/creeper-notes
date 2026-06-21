@@ -19,17 +19,17 @@
   --h_color_success_weak: rgba(34, 197, 94, 0.12);
   --h_color_warning: #d97706;
   --h_color_warning_weak: rgba(217, 119, 6, 0.12);
-  --h_dark_background_start: color-mix(in srgb, var(--h_color_primary) 12%, #111c25);
-  --h_dark_background_end: color-mix(in srgb, var(--h_color_primary) 5%, #0b1118);
-  --h_dark_surface: color-mix(in srgb, var(--h_color_primary) 8%, #152330);
-  --h_dark_surface_muted: color-mix(in srgb, var(--h_color_primary) 12%, #1a2b3a);
-  --h_dark_surface_deep: color-mix(in srgb, var(--h_color_primary) 4%, #0b1118);
-  --h_dark_border: color-mix(in srgb, var(--h_color_primary) 20%, #1e2f3b);
-  --h_dark_border_strong: color-mix(in srgb, var(--h_color_primary) 38%, #263a46);
-  --h_dark_text: #eaf4f8;
-  --h_dark_text_secondary: color-mix(in srgb, var(--h_color_primary) 18%, #8ea7b3);
-  --h_dark_text_muted: color-mix(in srgb, var(--h_color_primary) 12%, #6f8794);
-  --h_dark_shadow: rgba(0, 0, 0, 0.38);
+  --h_window_background_start: color-mix(in srgb, var(--h_color_primary) 12%, #111c25);
+  --h_window_background_end: color-mix(in srgb, var(--h_color_primary) 5%, #0b1118);
+  --h_window_surface: color-mix(in srgb, var(--h_color_primary) 8%, #152330);
+  --h_window_surface_muted: color-mix(in srgb, var(--h_color_primary) 12%, #1a2b3a);
+  --h_window_surface_deep: color-mix(in srgb, var(--h_color_primary) 4%, #0b1118);
+  --h_window_border: color-mix(in srgb, var(--h_color_primary) 20%, #1e2f3b);
+  --h_window_border_strong: color-mix(in srgb, var(--h_color_primary) 38%, #263a46);
+  --h_window_text: #eaf4f8;
+  --h_window_text_secondary: color-mix(in srgb, var(--h_color_primary) 18%, #8ea7b3);
+  --h_window_text_muted: color-mix(in srgb, var(--h_color_primary) 12%, #6f8794);
+  --h_window_shadow: rgba(0, 0, 0, 0.38);
 }
 
 :root[data-theme="green_jade"] {
@@ -52,17 +52,17 @@
   --h_color_success_weak: rgba(34, 197, 94, 0.12);
   --h_color_warning: #d97706;
   --h_color_warning_weak: rgba(217, 119, 6, 0.12);
-  --h_dark_background_start: color-mix(in srgb, var(--h_color_primary) 13%, #10201a);
-  --h_dark_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #07120e);
-  --h_dark_surface: color-mix(in srgb, var(--h_color_primary) 9%, #152b24);
-  --h_dark_surface_muted: color-mix(in srgb, var(--h_color_primary) 14%, #1a352c);
-  --h_dark_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #07120e);
-  --h_dark_border: color-mix(in srgb, var(--h_color_primary) 22%, #1f3b31);
-  --h_dark_border_strong: color-mix(in srgb, var(--h_color_primary) 40%, #294d42);
-  --h_dark_text: #edfdf7;
-  --h_dark_text_secondary: color-mix(in srgb, var(--h_color_primary) 18%, #9ab8ad);
-  --h_dark_text_muted: color-mix(in srgb, var(--h_color_primary) 12%, #789188);
-  --h_dark_shadow: rgba(0, 0, 0, 0.38);
+  --h_window_background_start: color-mix(in srgb, var(--h_color_primary) 13%, #10201a);
+  --h_window_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #07120e);
+  --h_window_surface: color-mix(in srgb, var(--h_color_primary) 9%, #152b24);
+  --h_window_surface_muted: color-mix(in srgb, var(--h_color_primary) 14%, #1a352c);
+  --h_window_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #07120e);
+  --h_window_border: color-mix(in srgb, var(--h_color_primary) 22%, #1f3b31);
+  --h_window_border_strong: color-mix(in srgb, var(--h_color_primary) 40%, #294d42);
+  --h_window_text: #edfdf7;
+  --h_window_text_secondary: color-mix(in srgb, var(--h_color_primary) 18%, #9ab8ad);
+  --h_window_text_muted: color-mix(in srgb, var(--h_color_primary) 12%, #789188);
+  --h_window_shadow: rgba(0, 0, 0, 0.38);
 }
 
 :root[data-theme="red_brown"] {
@@ -85,17 +85,17 @@
   --h_color_success_weak: rgba(34, 197, 94, 0.12);
   --h_color_warning: #d97706;
   --h_color_warning_weak: rgba(217, 119, 6, 0.12);
-  --h_dark_background_start: color-mix(in srgb, var(--h_color_primary) 13%, #251611);
-  --h_dark_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #140a07);
-  --h_dark_surface: color-mix(in srgb, var(--h_color_primary) 10%, #2d1d18);
-  --h_dark_surface_muted: color-mix(in srgb, var(--h_color_primary) 16%, #39251e);
-  --h_dark_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #140a07);
-  --h_dark_border: color-mix(in srgb, var(--h_color_primary) 24%, #3c281f);
-  --h_dark_border_strong: color-mix(in srgb, var(--h_color_primary) 42%, #5b3a2d);
-  --h_dark_text: #fff3ed;
-  --h_dark_text_secondary: color-mix(in srgb, var(--h_color_primary) 20%, #b99b91);
-  --h_dark_text_muted: color-mix(in srgb, var(--h_color_primary) 14%, #92766b);
-  --h_dark_shadow: rgba(0, 0, 0, 0.38);
+  --h_window_background_start: color-mix(in srgb, var(--h_color_primary) 13%, #251611);
+  --h_window_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #140a07);
+  --h_window_surface: color-mix(in srgb, var(--h_color_primary) 10%, #2d1d18);
+  --h_window_surface_muted: color-mix(in srgb, var(--h_color_primary) 16%, #39251e);
+  --h_window_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #140a07);
+  --h_window_border: color-mix(in srgb, var(--h_color_primary) 24%, #3c281f);
+  --h_window_border_strong: color-mix(in srgb, var(--h_color_primary) 42%, #5b3a2d);
+  --h_window_text: #fff3ed;
+  --h_window_text_secondary: color-mix(in srgb, var(--h_color_primary) 20%, #b99b91);
+  --h_window_text_muted: color-mix(in srgb, var(--h_color_primary) 14%, #92766b);
+  --h_window_shadow: rgba(0, 0, 0, 0.38);
 }
 
 html {
