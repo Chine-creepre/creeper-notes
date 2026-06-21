@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
-import HTree from "@/components/Tree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
 const {
-  activeFolderKey,
   activeNoteId,
   clearSearch,
   createNewNote,
@@ -16,7 +14,6 @@ const {
   formatNoteTime,
   getNoteDescription,
   keyword,
-  loadFolders,
   loadingNotes,
   moveCurrentNoteToFolder,
   noteCountText,
@@ -24,7 +21,6 @@ const {
   saveCurrentNote,
   saving,
   searchCurrentNotes,
-  selectFolder,
   selectNote,
   selectedNote,
   statusMessage,
@@ -34,58 +30,34 @@ const {
 <template>
   <HAppLayout>
     <div class="h_bootstrap">
-      <aside class="h_bootstrap_sidebar">
-        <div class="h_bootstrap_brand">
-          <span class="h_bootstrap_brand_icon">
-            <Icon icon="lucide:notebook-tabs" />
-          </span>
-          <div>
-            <strong>Creeper Notes</strong>
-            <em>本地笔记系统</em>
-          </div>
-        </div>
-
-        <div class="h_bootstrap_sidebar_section">
-          <div class="h_bootstrap_sidebar_title">
-            <span>目录</span>
-            <button type="button" title="刷新目录" @click="loadFolders">
-              <Icon icon="lucide:refresh-cw" />
-            </button>
-          </div>
-
-          <div class="h_bootstrap_tree_card">
-            <HTree
-              :nodes="folderTreeNodes"
-              :selected-key="activeFolderKey"
-              empty-text="暂无目录"
-              @select="selectFolder"
-            />
-          </div>
-        </div>
-      </aside>
-
-      <section class="h_bootstrap_notes">
+      <section class="h_bootstrap_notes_panel">
         <header class="h_bootstrap_notes_header">
           <div>
-            <h1>笔记</h1>
+            <h1>Notes</h1>
             <p>{{ noteCountText }}</p>
           </div>
-
-          <button class="h_bootstrap_primary" type="button" @click="createNewNote">
-            <Icon icon="lucide:plus" />
-            <span>新建</span>
-          </button>
         </header>
 
         <div class="h_bootstrap_search">
           <Icon icon="lucide:search" />
           <input
             v-model="keyword"
-            placeholder="搜索当前笔记"
+            placeholder="搜索..."
             @keydown.enter="searchCurrentNotes"
           />
           <button v-if="keyword" type="button" @click="clearSearch">
             <Icon icon="lucide:x" />
+          </button>
+        </div>
+
+        <div class="h_bootstrap_quick_actions">
+          <button class="h_bootstrap_quick_action_active" type="button" @click="createNewNote">
+            <Icon icon="lucide:plus" />
+            <span>新建笔记</span>
+          </button>
+          <button type="button">
+            <Icon icon="lucide:folder" />
+            <span>分类 / 目录</span>
           </button>
         </div>
 
@@ -101,49 +73,39 @@ const {
               type="button"
               @click="selectNote(note)"
             >
-              <span class="h_bootstrap_note_icon">
-                <Icon icon="lucide:file-text" />
-              </span>
-              <span class="h_bootstrap_note_content">
-                <strong>{{ note.title }}</strong>
-                <em>{{ getNoteDescription(note) }}</em>
-                <small>{{ formatNoteTime(note.updated_at) }}</small>
-              </span>
+              <strong>{{ note.title }}</strong>
+              <em>{{ formatNoteTime(note.updated_at) }} · {{ note.folder?.name || '根目录' }}</em>
+              <span>{{ getNoteDescription(note) }}</span>
             </button>
           </template>
         </div>
       </section>
 
-      <section class="h_bootstrap_editor">
+      <section class="h_bootstrap_editor_panel">
         <template v-if="selectedNote">
           <header class="h_bootstrap_editor_header">
-            <div>
-              <span class="h_bootstrap_editor_badge">Editor</span>
-              <h2>{{ draft.title || '未命名笔记' }}</h2>
-            </div>
-
-            <div class="h_bootstrap_editor_actions">
-              <button class="h_bootstrap_secondary" type="button" :disabled="saving" @click="saveCurrentNote">
+            <div class="h_bootstrap_editor_tools">
+              <button type="button" title="保存" :disabled="saving" @click="saveCurrentNote">
                 <Icon icon="lucide:save" />
-                <span>{{ saving ? '保存中' : '保存' }}</span>
               </button>
-              <button class="h_bootstrap_danger" type="button" @click="deleteCurrentNote">
+              <button type="button" title="删除" @click="deleteCurrentNote">
                 <Icon icon="lucide:trash-2" />
+              </button>
+              <button type="button" title="只读" @click="draft.readonly = !draft.readonly">
+                <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
+              </button>
+              <span></span>
+              <button type="button" title="筛选">
+                <Icon icon="lucide:funnel" />
+              </button>
+              <button type="button" title="更多">
+                <Icon icon="lucide:ellipsis" />
               </button>
             </div>
           </header>
 
           <main class="h_bootstrap_editor_body">
-            <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="标题" />
-            <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述" />
-
-            <div class="h_bootstrap_editor_meta">
-              <label class="h_bootstrap_readonly">
-                <input v-model="draft.readonly" type="checkbox" />
-                <span></span>
-                <em>只读</em>
-              </label>
-
+            <div class="h_bootstrap_editor_topline">
               <HSelectTree
                 v-model="draft.folderId"
                 :nodes="folderTreeNodes.slice(2)"
@@ -151,7 +113,11 @@ const {
                 empty-text="暂无目录"
                 @select="moveCurrentNoteToFolder(draft.folderId)"
               />
+              <span>{{ saving ? '保存中...' : '自动保存关闭' }}</span>
             </div>
+
+            <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="未命名笔记" />
+            <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述 / 摘要" />
 
             <textarea
               v-model="draft.content"
@@ -165,7 +131,7 @@ const {
         <div v-else class="h_bootstrap_editor_empty">
           <Icon icon="lucide:book-open-text" />
           <strong>选择或新建一条笔记</strong>
-          <span>左侧选择目录，中间选择笔记后开始编辑。</span>
+          <span>从左侧列表选择笔记后开始编辑。</span>
         </div>
 
         <div v-if="statusMessage" class="h_bootstrap_status">{{ statusMessage }}</div>
