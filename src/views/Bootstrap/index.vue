@@ -13,10 +13,12 @@ const {
   draft,
   formatNoteTime,
   getNoteDescription,
+  hasDraftChanged,
   keyword,
   loadingNotes,
   newNoteFolderId,
   newNoteFolderTreeNodes,
+  noteEditorState,
   notes,
   saveCurrentNote,
   saving,
@@ -25,11 +27,12 @@ const {
   selectNote,
   selectedNote,
   statusMessage,
+  windowTitle,
 } = useBootstrap();
 </script>
 
 <template>
-  <HAppLayout :title="selectedNote?.title || ''">
+  <HAppLayout :title="windowTitle">
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
         <div class="h_bootstrap_search">
@@ -76,13 +79,13 @@ const {
               <em>{{ formatNoteTime(note.updated_at) }} · {{ note.folder?.name || '根目录' }}</em>
 
               <span v-if="note.id === activeNoteId" class="h_bootstrap_note_actions" @click.stop>
-                <button type="button" title="保存" :disabled="saving" @click="saveCurrentNote">
+                <button class="h_bootstrap_note_action_save" type="button" title="保存" :disabled="saving || !hasDraftChanged" @click="saveCurrentNote">
                   <Icon icon="lucide:save" />
                 </button>
-                <button type="button" title="删除" @click="deleteCurrentNote">
+                <button class="h_bootstrap_note_action_delete" type="button" title="删除" @click="deleteCurrentNote">
                   <Icon icon="lucide:trash-2" />
                 </button>
-                <button type="button" title="只读" @click="draft.readonly = !draft.readonly">
+                <button :class="['h_bootstrap_note_action_readonly', { h_bootstrap_note_action_readonly_active: draft.readonly }]" type="button" title="只读" @click="draft.readonly = !draft.readonly">
                   <Icon :icon="draft.readonly ? 'lucide:lock' : 'lucide:unlock'" />
                 </button>
               </span>
@@ -103,7 +106,12 @@ const {
               </div>
             </div>
 
-            <HMarkdownEditor v-model="draft.content" :readonly="draft.readonly" />
+            <HMarkdownEditor
+              v-model="draft.content"
+              :dirty="hasDraftChanged"
+              :readonly="draft.readonly"
+              @save="saveCurrentNote"
+            />
           </main>
         </template>
 
@@ -113,7 +121,7 @@ const {
           <span>从左侧列表选择笔记后开始编辑。</span>
         </div>
 
-        <div v-if="statusMessage" class="h_bootstrap_status">{{ statusMessage }}</div>
+        <div v-if="statusMessage" :class="['h_bootstrap_status', `h_bootstrap_status_${noteEditorState}`]">{{ statusMessage }}</div>
       </section>
     </div>
   </HAppLayout>
