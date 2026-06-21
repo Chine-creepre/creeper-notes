@@ -12,6 +12,7 @@
     "build:mac": "tauri build --bundles dmg"
   },
   "dependencies": {
+    "@iconify/vue": "^4.3.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
     "pinia": "^3.0.4",
