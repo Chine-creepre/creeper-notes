@@ -3,46 +3,46 @@ import { Icon } from "@iconify/vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
-import { openSettingsWindow } from "@/request/apis/config";
 import { useBootstrap } from "./hook";
 
 const {
+  activeFolderKey,
   activeNoteId,
   appVersionText,
   clearSearch,
   createNewNote,
   deleteCurrentNote,
   draft,
+  folderTreeNodes,
   formatNoteTime,
   getNoteDescription,
   hasDraftChanged,
+  isAllNotesActive,
   keyword,
   loadingNotes,
-  newNoteFolderId,
-  newNoteFolderTreeNodes,
   noteEditorState,
   notes,
   saveCurrentNote,
   saving,
   searchCurrentNotes,
-  selectNewNoteFolder,
+  selectAllNotes,
+  selectFolder,
   selectNote,
   selectedNote,
   statusMessage,
   windowTitle,
 } = useBootstrap();
-
-const openSettingsPage = async (): Promise<void> => {
-  try {
-    await openSettingsWindow();
-  } catch (error) {
-    console.error("open settings window failed", error);
-  }
-};
 </script>
 
 <template>
   <HAppLayout :title="windowTitle" :title-right-text="appVersionText">
+    <template #title-right>
+      <button class="h_bootstrap_title_new_note" type="button" @click="createNewNote">
+        <Icon icon="lucide:plus" />
+        <span>新建笔记</span>
+      </button>
+    </template>
+
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
         <div class="h_bootstrap_search">
@@ -58,23 +58,19 @@ const openSettingsPage = async (): Promise<void> => {
         </div>
 
         <div class="h_bootstrap_quick_actions">
-          <button class="h_bootstrap_quick_action_active" type="button" @click="createNewNote">
-            <Icon icon="lucide:plus" />
-            <span>新建笔记</span>
+          <button :class="['h_bootstrap_all_notes_entry', { h_bootstrap_all_notes_entry_active: isAllNotesActive }]" type="button" @click="selectAllNotes">
+            <Icon icon="lucide:library-big" />
+            <span>全部笔记</span>
           </button>
 
           <HSelectTree
-            v-model="newNoteFolderId"
-            :nodes="newNoteFolderTreeNodes"
+            v-model="activeFolderKey"
+            :nodes="folderTreeNodes"
             root-label="根目录"
             empty-text="暂无目录"
             trigger-icon="lucide:folder"
-            @select="selectNewNoteFolder"
+            @select="selectFolder"
           />
-
-          <button class="h_bootstrap_settings_entry" type="button" title="设置" @click="openSettingsPage">
-            <Icon icon="lucide:settings" />
-          </button>
         </div>
 
         <div class="h_bootstrap_note_list">
