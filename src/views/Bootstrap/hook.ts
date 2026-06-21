@@ -44,5 +44,6 @@ export const useBootstrap = () => {
     searchCurrentNotes: systemStore.searchCurrentNotes,
     selectFolder: systemStore.selectFolder,
     selectNote: systemStore.selectNote,
+    toggleCurrentNoteReadonly: systemStore.toggleCurrentNoteReadonly,
   };
 };
