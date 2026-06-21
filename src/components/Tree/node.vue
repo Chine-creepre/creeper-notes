@@ -1,5 +1,14 @@
 <template>
-  <div class="h_tree_node" :class="{ h_tree_node_leaf: !hasChildren }" role="treeitem" :aria-expanded="hasChildren ? expanded : undefined">
+  <div
+    class="h_tree_node"
+    :class="{
+      h_tree_node_leaf: !hasChildren,
+      h_tree_node_root: level === 0,
+    }"
+    :style="treeNodeStyle"
+    role="treeitem"
+    :aria-expanded="hasChildren ? expanded : undefined"
+  >
     <div
       :class="[
         'h_tree_node_content',
@@ -8,7 +17,7 @@
           h_tree_node_content_disabled: node.disabled,
         },
       ]"
-      :style="{ paddingLeft: `${level * 18 + 8}px` }"
+      :style="treeNodeContentStyle"
       @click="handleSelect"
     >
       <button v-if="hasChildren" class="h_tree_node_toggle" type="button" @click.stop="toggleExpanded">
@@ -35,9 +44,17 @@
 </template>
 
 <script setup lang="ts">
+defineOptions({
+  name: "HTreeNodeItem",
+});
+
 import { Icon } from "@iconify/vue";
-import { computed, ref } from "vue";
+import { computed, ref, type CSSProperties } from "vue";
 import type { HTreeNode, HTreeSelectedKey } from "./types";
+
+const TREE_INDENT_SIZE = 18;
+const TREE_CONTENT_BASE_PADDING = 8;
+const TREE_LINE_OFFSET = 19;
 
 const props = withDefaults(
   defineProps<{
@@ -58,6 +75,14 @@ const emit = defineEmits<{
 
 const expanded = ref(props.defaultExpanded);
 const hasChildren = computed(() => Boolean(props.node.children?.length));
+
+const treeNodeStyle = computed<CSSProperties>(() => ({
+  "--h_tree_line_left": `${props.level * TREE_INDENT_SIZE + TREE_LINE_OFFSET}px`,
+}));
+
+const treeNodeContentStyle = computed<CSSProperties>(() => ({
+  paddingLeft: `${props.level * TREE_INDENT_SIZE + TREE_CONTENT_BASE_PADDING}px`,
+}));
 
 const toggleExpanded = (): void => {
   expanded.value = !expanded.value;
