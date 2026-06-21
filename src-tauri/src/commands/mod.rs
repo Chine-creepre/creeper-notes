@@ -7,7 +7,7 @@ mod start_dragging_settings_window;
 mod start_dragging_window;
 mod window_commands;
 
-pub use config_commands::{get_config, update_config};
+pub use config_commands::{get_config, reset_config, update_config};
 pub use folder_commands::{
     create_folder,
     delete_folder,
