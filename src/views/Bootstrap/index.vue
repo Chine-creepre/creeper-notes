@@ -9,7 +9,6 @@ const {
   activeFolderId,
   activeNoteId,
   appVersionText,
-  clearSearch,
   createNewNote,
   deleteCurrentNote,
   draft,
@@ -17,14 +16,12 @@ const {
   formatNoteTime,
   getNoteDescription,
   hasDraftChanged,
-  keyword,
   loadingNotes,
   markdownEditorMode,
   noteEditorState,
   notes,
   saveCurrentNote,
   saving,
-  searchCurrentNotes,
   selectFolder,
   selectNote,
   selectedNote,
@@ -45,18 +42,6 @@ const {
 
     <div class="h_bootstrap">
       <section class="h_bootstrap_notes_panel">
-        <div class="h_bootstrap_search">
-          <Icon icon="lucide:search" />
-          <input
-            v-model="keyword"
-            placeholder="搜索..."
-            @keydown.enter="searchCurrentNotes"
-          />
-          <button v-if="keyword" type="button" @click="clearSearch">
-            <Icon icon="lucide:x" />
-          </button>
-        </div>
-
         <div class="h_bootstrap_quick_actions">
           <HSelectTree
             v-model="activeFolderId"
