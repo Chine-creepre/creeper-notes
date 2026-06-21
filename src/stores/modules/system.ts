@@ -239,6 +239,33 @@ export const useSystemStore = defineStore("system", () => {
     }
   };
 
+  const toggleCurrentNoteReadonly = async (): Promise<void> => {
+    const currentNote = selectedNote.value;
+
+    if (!currentNote) return;
+
+    const nextReadonly = !draft.readonly;
+    saving.value = true;
+
+    try {
+      const updatedNote = await updateNote({
+        id: currentNote.id,
+        title: normalizeDraftTitle(draft.title),
+        describe: draft.describe.trim() || null,
+        content: draft.content,
+        readonly: nextReadonly,
+        folder_id: draft.folderId,
+      });
+
+      notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
+      selectNote(updatedNote);
+      markdownEditorMode.value = "preview";
+      showStatusMessage(nextReadonly ? "已设为只读" : "已取消只读");
+    } finally {
+      saving.value = false;
+    }
+  };
+
   const deleteCurrentNote = async (): Promise<void> => {
     const currentNote = selectedNote.value;
 
@@ -320,6 +347,7 @@ export const useSystemStore = defineStore("system", () => {
     selectNote,
     selectedNote,
     statusMessage,
+    toggleCurrentNoteReadonly,
     windowTitle,
   };
 });
