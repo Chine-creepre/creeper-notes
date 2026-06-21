@@ -1,6 +1,7 @@
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { storeToRefs } from "pinia";
 import { onBeforeUnmount, onMounted } from "vue";
+import { APP_EVENTS } from "@/constants/events";
 import { useSystemStore } from "@/stores/modules/system";
 
 interface OpenNotePayload {
@@ -13,8 +14,14 @@ export const useBootstrap = () => {
 
   let unlistenOpenNote: UnlistenFn | undefined;
 
+  const syncFoldersChanged = async (): Promise<void> => {
+    await systemStore.loadFolders();
+    await systemStore.loadNotes();
+  };
+
   onMounted(async () => {
     await systemStore.initializeSystemData();
+    window.addEventListener(APP_EVENTS.foldersChanged, syncFoldersChanged);
 
     unlistenOpenNote = await listen<OpenNotePayload>("open-note", async (event) => {
       const noteId = event.payload?.id;
@@ -26,6 +33,7 @@ export const useBootstrap = () => {
   });
 
   onBeforeUnmount(() => {
+    window.removeEventListener(APP_EVENTS.foldersChanged, syncFoldersChanged);
     unlistenOpenNote?.();
   });
 
