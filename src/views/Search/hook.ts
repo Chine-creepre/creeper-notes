@@ -1,24 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { emit } from "@tauri-apps/api/event";
 import { nextTick, onMounted, ref, watch } from "vue";
-
-interface Note {
-  id: string;
-  title: string;
-  describe?: string | null;
-  content?: string | null;
-  readonly: boolean;
-  created_at: number;
-  updated_at: number;
-  deleted: boolean;
-}
-
-interface PageResult<T> {
-  total: number;
-  page: number;
-  page_size: number;
-  items: T[];
-}
+import { searchNotes, type Note } from "@/request/apis/notes";
 
 const SEARCH_PAGE_SIZE = 6;
 
@@ -38,7 +21,7 @@ export const useHSearch = () => {
     await invoke("start_dragging_search_window");
   };
 
-  const searchNotes = async (): Promise<void> => {
+  const fetchSuggestions = async (): Promise<void> => {
     const trimmedKeyword = keyword.value.trim();
 
     if (!trimmedKeyword) {
@@ -47,12 +30,10 @@ export const useHSearch = () => {
       return;
     }
 
-    const result = await invoke<PageResult<Note>>("search_notes", {
-      query: {
-        keyword: trimmedKeyword,
-        page: 1,
-        page_size: SEARCH_PAGE_SIZE,
-      },
+    const result = await searchNotes({
+      keyword: trimmedKeyword,
+      page: 1,
+      page_size: SEARCH_PAGE_SIZE,
     });
 
     suggestions.value = result.items;
@@ -90,7 +71,7 @@ export const useHSearch = () => {
     }
 
     searchTimer = window.setTimeout(() => {
-      searchNotes();
+      fetchSuggestions();
     }, 160);
   });
 
