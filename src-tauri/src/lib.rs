@@ -15,8 +15,10 @@ use commands::{
     get_config,
     get_data_path,
     hide_main_window,
+    list_folder_tree,
     list_folders,
     list_notes,
+    move_note_to_folder,
     open_search_window,
     search_notes,
     show_main_window,
@@ -64,6 +66,7 @@ pub fn run() {
             create_folder,
             find_folder_by_id,
             list_folders,
+            list_folder_tree,
             update_folder,
             delete_folder,
             create_note,
@@ -71,6 +74,7 @@ pub fn run() {
             list_notes,
             search_notes,
             update_note,
+            move_note_to_folder,
             delete_note
         ])
         .run(tauri::generate_context!())
