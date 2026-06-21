@@ -31,6 +31,21 @@
   white-space: nowrap;
 }
 
+.h_window_title_bar_right {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 10px;
+  min-width: 0;
+}
+
+.h_window_title_bar_separator {
+  display: inline-block;
+  width: 1px;
+  height: 16px;
+  background: var(--h_window_border_strong);
+}
+
 .h_window_title_bar_right_text {
   flex: 0 0 auto;
   color: var(--h_window_text_muted);
