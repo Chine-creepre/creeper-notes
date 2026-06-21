@@ -33,7 +33,7 @@ use commands::{
     update_folder,
     update_note,
 };
-use services::{config_service, database_service, shortcut_service};
+use services::{config_service, database_service, shortcut_service, tray_service};
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -50,6 +50,9 @@ pub fn run() {
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             shortcut_service::initialize_shortcuts(app.handle())
+                .map_err(Box::<dyn std::error::Error>::from)?;
+
+            tray_service::initialize_tray(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             Ok(())
