@@ -113,6 +113,14 @@ pub fn toggle_settings_window(app: &AppHandle) -> Result<(), String> {
     open_settings_window(app)
 }
 
+pub fn is_settings_window_active(app: &AppHandle) -> bool {
+    let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) else {
+        return false;
+    };
+
+    window.is_visible().unwrap_or(false)
+}
+
 pub fn show_main_window(app: &AppHandle) -> Result<(), String> {
     let window = app
         .get_webview_window(MAIN_WINDOW_LABEL)
