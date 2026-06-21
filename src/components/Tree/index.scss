@@ -23,14 +23,13 @@
 .h_tree_node::before {
   content: "";
   position: absolute;
-  top: 0;
+  top: 34px;
   bottom: 0;
-  left: calc(var(--h_tree_line_left, 18px));
+  left: var(--h_tree_line_left);
   width: 1px;
   background: var(--h_color_border);
 }
 
-.h_tree_root > .h_tree_node::before,
 .h_tree_node_leaf::before {
   display: none;
 }
@@ -53,13 +52,13 @@
   content: "";
   position: absolute;
   top: 50%;
-  left: calc(var(--h_tree_line_left, 18px));
+  left: var(--h_tree_line_left);
   width: 12px;
   height: 1px;
   background: var(--h_color_border);
 }
 
-.h_tree_root > .h_tree_node > .h_tree_node_content::before {
+.h_tree_node_root > .h_tree_node_content::before {
   display: none;
 }
 
