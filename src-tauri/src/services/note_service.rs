@@ -89,12 +89,18 @@ pub fn search_notes(app: &AppHandle, query: NoteQuery) -> Result<PageResult<Note
 pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<(), String> {
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
-    let payload = UpdateNotePayload {
-        folder_id: normalize_folder_id(payload.folder_id),
-        ..payload
-    };
+    let folder_id = normalize_folder_id(payload.folder_id);
 
-    validate_folder_id(&connection, &payload.folder_id)?;
+    validate_folder_id(&connection, &folder_id)?;
+
+    let payload = UpdateNotePayload {
+        id: payload.id,
+        title: payload.title,
+        describe: payload.describe,
+        content: payload.content,
+        readonly: payload.readonly,
+        folder_id,
+    };
 
     note_repository::update_note(&connection, &payload, timestamp)
 }
