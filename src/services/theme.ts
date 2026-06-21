@@ -1,24 +1,34 @@
 import { getConfig, type AppConfig } from "@/request/apis/config";
 
-export type AppTheme = "system" | "light" | "dark";
+export type AppTheme = "blue_cyan" | "green_jade" | "red_brown";
 
-const SYSTEM_DARK_QUERY = "(prefers-color-scheme: dark)";
+export const DEFAULT_APP_THEME: AppTheme = "blue_cyan";
 
-const isAppTheme = (theme: string): theme is AppTheme =>
-  theme === "system" || theme === "light" || theme === "dark";
+export const APP_THEME_OPTIONS: Array<{
+  label: string;
+  value: AppTheme;
+}> = [
+  {
+    label: "蓝青主题",
+    value: "blue_cyan",
+  },
+  {
+    label: "绿玉主题",
+    value: "green_jade",
+  },
+  {
+    label: "红棕主题",
+    value: "red_brown",
+  },
+];
 
-const getResolvedTheme = (theme: AppTheme): "light" | "dark" => {
-  if (theme !== "system") return theme;
-
-  return window.matchMedia(SYSTEM_DARK_QUERY).matches ? "dark" : "light";
-};
+export const isAppTheme = (theme: string): theme is AppTheme =>
+  theme === "blue_cyan" || theme === "green_jade" || theme === "red_brown";
 
 export const applyTheme = (theme: string): void => {
-  const appTheme = isAppTheme(theme) ? theme : "system";
-  const resolvedTheme = getResolvedTheme(appTheme);
+  const appTheme = isAppTheme(theme) ? theme : DEFAULT_APP_THEME;
 
-  document.documentElement.dataset.theme = resolvedTheme;
-  document.documentElement.dataset.themeMode = appTheme;
+  document.documentElement.dataset.theme = appTheme;
 };
 
 export const initializeTheme = async (): Promise<void> => {
@@ -26,11 +36,3 @@ export const initializeTheme = async (): Promise<void> => {
 
   applyTheme(appConfig.theme);
 };
-
-window.matchMedia(SYSTEM_DARK_QUERY).addEventListener("change", () => {
-  const themeMode = document.documentElement.dataset.themeMode;
-
-  if (themeMode === "system") {
-    applyTheme("system");
-  }
-});
