@@ -83,6 +83,42 @@ pub fn find_folder_by_id(connection: &Connection, id: &str) -> Result<Option<Fol
     Ok(None)
 }
 
+pub fn exists_sibling_folder_by_name(
+    connection: &Connection,
+    parent_id: &Option<String>,
+    name: &str,
+    excluded_id: Option<&str>,
+) -> Result<bool, String> {
+    let parent_condition = if parent_id.is_some() {
+        "parent_id = ?1"
+    } else {
+        "parent_id IS NULL"
+    };
+    let excluded_condition = if excluded_id.is_some() {
+        "AND id <> ?3"
+    } else {
+        ""
+    };
+    let sql = format!(
+        r#"
+        SELECT COUNT(*)
+        FROM {}
+        WHERE {}
+          AND name = ?2
+          AND deleted = 0
+          {}
+        "#,
+        FOLDERS_TABLE_NAME,
+        parent_condition,
+        excluded_condition,
+    );
+    let count = connection
+        .query_row(&sql, params![parent_id, name, excluded_id], |row| row.get::<_, u64>(0))
+        .map_err(|error| error.to_string())?;
+
+    Ok(count > 0)
+}
+
 pub fn list_folders(connection: &Connection) -> Result<Vec<Folder>, String> {
     let sql = format!(
         r#"
