@@ -87,7 +87,9 @@
 }
 
 .h_bootstrap_quick_actions {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
   flex: 0 0 auto;
   gap: 10px;
 }
@@ -116,6 +118,35 @@
 .h_bootstrap_quick_actions svg {
   width: 14px;
   height: 14px;
+}
+
+.h_bootstrap_quick_actions :deep(.h_select_tree) {
+  min-width: 0;
+}
+
+.h_bootstrap_quick_actions :deep(.h_select_tree_trigger) {
+  height: 36px;
+  border-color: transparent;
+  border-radius: 999px;
+  background: #152330;
+  color: #8ea7b3;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.h_bootstrap_quick_actions :deep(.h_select_tree_trigger::before) {
+  content: "";
+}
+
+.h_bootstrap_quick_actions :deep(.h_select_tree_trigger span) {
+  padding-left: 24px;
+  background: no-repeat left center / 16px 16px;
+}
+
+.h_bootstrap_quick_actions :deep(.h_select_tree_popup) {
+  border-color: #263a46;
+  background: #152330;
+  color: #8ea7b3;
 }
 
 .h_bootstrap_note_list {
@@ -198,7 +229,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 34px 46px 42px;
+  padding: 24px 30px 28px;
   background: rgba(7, 12, 18, 0.18);
 }
 
@@ -207,8 +238,8 @@
   justify-content: flex-start;
   flex: 0 0 auto;
   min-width: 0;
-  margin-bottom: 26px;
-  padding-bottom: 14px;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
   border-bottom: 1px solid #1e2f3b;
 }
 
@@ -277,7 +308,7 @@
 .h_bootstrap_desc_input {
   flex: 0 0 auto;
   height: 28px;
-  margin-bottom: 22px;
+  margin-bottom: 18px;
   color: #8ea7b3;
   font-size: 12px;
   line-height: 28px;
