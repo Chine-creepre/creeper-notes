@@ -25,10 +25,10 @@ const { startDragWindow } = useHWindowTitleBar();
       @mousedown.left="startDragWindow">
       <span v-if="title" class="h_window_title_bar_current_note">{{ title }}</span>
 
-      <div v-if="hasRightActions || rightText" class="h_window_title_bar_right" @mousedown.stop>
-        <slot name="right"></slot>
-        <span v-if="hasRightActions && rightText" class="h_window_title_bar_separator"></span>
+      <div v-if="rightText || hasRightActions" class="h_window_title_bar_right" @mousedown.stop>
         <span v-if="rightText" class="h_window_title_bar_right_text">{{ rightText }}</span>
+        <span v-if="rightText && hasRightActions" class="h_window_title_bar_separator"></span>
+        <slot name="right"></slot>
       </div>
     </div>
   </header>
