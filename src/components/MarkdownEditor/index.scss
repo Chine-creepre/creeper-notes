@@ -1,0 +1,134 @@
+.h_markdown_editor {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  border: 1px solid #1e2f3b;
+  border-radius: 14px;
+  overflow: hidden;
+  background: rgba(21, 35, 48, 0.64);
+}
+
+.h_markdown_editor_toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 42px;
+  padding: 0 10px;
+  border-bottom: 1px solid #1e2f3b;
+  box-sizing: border-box;
+  background: rgba(8, 13, 18, 0.24);
+}
+
+.h_markdown_editor_toolbar span {
+  flex: 1;
+  min-width: 0;
+}
+
+.h_markdown_editor_toolbar button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #6f8794;
+  cursor: pointer;
+}
+
+.h_markdown_editor_toolbar button:hover,
+.h_markdown_editor_toolbar_active {
+  background: #152330;
+  color: #36d2c4;
+}
+
+.h_markdown_editor_toolbar svg {
+  width: 15px;
+  height: 15px;
+}
+
+.h_markdown_editor_input,
+.h_markdown_editor_preview {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 22px;
+  box-sizing: border-box;
+  color: #8ea7b3;
+  font-family:
+    Inter,
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.h_markdown_editor_input {
+  width: 100%;
+  border: 0;
+  outline: none;
+  resize: none;
+  background: transparent;
+}
+
+.h_markdown_editor_input::placeholder {
+  color: #526672;
+}
+
+.h_markdown_editor_input:read-only {
+  color: #607783;
+}
+
+.h_markdown_editor_preview {
+  overflow: auto;
+}
+
+.h_markdown_editor_preview :deep(h1),
+.h_markdown_editor_preview :deep(h2),
+.h_markdown_editor_preview :deep(h3),
+.h_markdown_editor_preview :deep(p),
+.h_markdown_editor_preview :deep(blockquote) {
+  margin: 0 0 12px;
+}
+
+.h_markdown_editor_preview :deep(h1) {
+  color: #eaf4f8;
+  font-size: 24px;
+  line-height: 1.35;
+}
+
+.h_markdown_editor_preview :deep(h2) {
+  color: #eaf4f8;
+  font-size: 20px;
+  line-height: 1.4;
+}
+
+.h_markdown_editor_preview :deep(h3) {
+  color: #eaf4f8;
+  font-size: 17px;
+  line-height: 1.45;
+}
+
+.h_markdown_editor_preview :deep(strong) {
+  color: #eaf4f8;
+}
+
+.h_markdown_editor_preview :deep(code) {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: #0b1118;
+  color: #36d2c4;
+}
+
+.h_markdown_editor_preview :deep(blockquote) {
+  padding-left: 12px;
+  border-left: 3px solid #2f6f9f;
+  color: #8ea7b3;
+}
