@@ -1,5 +1,5 @@
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
-import { computed, onBeforeUnmount, onMounted, reactive, ref } from "vue";
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
 import type { HTreeNode } from "@/components/Tree/types";
 import {
   createNote,
@@ -19,9 +19,28 @@ const ALL_NOTES_KEY = "__all__";
 const DEFAULT_NOTE_TITLE = "未命名笔记";
 const FOLDER_TREE_ICON = "lucide:folder";
 
+type NoteEditorState = "empty" | "clean" | "dirty" | "saving" | "saved" | "readonly";
+
 interface OpenNotePayload {
   id?: string;
 }
+
+interface DraftSnapshot {
+  title: string;
+  describe: string;
+  content: string;
+  readonly: boolean;
+  folderId: string | null;
+}
+
+const NOTE_EDITOR_STATE_LABELS: Record<NoteEditorState, string> = {
+  empty: "未选择",
+  clean: "已同步",
+  dirty: "未保存",
+  saving: "保存中",
+  saved: "已保存",
+  readonly: "只读",
+};
 
 const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
   id: folder.id,
@@ -46,6 +65,21 @@ const normalizeDraftTitle = (title: string): string => {
   return trimmedTitle || DEFAULT_NOTE_TITLE;
 };
 
+const createDraftSnapshot = (note: Note | null): DraftSnapshot => ({
+  title: note?.title ?? "",
+  describe: note?.describe ?? "",
+  content: note?.content ?? "",
+  readonly: note?.readonly ?? false,
+  folderId: note?.folder_id ?? null,
+});
+
+const isSameDraftSnapshot = (draft: DraftSnapshot, snapshot: DraftSnapshot): boolean =>
+  draft.title === snapshot.title &&
+  draft.describe === snapshot.describe &&
+  draft.content === snapshot.content &&
+  draft.readonly === snapshot.readonly &&
+  draft.folderId === snapshot.folderId;
+
 export const useBootstrap = () => {
   const folders = ref<FolderTreeNode[]>([]);
   const notes = ref<Note[]>([]);
@@ -56,13 +90,15 @@ export const useBootstrap = () => {
   const saving = ref(false);
   const keyword = ref("");
   const statusMessage = ref("");
+  const noteEditorState = ref<NoteEditorState>("empty");
+  const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
 
-  const draft = reactive({
+  const draft = reactive<DraftSnapshot>({
     title: "",
     describe: "",
     content: "",
     readonly: false,
-    folderId: null as string | null,
+    folderId: null,
   });
 
   let unlistenOpenNote: UnlistenFn | undefined;
@@ -93,6 +129,32 @@ export const useBootstrap = () => {
 
     return activeFolderKey.value;
   });
+  const hasDraftChanged = computed(() => !isSameDraftSnapshot(draft, savedDraftSnapshot.value));
+  const noteEditorStateLabel = computed(() => NOTE_EDITOR_STATE_LABELS[noteEditorState.value]);
+  const windowTitle = computed(() => {
+    const title = selectedNote.value?.title || draft.title || "未命名笔记";
+
+    return `${title} · ${noteEditorStateLabel.value}`;
+  });
+
+  const transitionNoteEditorState = (): void => {
+    if (!selectedNote.value) {
+      noteEditorState.value = "empty";
+      return;
+    }
+
+    if (saving.value) {
+      noteEditorState.value = "saving";
+      return;
+    }
+
+    if (draft.readonly) {
+      noteEditorState.value = "readonly";
+      return;
+    }
+
+    noteEditorState.value = hasDraftChanged.value ? "dirty" : "clean";
+  };
 
   const clearStatusMessage = (): void => {
     if (statusTimer) {
@@ -110,11 +172,15 @@ export const useBootstrap = () => {
   };
 
   const syncDraft = (note: Note | null): void => {
-    draft.title = note?.title ?? "";
-    draft.describe = note?.describe ?? "";
-    draft.content = note?.content ?? "";
-    draft.readonly = note?.readonly ?? false;
-    draft.folderId = note?.folder_id ?? null;
+    const snapshot = createDraftSnapshot(note);
+
+    draft.title = snapshot.title;
+    draft.describe = snapshot.describe;
+    draft.content = snapshot.content;
+    draft.readonly = snapshot.readonly;
+    draft.folderId = snapshot.folderId;
+    savedDraftSnapshot.value = snapshot;
+    transitionNoteEditorState();
   };
 
   const loadFolders = async (): Promise<void> => {
@@ -183,15 +249,17 @@ export const useBootstrap = () => {
     activeFolderKey.value = note.folder_id ?? ROOT_FOLDER_KEY;
     notes.value = [note, ...notes.value];
     selectNote(note);
+    noteEditorState.value = "saved";
     showStatusMessage("已新建笔记");
   };
 
   const saveCurrentNote = async (): Promise<void> => {
     const currentNote = selectedNote.value;
 
-    if (!currentNote) return;
+    if (!currentNote || !hasDraftChanged.value) return;
 
     saving.value = true;
+    transitionNoteEditorState();
 
     try {
       const updatedNote = await updateNote({
@@ -205,9 +273,13 @@ export const useBootstrap = () => {
 
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
+      noteEditorState.value = "saved";
       showStatusMessage("已保存");
     } finally {
       saving.value = false;
+      if (noteEditorState.value !== "saved") {
+        transitionNoteEditorState();
+      }
     }
   };
 
@@ -272,6 +344,11 @@ export const useBootstrap = () => {
     });
   };
 
+  watch(
+    () => [draft.title, draft.describe, draft.content, draft.readonly, draft.folderId] as const,
+    transitionNoteEditorState,
+  );
+
   onMounted(async () => {
     await Promise.all([loadFolders(), loadNotes()]);
 
@@ -302,6 +379,7 @@ export const useBootstrap = () => {
     folderTreeNodes,
     formatNoteTime,
     getNoteDescription,
+    hasDraftChanged,
     keyword,
     loadFolders,
     loadingNotes,
@@ -309,6 +387,8 @@ export const useBootstrap = () => {
     newNoteFolderId,
     newNoteFolderTreeNodes,
     noteCountText,
+    noteEditorState,
+    noteEditorStateLabel,
     notes,
     saveCurrentNote,
     saving,
@@ -318,5 +398,6 @@ export const useBootstrap = () => {
     selectNote,
     selectedNote,
     statusMessage,
+    windowTitle,
   };
 };
