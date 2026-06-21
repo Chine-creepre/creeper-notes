@@ -141,14 +141,27 @@
             <p>同级分类名称不能重复。</p>
           </div>
 
-          <div class="h_settings_folder_form">
+          <div v-if="!isEditingFolder" class="h_settings_folder_form">
             <input v-model="folderName" class="h_settings_control" placeholder="分类名称" />
             <HSelectTree v-model="folderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
             <button class="h_settings_primary" type="button" @click="createRootFolder">新增</button>
           </div>
 
+          <div v-else class="h_settings_folder_form">
+            <input v-model="editingFolderName" class="h_settings_control" placeholder="分类名称" />
+            <HSelectTree v-model="editingFolderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
+            <button class="h_settings_primary" type="button" @click="saveEditFolder">保存</button>
+            <button class="h_settings_secondary" type="button" @click="cancelEditFolder">取消</button>
+          </div>
+
           <div class="h_settings_folder_tree_card">
-            <HTree :nodes="folderTreeNodes" empty-text="暂无分类" />
+            <HTree
+              :nodes="folderTreeNodes"
+              show-actions
+              empty-text="暂无分类"
+              @edit="startEditFolder"
+              @delete="removeFolderByNode"
+            />
           </div>
         </article>
       </section>
@@ -165,21 +178,28 @@ import { useHSettings } from "./hook";
 
 const {
   activeDrawer,
+  cancelEditFolder,
   captureShortcut,
   closeWindow,
   config,
   confirmTheme,
   createRootFolder,
+  editingFolderName,
+  editingFolderParentId,
   errorMessage,
   folderName,
   folderParentId,
   folderTreeNodes,
+  isEditingFolder,
   listeningShortcutField,
+  removeFolderByNode,
   resetSettings,
   saveConfig,
+  saveEditFolder,
   saveStartupSettings,
   saving,
   startDragWindow,
+  startEditFolder,
   startListenShortcut,
   successMessage,
   themeDraft,
