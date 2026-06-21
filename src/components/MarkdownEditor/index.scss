@@ -4,10 +4,10 @@
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  border: 1px solid var(--h_dark_border);
+  border: 1px solid var(--h_window_border);
   border-radius: 14px;
   overflow: hidden;
-  background: color-mix(in srgb, var(--h_dark_surface) 64%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface) 64%, transparent);
 }
 
 .h_markdown_editor_toolbar {
@@ -18,9 +18,9 @@
   min-width: 0;
   height: 42px;
   padding: 0 10px;
-  border-bottom: 1px solid var(--h_dark_border);
+  border-bottom: 1px solid var(--h_window_border);
   box-sizing: border-box;
-  background: color-mix(in srgb, var(--h_dark_surface_deep) 32%, transparent);
+  background: color-mix(in srgb, var(--h_window_surface_deep) 32%, transparent);
 }
 
 .h_markdown_editor_toolbar span {
@@ -38,13 +38,13 @@
   border: 0;
   border-radius: 9px;
   background: transparent;
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
   cursor: pointer;
 }
 
 .h_markdown_editor_toolbar button:hover,
 .h_markdown_editor_toolbar_active {
-  background: var(--h_dark_surface);
+  background: var(--h_window_surface);
   color: var(--h_color_primary);
 }
 
@@ -60,7 +60,7 @@
   min-height: 0;
   padding: 22px;
   box-sizing: border-box;
-  color: var(--h_dark_text_secondary);
+  color: var(--h_window_text_secondary);
   font-family:
     Inter,
     "PingFang SC",
@@ -79,11 +79,11 @@
 }
 
 .h_markdown_editor_input::placeholder {
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
 }
 
 .h_markdown_editor_input:read-only {
-  color: var(--h_dark_text_muted);
+  color: var(--h_window_text_muted);
 }
 
 .h_markdown_editor_preview {
@@ -99,36 +99,36 @@
 }
 
 .h_markdown_editor_preview :deep(h1) {
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-size: 24px;
   line-height: 1.35;
 }
 
 .h_markdown_editor_preview :deep(h2) {
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-size: 20px;
   line-height: 1.4;
 }
 
 .h_markdown_editor_preview :deep(h3) {
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
   font-size: 17px;
   line-height: 1.45;
 }
 
 .h_markdown_editor_preview :deep(strong) {
-  color: var(--h_dark_text);
+  color: var(--h_window_text);
 }
 
 .h_markdown_editor_preview :deep(code) {
   padding: 2px 6px;
   border-radius: 6px;
-  background: var(--h_dark_surface_deep);
+  background: var(--h_window_surface_deep);
   color: var(--h_color_primary);
 }
 
 .h_markdown_editor_preview :deep(blockquote) {
   padding-left: 12px;
   border-left: 3px solid var(--h_color_primary);
-  color: var(--h_dark_text_secondary);
+  color: var(--h_window_text_secondary);
 }
