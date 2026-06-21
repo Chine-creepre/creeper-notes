@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::models::folder::Folder;
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Note {
     pub id: String,
@@ -8,6 +10,7 @@ pub struct Note {
     pub content: Option<String>,
     pub readonly: bool,
     pub folder_id: Option<String>,
+    pub folder: Option<Folder>,
     pub created_at: i64,
     pub updated_at: i64,
     pub deleted: bool,
