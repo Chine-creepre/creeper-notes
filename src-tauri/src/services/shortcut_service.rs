@@ -20,20 +20,32 @@ fn register_shortcuts(app: &AppHandle) -> Result<(), String> {
 
     app.global_shortcut()
         .on_shortcut(toggle_shortcut, move |_app, _shortcut, event| {
-            if event.state() == ShortcutState::Pressed {
-                if let Err(error) = window_service::toggle_main_window(&toggle_app_handle) {
-                    eprintln!("failed to toggle main window: {}", error);
-                }
+            if event.state() != ShortcutState::Pressed {
+                return;
+            }
+
+            if window_service::is_settings_window_active(&toggle_app_handle) {
+                return;
+            }
+
+            if let Err(error) = window_service::toggle_main_window(&toggle_app_handle) {
+                eprintln!("failed to toggle main window: {}", error);
             }
         })
         .map_err(|error| error.to_string())?;
 
     app.global_shortcut()
         .on_shortcut(search_shortcut, move |_app, _shortcut, event| {
-            if event.state() == ShortcutState::Pressed {
-                if let Err(error) = window_service::toggle_search_window(&search_app_handle) {
-                    eprintln!("failed to toggle search window: {}", error);
-                }
+            if event.state() != ShortcutState::Pressed {
+                return;
+            }
+
+            if window_service::is_settings_window_active(&search_app_handle) {
+                return;
+            }
+
+            if let Err(error) = window_service::toggle_search_window(&search_app_handle) {
+                eprintln!("failed to toggle search window: {}", error);
             }
         })
         .map_err(|error| error.to_string())?;
