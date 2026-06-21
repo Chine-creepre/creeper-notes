@@ -1,17 +1,36 @@
 import { invoke } from "@tauri-apps/api/core";
-import { emit } from "@tauri-apps/api/event";
-import { nextTick, onMounted, ref, watch } from "vue";
+import { emit, listen, type UnlistenFn } from "@tauri-apps/api/event";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { searchNotes, type Note } from "@/request/apis/notes";
 
-const SEARCH_PAGE_SIZE = 6;
+const SEARCH_PAGE_SIZE = 8;
+const SEARCH_DEBOUNCE_DELAY = 160;
+const FOCUS_SEARCH_INPUT_EVENT = "focus-search-input";
 
 export const useHSearch = () => {
   const inputRef = ref<HTMLInputElement>();
   const keyword = ref("");
   const suggestions = ref<Note[]>([]);
   const activeIndex = ref(0);
+  const searching = ref(false);
+  const searched = ref(false);
 
   let searchTimer: number | undefined;
+  let unlistenFocusSearchInput: UnlistenFn | undefined;
+
+  const trimmedKeyword = computed(() => keyword.value.trim());
+  const hasKeyword = computed(() => Boolean(trimmedKeyword.value));
+  const hasSuggestions = computed(() => suggestions.value.length > 0);
+  const isEmptyInitial = computed(() => !hasKeyword.value && !searching.value);
+  const isEmptyResult = computed(
+    () => hasKeyword.value && searched.value && !searching.value && !hasSuggestions.value,
+  );
+
+  const focusInput = async (): Promise<void> => {
+    await nextTick();
+    inputRef.value?.focus();
+    inputRef.value?.select();
+  };
 
   const closeSearch = async (): Promise<void> => {
     await invoke("close_search_window");
@@ -22,22 +41,28 @@ export const useHSearch = () => {
   };
 
   const fetchSuggestions = async (): Promise<void> => {
-    const trimmedKeyword = keyword.value.trim();
-
-    if (!trimmedKeyword) {
+    if (!trimmedKeyword.value) {
       suggestions.value = [];
       activeIndex.value = 0;
+      searched.value = false;
       return;
     }
 
-    const result = await searchNotes({
-      keyword: trimmedKeyword,
-      page: 1,
-      page_size: SEARCH_PAGE_SIZE,
-    });
+    searching.value = true;
 
-    suggestions.value = result.items;
-    activeIndex.value = 0;
+    try {
+      const result = await searchNotes({
+        keyword: trimmedKeyword.value,
+        page: 1,
+        page_size: SEARCH_PAGE_SIZE,
+      });
+
+      suggestions.value = result.items;
+      activeIndex.value = 0;
+      searched.value = true;
+    } finally {
+      searching.value = false;
+    }
   };
 
   const moveActiveSuggestion = (step: number): void => {
@@ -72,23 +97,40 @@ export const useHSearch = () => {
 
     searchTimer = window.setTimeout(() => {
       fetchSuggestions();
-    }, 160);
+    }, SEARCH_DEBOUNCE_DELAY);
   });
 
   onMounted(async () => {
-    await nextTick();
-    inputRef.value?.focus();
+    await focusInput();
+
+    unlistenFocusSearchInput = await listen(FOCUS_SEARCH_INPUT_EVENT, () => {
+      focusInput();
+    });
+  });
+
+  onBeforeUnmount(() => {
+    if (searchTimer) {
+      window.clearTimeout(searchTimer);
+    }
+
+    unlistenFocusSearchInput?.();
   });
 
   return {
     activeIndex,
     closeSearch,
+    hasKeyword,
+    hasSuggestions,
     inputRef,
+    isEmptyInitial,
+    isEmptyResult,
     keyword,
     moveActiveSuggestion,
+    searching,
     selectActiveSuggestion,
     selectSuggestion,
     startDragWindow,
     suggestions,
+    trimmedKeyword,
   };
 };
