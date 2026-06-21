@@ -27,6 +27,15 @@
 
       <Icon class="h_tree_node_icon" :icon="node.icon || 'lucide:folder'" />
       <span class="h_tree_node_label" :title="node.label">{{ node.label }}</span>
+
+      <span v-if="showActions" class="h_tree_node_actions">
+        <button v-if="node.editable !== false" class="h_tree_node_action" type="button" title="编辑" @click.stop="handleEdit">
+          <Icon icon="lucide:pencil" />
+        </button>
+        <button v-if="node.deletable !== false" class="h_tree_node_action h_tree_node_action_danger" type="button" title="删除" @click.stop="handleDelete">
+          <Icon icon="lucide:trash-2" />
+        </button>
+      </span>
     </div>
 
     <div v-if="hasChildren && expanded" class="h_tree_node_children" role="group">
@@ -37,7 +46,10 @@
         :level="level + 1"
         :selected-key="selectedKey"
         :default-expanded="defaultExpanded"
+        :show-actions="showActions"
         @select="emit('select', $event)"
+        @edit="emit('edit', $event)"
+        @delete="emit('delete', $event)"
       />
     </div>
   </div>
@@ -62,15 +74,19 @@ const props = withDefaults(
     level: number;
     selectedKey?: HTreeSelectedKey;
     defaultExpanded?: boolean;
+    showActions?: boolean;
   }>(),
   {
     selectedKey: null,
     defaultExpanded: true,
+    showActions: false,
   },
 );
 
 const emit = defineEmits<{
   select: [node: HTreeNode];
+  edit: [node: HTreeNode];
+  delete: [node: HTreeNode];
 }>();
 
 const expanded = ref(props.defaultExpanded);
@@ -92,5 +108,17 @@ const handleSelect = (): void => {
   if (props.node.disabled) return;
 
   emit("select", props.node);
+};
+
+const handleEdit = (): void => {
+  if (props.node.disabled) return;
+
+  emit("edit", props.node);
+};
+
+const handleDelete = (): void => {
+  if (props.node.disabled) return;
+
+  emit("delete", props.node);
 };
 </script>
