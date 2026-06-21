@@ -11,6 +11,8 @@
 .h_window_title_bar_drag {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
   flex: 1;
   min-width: 0;
   height: 100%;
@@ -26,5 +28,14 @@
   font-weight: 650;
   line-height: 1;
   text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.h_window_title_bar_right_text {
+  flex: 0 0 auto;
+  color: var(--h_window_text_muted);
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1;
   white-space: nowrap;
 }
