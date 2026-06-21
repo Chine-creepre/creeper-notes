@@ -18,6 +18,7 @@ const DEFAULT_NOTE_TITLE = "未命名笔记";
 const FOLDER_TREE_ICON = "lucide:folder";
 
 type NoteEditorState = "empty" | "clean" | "dirty" | "saving" | "saved" | "readonly";
+type MarkdownEditorMode = "edit" | "preview";
 
 interface DraftSnapshot {
   title: string;
@@ -78,6 +79,7 @@ export const useSystemStore = defineStore("system", () => {
   const keyword = ref("");
   const statusMessage = ref("");
   const noteEditorState = ref<NoteEditorState>("empty");
+  const markdownEditorMode = ref<MarkdownEditorMode>("preview");
   const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
 
   const draft = reactive<DraftSnapshot>({
@@ -163,6 +165,7 @@ export const useSystemStore = defineStore("system", () => {
     draft.readonly = snapshot.readonly;
     draft.folderId = snapshot.folderId;
     savedDraftSnapshot.value = snapshot;
+    markdownEditorMode.value = "preview";
     transitionNoteEditorState();
   };
 
@@ -229,6 +232,7 @@ export const useSystemStore = defineStore("system", () => {
     activeFolderId.value = null;
     notes.value = [note, ...notes.value];
     selectNote(note);
+    markdownEditorMode.value = "edit";
     noteEditorState.value = "saved";
     showStatusMessage("已新建笔记");
   };
@@ -253,6 +257,7 @@ export const useSystemStore = defineStore("system", () => {
 
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
+      markdownEditorMode.value = "preview";
       noteEditorState.value = "saved";
       showStatusMessage("已保存");
     } finally {
@@ -335,6 +340,7 @@ export const useSystemStore = defineStore("system", () => {
     loadFolders,
     loadNotes,
     loadingNotes,
+    markdownEditorMode,
     moveCurrentNoteToFolder,
     noteCountText,
     noteEditorState,
