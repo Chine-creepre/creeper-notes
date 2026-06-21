@@ -15,6 +15,16 @@ fn focus_search_window_input(app: &AppHandle) -> Result<(), String> {
         .map_err(|error| error.to_string())
 }
 
+fn hide_visible_window(app: &AppHandle, label: &str) -> Result<(), String> {
+    if let Some(window) = app.get_webview_window(label) {
+        if window.is_visible().map_err(|error| error.to_string())? {
+            window.hide().map_err(|error| error.to_string())?;
+        }
+    }
+
+    Ok(())
+}
+
 fn set_search_window_height(app: &AppHandle, height: f64) -> Result<(), String> {
     let window = app
         .get_webview_window(SEARCH_WINDOW_LABEL)
@@ -40,6 +50,8 @@ pub fn resize_search_window(app: &AppHandle, expanded: bool) -> Result<(), Strin
 }
 
 pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
+    hide_visible_window(app, MAIN_WINDOW_LABEL)?;
+
     if let Some(window) = app.get_webview_window(SEARCH_WINDOW_LABEL) {
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
@@ -82,6 +94,7 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
         if window.is_visible().map_err(|error| error.to_string())? {
             window.hide().map_err(|error| error.to_string())?;
         } else {
+            hide_visible_window(app, MAIN_WINDOW_LABEL)?;
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
             resize_search_window(app, false)?;
@@ -151,6 +164,8 @@ pub fn is_settings_window_active(app: &AppHandle) -> bool {
 }
 
 pub fn show_main_window(app: &AppHandle) -> Result<(), String> {
+    hide_visible_window(app, SEARCH_WINDOW_LABEL)?;
+
     let window = app
         .get_webview_window(MAIN_WINDOW_LABEL)
         .ok_or_else(|| "main window not found".to_string())?;
@@ -179,6 +194,7 @@ pub fn toggle_main_window(app: &AppHandle) -> Result<(), String> {
     if window.is_visible().map_err(|error| error.to_string())? {
         window.hide().map_err(|error| error.to_string())?;
     } else {
+        hide_visible_window(app, SEARCH_WINDOW_LABEL)?;
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
     }
