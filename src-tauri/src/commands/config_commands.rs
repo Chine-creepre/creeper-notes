@@ -12,3 +12,8 @@ pub fn get_config(app: AppHandle) -> Result<AppConfig, String> {
 pub fn update_config(app: AppHandle, app_config: AppConfig) -> Result<AppConfig, String> {
     config_service::update_config(&app, app_config)
 }
+
+#[tauri::command]
+pub fn reset_config(app: AppHandle) -> Result<AppConfig, String> {
+    config_service::reset_config(&app)
+}
