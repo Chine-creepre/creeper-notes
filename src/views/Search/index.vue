@@ -12,9 +12,11 @@
           </div>
         </div>
 
-        <button class="h_search_close" type="button" @mousedown.stop @click.stop="closeSearch">
-          <Icon icon="lucide:x" />
-        </button>
+        <div class="h_search_header_actions" @mousedown.stop>
+          <button class="h_search_close" type="button" @click.stop="closeSearch">
+            <Icon icon="lucide:x" />
+          </button>
+        </div>
       </header>
 
       <main class="h_search_body">
