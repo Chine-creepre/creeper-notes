@@ -1,13 +1,13 @@
 .h_tree {
   width: 100%;
   min-width: 0;
-  color: var(--h_color_text_secondary);
+  color: var(--h_dark_text_secondary);
   font-size: 13px;
 }
 
 .h_tree_empty {
   padding: 16px;
-  color: var(--h_color_text_muted);
+  color: var(--h_dark_text_muted);
   text-align: center;
 }
 
@@ -27,7 +27,7 @@
   bottom: 0;
   left: var(--h_tree_line_left);
   width: 1px;
-  background: var(--h_color_border);
+  background: var(--h_dark_border);
 }
 
 .h_tree_node_leaf::before {
@@ -44,7 +44,7 @@
   min-height: 34px;
   border-radius: 11px;
   box-sizing: border-box;
-  color: var(--h_color_text_secondary);
+  color: var(--h_dark_text_secondary);
   cursor: pointer;
 }
 
@@ -55,7 +55,7 @@
   left: var(--h_tree_line_left);
   width: 12px;
   height: 1px;
-  background: var(--h_color_border);
+  background: var(--h_dark_border);
 }
 
 .h_tree_node_root > .h_tree_node_content::before {
@@ -63,11 +63,11 @@
 }
 
 .h_tree_node_content:hover {
-  background: var(--h_color_surface_muted);
+  background: var(--h_dark_surface_muted);
 }
 
 .h_tree_node_content_active {
-  background: var(--h_color_primary_weak);
+  background: color-mix(in srgb, var(--h_color_primary) 18%, transparent);
   color: var(--h_color_primary);
 }
 
@@ -131,12 +131,12 @@
   border: 0;
   border-radius: 8px;
   background: transparent;
-  color: var(--h_color_text_muted);
+  color: var(--h_dark_text_muted);
   cursor: pointer;
 }
 
 .h_tree_node_action:hover {
-  background: var(--h_color_primary_weak);
+  background: color-mix(in srgb, var(--h_color_primary) 18%, transparent);
   color: var(--h_color_primary);
 }
 
