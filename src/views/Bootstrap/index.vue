@@ -3,6 +3,7 @@ import { Icon } from "@iconify/vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
+import { openSettingsWindow } from "@/request/apis/config";
 import { useBootstrap } from "./hook";
 
 const {
@@ -61,6 +62,10 @@ const {
             trigger-icon="lucide:folder"
             @select="selectNewNoteFolder"
           />
+
+          <button class="h_bootstrap_settings_entry" type="button" title="设置" @click="openSettingsWindow">
+            <Icon icon="lucide:settings" />
+          </button>
         </div>
 
         <div class="h_bootstrap_note_list">
