@@ -18,6 +18,11 @@ pub fn toggle_search_window(app: AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
+pub fn resize_search_window(app: AppHandle, expanded: bool) -> Result<(), String> {
+    window_service::resize_search_window(&app, expanded)
+}
+
+#[tauri::command]
 pub fn open_settings_window(app: AppHandle) -> Result<(), String> {
     window_service::open_settings_window(&app)
 }
