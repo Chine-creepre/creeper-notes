@@ -85,20 +85,13 @@ fn initialize_main_window_close_handler(app: &AppHandle) -> Result<(), String> {
     let Some(window) = app.get_webview_window(MAIN_WINDOW_LABEL) else {
         return Ok(());
     };
-
-    window.on_window_event(|event| {
-        if let WindowEvent::CloseRequested { api, .. } = event {
-            api.prevent_close();
-        }
-    });
-
-    let window = app
-        .get_webview_window(MAIN_WINDOW_LABEL)
-        .ok_or_else(|| "main window not found".to_string())?;
+    let close_window = window.clone();
 
     window.on_window_event(move |event| {
-        if let WindowEvent::CloseRequested { .. } = event {
-            if let Err(error) = window.hide() {
+        if let WindowEvent::CloseRequested { api, .. } = event {
+            api.prevent_close();
+
+            if let Err(error) = close_window.hide() {
                 eprintln!("failed to hide main window: {}", error);
             }
         }
