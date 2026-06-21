@@ -1,4 +1,5 @@
 mod config_commands;
+mod folder_commands;
 mod get_data_path;
 mod note_commands;
 mod start_dragging_search_window;
@@ -6,6 +7,13 @@ mod start_dragging_window;
 mod window_commands;
 
 pub use config_commands::{get_config, update_config};
+pub use folder_commands::{
+    create_folder,
+    delete_folder,
+    find_folder_by_id,
+    list_folders,
+    update_folder,
+};
 pub use get_data_path::get_data_path;
 pub use note_commands::{
     create_note,
