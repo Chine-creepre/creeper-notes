@@ -94,13 +94,8 @@ export const useSystemStore = defineStore("system", () => {
   let statusTimer: number | undefined;
 
   const appVersionText = computed(() => `v${appVersion.value}`);
+  const isAllNotesActive = computed(() => activeFolderKey.value === ALL_NOTES_KEY);
   const folderTreeNodes = computed<HTreeNode[]>(() => [
-    {
-      id: ALL_NOTES_KEY,
-      label: "全部笔记",
-      icon: "lucide:library-big",
-      children: [],
-    },
     {
       id: ROOT_FOLDER_KEY,
       label: "根目录",
@@ -230,8 +225,15 @@ export const useSystemStore = defineStore("system", () => {
     await Promise.all([loadFolders(), loadNotes()]);
   };
 
-  const selectFolder = async (node: HTreeNode): Promise<void> => {
-    activeFolderKey.value = node.id;
+  const selectAllNotes = async (): Promise<void> => {
+    activeFolderKey.value = ALL_NOTES_KEY;
+    activeNoteId.value = null;
+    keyword.value = "";
+    await loadNotes();
+  };
+
+  const selectFolder = async (node: HTreeNode | null): Promise<void> => {
+    activeFolderKey.value = node?.id ?? ROOT_FOLDER_KEY;
     activeNoteId.value = null;
     keyword.value = "";
     await loadNotes();
@@ -258,7 +260,7 @@ export const useSystemStore = defineStore("system", () => {
       folder_id: newNoteFolderId.value,
     });
 
-    activeFolderKey.value = note.folder_id ?? ROOT_FOLDER_KEY;
+    activeFolderKey.value = ALL_NOTES_KEY;
     notes.value = [note, ...notes.value];
     selectNote(note);
     noteEditorState.value = "saved";
@@ -364,6 +366,7 @@ export const useSystemStore = defineStore("system", () => {
     getNoteDescription,
     hasDraftChanged,
     initializeSystemData,
+    isAllNotesActive,
     keyword,
     loadFolders,
     loadNotes,
@@ -379,6 +382,7 @@ export const useSystemStore = defineStore("system", () => {
     saveCurrentNote,
     saving,
     searchCurrentNotes,
+    selectAllNotes,
     selectFolder,
     selectNewNoteFolder,
     selectNote,
