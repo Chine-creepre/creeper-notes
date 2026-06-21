@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::models::note::{CreateNotePayload, Note, UpdateNotePayload};
 use crate::models::note_query::NoteQuery;
 use crate::models::page_result::PageResult;
-use crate::repositories::{database_repository, note_repository};
+use crate::repositories::{database_repository, folder_repository, note_repository};
 use crate::services::path_service;
 
 fn get_current_timestamp() -> Result<i64, String> {
@@ -26,9 +26,30 @@ fn get_connection(app: &AppHandle) -> Result<Connection, String> {
         .map_err(|error| error.to_string())
 }
 
+fn normalize_folder_id(folder_id: Option<String>) -> Option<String> {
+    folder_id
+        .map(|folder_id| folder_id.trim().to_string())
+        .filter(|folder_id| !folder_id.is_empty())
+}
+
+fn validate_folder_id(connection: &Connection, folder_id: &Option<String>) -> Result<(), String> {
+    if let Some(folder_id) = folder_id {
+        let folder = folder_repository::find_folder_by_id(connection, folder_id)?;
+
+        if folder.is_none() {
+            return Err("folder not found".to_string());
+        }
+    }
+
+    Ok(())
+}
+
 pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, String> {
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
+    let folder_id = normalize_folder_id(payload.folder_id);
+
+    validate_folder_id(&connection, &folder_id)?;
 
     let note = Note {
         id: Uuid::new_v4().to_string(),
@@ -36,6 +57,7 @@ pub fn create_note(app: &AppHandle, payload: CreateNotePayload) -> Result<Note, 
         describe: payload.describe,
         content: payload.content,
         readonly: payload.readonly,
+        folder_id,
         created_at: timestamp,
         updated_at: timestamp,
         deleted: false,
@@ -67,6 +89,12 @@ pub fn search_notes(app: &AppHandle, query: NoteQuery) -> Result<PageResult<Note
 pub fn update_note(app: &AppHandle, payload: UpdateNotePayload) -> Result<(), String> {
     let connection = get_connection(app)?;
     let timestamp = get_current_timestamp()?;
+    let payload = UpdateNotePayload {
+        folder_id: normalize_folder_id(payload.folder_id),
+        ..payload
+    };
+
+    validate_folder_id(&connection, &payload.folder_id)?;
 
     note_repository::update_note(&connection, &payload, timestamp)
 }
