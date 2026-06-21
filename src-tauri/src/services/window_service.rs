@@ -1,13 +1,20 @@
-use tauri::{AppHandle, Manager, WebviewUrl, WebviewWindowBuilder};
+use tauri::{AppHandle, Emitter, Manager, WebviewUrl, WebviewWindowBuilder};
 
 const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
 const SEARCH_WINDOW_URL: &str = "/search";
+const SEARCH_WINDOW_FOCUS_EVENT: &str = "focus-search-input";
+
+fn focus_search_window_input(app: &AppHandle) -> Result<(), String> {
+    app.emit_to(SEARCH_WINDOW_LABEL, SEARCH_WINDOW_FOCUS_EVENT, ())
+        .map_err(|error| error.to_string())
+}
 
 pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SEARCH_WINDOW_LABEL) {
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
+        focus_search_window_input(app)?;
 
         return Ok(());
     }
@@ -22,10 +29,12 @@ pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     .transparent(true)
     .always_on_top(true)
     .resizable(false)
-    .inner_size(640.0, 260.0)
+    .inner_size(960.0, 680.0)
     .center()
     .build()
     .map_err(|error| error.to_string())?;
+
+    focus_search_window_input(app)?;
 
     Ok(())
 }
@@ -45,6 +54,7 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
         } else {
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
+            focus_search_window_input(app)?;
         }
 
         return Ok(());
