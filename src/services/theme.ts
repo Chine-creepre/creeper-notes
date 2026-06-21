@@ -1,8 +1,10 @@
+import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { getConfig, type AppConfig } from "@/request/apis/config";
 
 export type AppTheme = "blue_cyan" | "green_jade" | "red_brown";
 
 export const DEFAULT_APP_THEME: AppTheme = "blue_cyan";
+export const APP_CONFIG_CHANGED_EVENT = "app-config-changed";
 
 export const APP_THEME_OPTIONS: Array<{
   label: string;
@@ -31,8 +33,17 @@ export const applyTheme = (theme: string): void => {
   document.documentElement.dataset.theme = appTheme;
 };
 
+export const applyAppConfig = (appConfig: AppConfig): void => {
+  applyTheme(appConfig.theme);
+};
+
 export const initializeTheme = async (): Promise<void> => {
   const appConfig: AppConfig = await getConfig();
 
-  applyTheme(appConfig.theme);
+  applyAppConfig(appConfig);
 };
+
+export const listenAppConfigChanged = async (): Promise<UnlistenFn> =>
+  listen<AppConfig>(APP_CONFIG_CHANGED_EVENT, (event) => {
+    applyAppConfig(event.payload);
+  });
