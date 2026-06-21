@@ -26,7 +26,7 @@
       :value="modelValue"
       :readonly="readonly"
       placeholder="使用 Markdown 记录内容..."
-      @blur="focused = false"
+      @blur="handleBlur"
       @focus="focused = true"
       @input="handleInput"
       @keydown="handleKeydown"
@@ -120,9 +120,11 @@ const focusTextarea = async (): Promise<void> => {
 };
 
 const setEditorMode = async (mode: MarkdownEditorMode): Promise<void> => {
+  if (mode === "edit" && props.readonly) return;
+
   editorMode.value = mode;
 
-  if (mode === "edit" && !props.readonly) {
+  if (mode === "edit") {
     await focusTextarea();
   }
 };
@@ -132,6 +134,14 @@ const enterEditMode = async (): Promise<void> => {
   if (editorMode.value === "edit") return;
 
   await setEditorMode("edit");
+};
+
+const handleBlur = (): void => {
+  focused.value = false;
+
+  if (!props.dirty) {
+    editorMode.value = "preview";
+  }
 };
 
 const handleInput = (event: Event): void => {
