@@ -1,7 +1,7 @@
 import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { storeToRefs } from "pinia";
 import { onBeforeUnmount, onMounted } from "vue";
-import { useSystemStore } from "@/stores/system";
+import { useSystemStore } from "@/stores/modules/system";
 
 interface OpenNotePayload {
   id?: string;
