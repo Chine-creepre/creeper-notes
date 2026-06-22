@@ -1,0 +1,29 @@
+.h_select {
+  display: block;
+  width: 100%;
+  height: 28px;
+  min-width: 0;
+  padding: 0 28px 0 10px;
+  border: 1px solid var(--h_window_border_strong);
+  border-radius: 7px;
+  box-sizing: border-box;
+  outline: none;
+  appearance: none;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--h_window_text_muted) 50%) right 13px center / 5px 5px no-repeat,
+    linear-gradient(135deg, var(--h_window_text_muted) 50%, transparent 50%) right 8px center / 5px 5px no-repeat,
+    color-mix(in srgb, var(--h_window_surface_deep) 72%, transparent);
+  color: var(--h_window_text);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 28px;
+}
+
+.h_select:focus {
+  border-color: var(--h_color_primary);
+}
+
+.h_select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
