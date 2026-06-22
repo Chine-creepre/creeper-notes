@@ -1,3 +1,4 @@
+import { emit } from "@tauri-apps/api/event";
 import { computed, onMounted, ref, watch } from "vue";
 import {
   closeSettingsWindow,
@@ -127,8 +128,8 @@ export const useHSettings = () => {
   const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
   const isEditingFolder = computed(() => Boolean(editingFolderId.value));
 
-  const emitFoldersChanged = (): void => {
-    window.dispatchEvent(new CustomEvent(APP_EVENTS.foldersChanged));
+  const emitFoldersChanged = async (): Promise<void> => {
+    await emit(APP_EVENTS.foldersChanged);
   };
 
   const syncThemeDraft = (): void => {
@@ -280,7 +281,7 @@ export const useHSettings = () => {
       folderName.value = DEFAULT_FOLDER_NAME;
       folderParentId.value = null;
       await loadFolders();
-      emitFoldersChanged();
+      await emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderCreated);
     } catch (error) {
       showErrorMessage(error);
@@ -321,7 +322,7 @@ export const useHSettings = () => {
 
       resetFolderEditState();
       await loadFolders();
-      emitFoldersChanged();
+      await emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderUpdated);
     } catch (error) {
       showErrorMessage(error);
@@ -340,7 +341,7 @@ export const useHSettings = () => {
     try {
       await deleteFolder(id);
       await loadFolders();
-      emitFoldersChanged();
+      await emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderDeleted);
     } catch (error) {
       showErrorMessage(error);
