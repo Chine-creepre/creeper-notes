@@ -12,6 +12,7 @@ import {
   type FolderTreeNode,
   type UpdateFolderPayload,
 } from "@/request/apis/notes";
+import { sleep } from "@/utils/sleep";
 
 const FOLDER_TREE_ICON = "lucide:folder";
 
@@ -58,18 +59,21 @@ export const useFolderStore = defineStore("folder", () => {
 
   const createFolderItem = async (payload: CreateFolderPayload): Promise<void> => {
     await createFolder(payload);
+    await sleep();
     await loadFolders();
     await notifyFoldersChanged();
   };
 
   const updateFolderItem = async (payload: UpdateFolderPayload): Promise<void> => {
     await updateFolder(payload);
+    await sleep();
     await loadFolders();
     await notifyFoldersChanged();
   };
 
   const deleteFolderItem = async (id: string): Promise<void> => {
     await deleteFolder(id);
+    await sleep();
     await loadFolders();
     normalizeActiveFolder();
     await notifyFoldersChanged();
