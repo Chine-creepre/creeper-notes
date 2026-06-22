@@ -315,7 +315,7 @@ body,
 
 .h_settings_theme_card {
   display: flex;
-  flex: 0 1 310px;
+  flex: 1 1 150px;
   flex-direction: column;
   min-width: 0;
   min-height: 116px;
@@ -340,15 +340,15 @@ body,
   border-radius: 13px;
 }
 
-.h_settings_theme_card_blue-cyan .h_settings_theme_preview {
+.h_settings_theme_card_blue_cyan .h_settings_theme_preview {
   background: linear-gradient(135deg, #2563eb, #06b6d4);
 }
 
-.h_settings_theme_card_green-jade .h_settings_theme_preview {
+.h_settings_theme_card_green_jade .h_settings_theme_preview {
   background: linear-gradient(135deg, #059669, #14b8a6);
 }
 
-.h_settings_theme_card_red-brown .h_settings_theme_preview {
+.h_settings_theme_card_red_brown .h_settings_theme_preview {
   background: linear-gradient(135deg, #b91c1c, #92400e);
 }
 
