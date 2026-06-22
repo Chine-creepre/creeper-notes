@@ -72,7 +72,11 @@ const editorMode = computed<MarkdownEditorMode>({
 });
 
 const toolbarActions = [
-  { icon: "lucide:heading-1", mark: "# ", title: "标题" },
+  { icon: "lucide:heading-1", mark: "# ", title: "一级标题" },
+  { icon: "lucide:heading-2", mark: "## ", title: "二级标题" },
+  { icon: "lucide:heading-3", mark: "### ", title: "三级标题" },
+  { icon: "lucide:heading-4", mark: "#### ", title: "四级标题" },
+  { icon: "lucide:heading-5", mark: "##### ", title: "五级标题" },
   { icon: "lucide:bold", mark: "**加粗**", title: "加粗" },
   { icon: "lucide:italic", mark: "*斜体*", title: "斜体" },
   { icon: "lucide:list", mark: "- ", title: "列表" },
@@ -93,13 +97,16 @@ const renderInlineMarkdown = (value: string): string =>
   escapeHtml(value)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
-    .replace(/\*([^*]+)\*/g, "<em>$1</em>");
+    .replace(/(?<!\*)\*([^*]+)\*(?!\*)/g, "<em>$1</em>")
+    .replace(/_([^_]+)_/g, "<em>$1</em>");
 
 const previewHtml = computed(() => {
   const lines = props.modelValue.split("\n");
 
   return lines
     .map((line) => {
+      if (line.startsWith("##### ")) return `<h5>${renderInlineMarkdown(line.slice(6))}</h5>`;
+      if (line.startsWith("#### ")) return `<h4>${renderInlineMarkdown(line.slice(5))}</h4>`;
       if (line.startsWith("### ")) return `<h3>${renderInlineMarkdown(line.slice(4))}</h3>`;
       if (line.startsWith("## ")) return `<h2>${renderInlineMarkdown(line.slice(3))}</h2>`;
       if (line.startsWith("# ")) return `<h1>${renderInlineMarkdown(line.slice(2))}</h1>`;
@@ -151,7 +158,7 @@ const handleInput = (event: Event): void => {
 };
 
 const handleKeydown = (event: KeyboardEvent): void => {
-  if (!focused.value || !props.dirty) return;
+  if (!focused.value) return;
   if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "s") return;
 
   event.preventDefault();
