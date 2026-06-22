@@ -16,35 +16,35 @@
     <main class="h_settings_main">
       <aside class="h_settings_nav">
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'theme' }]" type="button" @click="activeDrawer = 'theme'">
-          <Icon class="h_settings_nav_icon" icon="lucide:palette" />
+          <HThemedIcon icon="lucide:palette" :active="activeDrawer === 'theme'" />
           <span>
             <strong>主题设置</strong>
             <em>界面颜色方案</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'startup' }]" type="button" @click="activeDrawer = 'startup'">
-          <Icon class="h_settings_nav_icon" icon="lucide:power" />
+          <HThemedIcon icon="lucide:power" :active="activeDrawer === 'startup'" />
           <span>
             <strong>启动设置</strong>
             <em>开机自启动</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'mainShortcut' }]" type="button" @click="activeDrawer = 'mainShortcut'">
-          <Icon class="h_settings_nav_icon" icon="lucide:keyboard" />
+          <HThemedIcon icon="lucide:keyboard" :active="activeDrawer === 'mainShortcut'" />
           <span>
             <strong>主窗口快捷键</strong>
             <em>显示或隐藏主窗口</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'searchShortcut' }]" type="button" @click="activeDrawer = 'searchShortcut'">
-          <Icon class="h_settings_nav_icon" icon="lucide:search" />
+          <HThemedIcon icon="lucide:search" :active="activeDrawer === 'searchShortcut'" />
           <span>
             <strong>搜索快捷键</strong>
             <em>快速打开搜索</em>
           </span>
         </button>
         <button :class="['h_settings_nav_item', { h_settings_nav_item_active: activeDrawer === 'folders' }]" type="button" @click="activeDrawer = 'folders'">
-          <Icon class="h_settings_nav_icon" icon="lucide:folder-tree" />
+          <HThemedIcon icon="lucide:folder-tree" :active="activeDrawer === 'folders'" />
           <span>
             <strong>分类 / 文件夹</strong>
             <em>管理笔记目录</em>
@@ -171,8 +171,8 @@
 </template>
 
 <script setup lang="ts">
-import { Icon } from "@iconify/vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
+import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import HTree from "@/components/Tree/index.vue";
 import "./index.scss";
 import { useHSettings } from "./hook";
