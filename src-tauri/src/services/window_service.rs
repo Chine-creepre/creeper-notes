@@ -4,9 +4,9 @@ const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
 const SEARCH_WINDOW_URL: &str = "/search";
 const SEARCH_WINDOW_FOCUS_EVENT: &str = "focus-search-input";
-const SEARCH_WINDOW_WIDTH: f64 = 720.0;
-const SEARCH_WINDOW_COLLAPSED_HEIGHT: f64 = 92.0;
-const SEARCH_WINDOW_EXPANDED_HEIGHT: f64 = 520.0;
+const SEARCH_WINDOW_WIDTH: f64 = 620.0;
+const SEARCH_WINDOW_COLLAPSED_HEIGHT: f64 = 76.0;
+const SEARCH_WINDOW_EXPANDED_HEIGHT: f64 = 420.0;
 const SETTINGS_WINDOW_LABEL: &str = "settings";
 const SETTINGS_WINDOW_URL: &str = "/settings";
 
@@ -35,7 +35,8 @@ fn set_search_window_height(app: &AppHandle, height: f64) -> Result<(), String> 
             width: SEARCH_WINDOW_WIDTH,
             height,
         }))
-        .map_err(|error| error.to_string())
+        .map_err(|error| error.to_string())?;
+    window.center().map_err(|error| error.to_string())
 }
 
 pub fn resize_search_window(app: &AppHandle, expanded: bool) -> Result<(), String> {
@@ -53,9 +54,10 @@ pub fn open_search_window(app: &AppHandle) -> Result<(), String> {
     hide_visible_window(app, MAIN_WINDOW_LABEL)?;
 
     if let Some(window) = app.get_webview_window(SEARCH_WINDOW_LABEL) {
+        resize_search_window(app, false)?;
+        window.center().map_err(|error| error.to_string())?;
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
-        resize_search_window(app, false)?;
         focus_search_window_input(app)?;
 
         return Ok(());
@@ -95,9 +97,10 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
             window.hide().map_err(|error| error.to_string())?;
         } else {
             hide_visible_window(app, MAIN_WINDOW_LABEL)?;
+            resize_search_window(app, false)?;
+            window.center().map_err(|error| error.to_string())?;
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
-            resize_search_window(app, false)?;
             focus_search_window_input(app)?;
         }
 
@@ -109,6 +112,7 @@ pub fn toggle_search_window(app: &AppHandle) -> Result<(), String> {
 
 pub fn open_settings_window(app: &AppHandle) -> Result<(), String> {
     if let Some(window) = app.get_webview_window(SETTINGS_WINDOW_LABEL) {
+        window.center().map_err(|error| error.to_string())?;
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
 
@@ -124,7 +128,7 @@ pub fn open_settings_window(app: &AppHandle) -> Result<(), String> {
     .decorations(false)
     .transparent(false)
     .resizable(false)
-    .inner_size(900.0, 520.0)
+    .inner_size(860.0, 500.0)
     .center()
     .build()
     .map_err(|error| error.to_string())?;
@@ -145,6 +149,7 @@ pub fn toggle_settings_window(app: &AppHandle) -> Result<(), String> {
         if window.is_visible().map_err(|error| error.to_string())? {
             window.close().map_err(|error| error.to_string())?;
         } else {
+            window.center().map_err(|error| error.to_string())?;
             window.show().map_err(|error| error.to_string())?;
             window.set_focus().map_err(|error| error.to_string())?;
         }
@@ -170,6 +175,7 @@ pub fn show_main_window(app: &AppHandle) -> Result<(), String> {
         .get_webview_window(MAIN_WINDOW_LABEL)
         .ok_or_else(|| "main window not found".to_string())?;
 
+    window.center().map_err(|error| error.to_string())?;
     window.show().map_err(|error| error.to_string())?;
     window.set_focus().map_err(|error| error.to_string())?;
 
@@ -195,6 +201,7 @@ pub fn toggle_main_window(app: &AppHandle) -> Result<(), String> {
         window.hide().map_err(|error| error.to_string())?;
     } else {
         hide_visible_window(app, SEARCH_WINDOW_LABEL)?;
+        window.center().map_err(|error| error.to_string())?;
         window.show().map_err(|error| error.to_string())?;
         window.set_focus().map_err(|error| error.to_string())?;
     }
