@@ -22,7 +22,6 @@ const {
   isNoteMetaConfirmDisabled,
   loadingNotes,
   markdownEditorMode,
-  noteEditorState,
   noteMetaDraft,
   noteMetaModalTitle,
   noteMetaModalVisible,
@@ -34,7 +33,6 @@ const {
   selectFolder,
   selectNote,
   selectedNote,
-  statusMessage,
   submitNoteMetaModal,
   toggleCurrentNoteReadonly,
   windowTitle,
@@ -117,8 +115,6 @@ const {
           <strong>选择或新建一条笔记</strong>
           <span>从左侧列表选择笔记后开始编辑。</span>
         </div>
-
-        <div v-if="statusMessage" :class="['h_bootstrap_status', `h_bootstrap_status_${noteEditorState}`]">{{ statusMessage }}</div>
       </section>
     </div>
 
