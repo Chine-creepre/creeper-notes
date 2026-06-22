@@ -63,10 +63,7 @@ const {
 
         <div class="h_bootstrap_note_list">
           <div v-if="loadingNotes" class="h_bootstrap_empty">加载中...</div>
-          <div v-else-if="!notes.length" class="h_bootstrap_empty h_bootstrap_empty_notes">
-            <strong>还没有笔记</strong>
-            <span>点击右上角「新建笔记」开始记录。</span>
-          </div>
+          <div v-else-if="!notes.length" class="h_bootstrap_empty">暂无笔记</div>
 
           <template v-else>
             <button
