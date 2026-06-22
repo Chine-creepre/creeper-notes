@@ -8,7 +8,7 @@
 
       <div class="h_settings_header_actions" @mousedown.stop>
         <span class="h_settings_version">{{ appVersionText }}</span>
-        <button class="h_settings_secondary" type="button" :disabled="saving" @click.stop="resetSettings">重置默认配置</button>
+        <HButton variant="secondary" size="sm" :disabled="saving" @click.stop="resetSettings">重置默认配置</HButton>
         <button class="h_settings_close" type="button" @click.stop="closeWindow">×</button>
       </div>
     </header>
@@ -81,7 +81,7 @@
             </button>
           </div>
 
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="confirmTheme">{{ saving ? "更新中" : "确认更新" }}</button>
+          <HButton :disabled="saving" @click="confirmTheme">{{ saving ? "更新中" : "确认更新" }}</HButton>
         </article>
 
         <article v-else-if="activeDrawer === 'startup'" class="h_settings_drawer">
@@ -102,7 +102,7 @@
             </label>
           </div>
 
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveStartupSettings">{{ saving ? "保存中" : "保存启动设置" }}</button>
+          <HButton :disabled="saving" @click="saveStartupSettings">{{ saving ? "保存中" : "保存启动设置" }}</HButton>
         </article>
 
         <article v-else-if="activeDrawer === 'mainShortcut'" class="h_settings_drawer">
@@ -117,7 +117,7 @@
             <strong>{{ listeningShortcutField === "toggle_shortcut" ? "按下快捷键，Esc 取消" : config.toggle_shortcut }}</strong>
           </button>
 
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+          <HButton :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</HButton>
         </article>
 
         <article v-else-if="activeDrawer === 'searchShortcut'" class="h_settings_drawer">
@@ -132,7 +132,7 @@
             <strong>{{ listeningShortcutField === "search_shortcut" ? "按下快捷键，Esc 取消" : config.search_shortcut }}</strong>
           </button>
 
-          <button class="h_settings_primary" type="button" :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</button>
+          <HButton :disabled="saving" @click="saveConfig">{{ saving ? "保存中" : "保存快捷键" }}</HButton>
         </article>
 
         <article v-else class="h_settings_drawer">
@@ -143,16 +143,16 @@
           </div>
 
           <div class="h_settings_folder_form">
-            <input v-model="folderName" class="h_settings_control" placeholder="分类名称" />
+            <HInput v-model="folderName" placeholder="分类名称" />
             <HSelectTree v-model="folderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
-            <button class="h_settings_primary" type="button" @click="createRootFolder">新增分类</button>
+            <HButton @click="createRootFolder">新增分类</HButton>
           </div>
 
           <div v-if="isEditingFolder" class="h_settings_folder_form">
-            <input v-model="editingFolderName" class="h_settings_control" placeholder="分类名称" />
+            <HInput v-model="editingFolderName" placeholder="分类名称" />
             <HSelectTree v-model="editingFolderParentId" :nodes="folderTreeNodes" root-label="根目录" empty-text="暂无分类" />
-            <button class="h_settings_primary" type="button" @click="saveEditFolder">保存编辑</button>
-            <button class="h_settings_secondary" type="button" @click="cancelEditFolder">取消</button>
+            <HButton @click="saveEditFolder">保存编辑</HButton>
+            <HButton variant="secondary" @click="cancelEditFolder">取消</HButton>
           </div>
 
           <div class="h_settings_folder_tree_card">
@@ -171,6 +171,8 @@
 </template>
 
 <script setup lang="ts">
+import HButton from "@/components/Button/index.vue";
+import HInput from "@/components/Input/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
 import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import HTree from "@/components/Tree/index.vue";
