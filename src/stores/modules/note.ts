@@ -10,6 +10,7 @@ import {
   type Note,
   type NoteQuery,
 } from "@/request/apis/notes";
+import { useMessageStore } from "./message";
 import { useFolderStore } from "./folder";
 
 const NOTE_PAGE_SIZE = 50;
@@ -63,11 +64,11 @@ const normalizeDraftTitle = (title: string): string => {
 
 export const useNoteStore = defineStore("note", () => {
   const folderStore = useFolderStore();
+  const messageStore = useMessageStore();
   const notes = ref<Note[]>([]);
   const activeNoteId = ref<string | null>(null);
   const loadingNotes = ref(false);
   const saving = ref(false);
-  const statusMessage = ref("");
   const markdownEditorMode = ref<MarkdownEditorMode>("preview");
   const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
   const noteMetaModalVisible = ref(false);
@@ -87,8 +88,6 @@ export const useNoteStore = defineStore("note", () => {
     describe: "",
   });
 
-  let statusTimer: number | undefined;
-
   const selectedNote = computed(() => notes.value.find((note) => note.id === activeNoteId.value) ?? null);
   const noteCountText = computed(() => `${notes.value.length} 条笔记`);
   const hasDraftChanged = computed(() => !isSameDraftSnapshot(draft, savedDraftSnapshot.value));
@@ -101,21 +100,6 @@ export const useNoteStore = defineStore("note", () => {
 
     return `${title} · ${noteEditorStateLabel.value}`;
   });
-
-  const clearStatusMessage = (): void => {
-    if (statusTimer) {
-      window.clearTimeout(statusTimer);
-      statusTimer = undefined;
-    }
-
-    statusMessage.value = "";
-  };
-
-  const showStatusMessage = (message: string): void => {
-    clearStatusMessage();
-    statusMessage.value = message;
-    statusTimer = window.setTimeout(clearStatusMessage, 1800);
-  };
 
   const syncDraft = (note: Note | null): void => {
     const snapshot = createDraftSnapshot(note);
@@ -222,7 +206,7 @@ export const useNoteStore = defineStore("note", () => {
       selectNote(note);
       markdownEditorMode.value = "edit";
       closeNoteMetaModal();
-      showStatusMessage("已新建笔记");
+      messageStore.success("已新建笔记");
     } finally {
       saving.value = false;
     }
@@ -253,7 +237,7 @@ export const useNoteStore = defineStore("note", () => {
       }
 
       closeNoteMetaModal();
-      showStatusMessage("已更新笔记信息");
+      messageStore.success("已更新笔记信息");
     } finally {
       saving.value = false;
     }
@@ -279,7 +263,7 @@ export const useNoteStore = defineStore("note", () => {
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
       markdownEditorMode.value = "preview";
-      showStatusMessage("已保存");
+      messageStore.success("已保存");
     } finally {
       saving.value = false;
     }
@@ -306,7 +290,7 @@ export const useNoteStore = defineStore("note", () => {
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
       markdownEditorMode.value = "preview";
-      showStatusMessage(nextReadonly ? "已设为只读" : "已取消只读");
+      messageStore.success(nextReadonly ? "已设为只读" : "已取消只读");
     } finally {
       saving.value = false;
     }
@@ -321,7 +305,7 @@ export const useNoteStore = defineStore("note", () => {
     notes.value = notes.value.filter((note) => note.id !== currentNote.id);
     activeNoteId.value = notes.value[0]?.id ?? null;
     syncDraft(selectedNote.value);
-    showStatusMessage("已删除笔记");
+    messageStore.success("已删除笔记");
   };
 
   const moveCurrentNoteToFolder = async (folderId: string | null): Promise<void> => {
@@ -332,7 +316,7 @@ export const useNoteStore = defineStore("note", () => {
     const updatedNote = await moveNoteToFolder(currentNote.id, folderId);
     notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
     selectNote(updatedNote);
-    showStatusMessage("已移动笔记");
+    messageStore.success("已移动笔记");
   };
 
   const openNoteById = async (id: string): Promise<void> => {
@@ -397,7 +381,6 @@ export const useNoteStore = defineStore("note", () => {
     saving,
     selectNote,
     selectedNote,
-    statusMessage,
     submitNoteMetaModal,
     toggleCurrentNoteReadonly,
     windowTitle,
