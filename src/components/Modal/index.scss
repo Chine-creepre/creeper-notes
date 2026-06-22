@@ -58,13 +58,6 @@
   white-space: nowrap;
 }
 
-.h_modal_header button,
-.h_modal_footer button {
-  border: 0;
-  font-family: inherit;
-  cursor: pointer;
-}
-
 .h_modal_header button {
   display: inline-flex;
   align-items: center;
@@ -72,9 +65,12 @@
   width: 22px;
   height: 22px;
   padding: 0;
+  border: 0;
   border-radius: 6px;
   background: transparent;
   color: var(--h_window_text_muted);
+  font-family: inherit;
+  cursor: pointer;
 }
 
 .h_modal_header button:hover {
@@ -99,36 +95,4 @@
   gap: 7px;
   padding: 10px 12px 12px;
   border-top: 1px solid var(--h_window_border);
-}
-
-.h_modal_footer button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 28px;
-  min-width: 60px;
-  padding: 0 10px;
-  border-radius: 7px;
-  font-size: 11px;
-  font-weight: 700;
-}
-
-.h_modal_cancel {
-  background: color-mix(in srgb, var(--h_window_surface_deep) 72%, transparent);
-  color: var(--h_window_text_secondary);
-}
-
-.h_modal_cancel:hover {
-  background: color-mix(in srgb, var(--h_color_primary) 12%, transparent);
-  color: var(--h_color_primary);
-}
-
-.h_modal_confirm {
-  background: var(--h_color_primary);
-  color: #ffffff;
-}
-
-.h_modal_confirm:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
 }
