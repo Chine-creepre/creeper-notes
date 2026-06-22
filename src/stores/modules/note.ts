@@ -16,6 +16,8 @@ import { useFolderStore } from "./folder";
 
 const NOTE_PAGE_SIZE = 50;
 const DEFAULT_NOTE_TITLE = "未命名笔记";
+const EMPTY_NOTE_GUIDE_TITLE = "还没有笔记，点击右上角「新建笔记」开始记录";
+const EMPTY_SELECTED_NOTE_TITLE = "选择或新建一条笔记";
 
 type MarkdownEditorMode = "edit" | "preview";
 type NoteEditorState = MarkdownEditorMode | "readonly";
@@ -97,9 +99,11 @@ export const useNoteStore = defineStore("note", () => {
   const noteMetaModalTitle = computed(() => (noteMetaModalMode.value === "create" ? "新建笔记" : "编辑笔记信息"));
   const isNoteMetaConfirmDisabled = computed(() => !noteMetaDraft.title.trim() || saving.value);
   const windowTitle = computed(() => {
-    const title = selectedNote.value?.title || draft.title || DEFAULT_NOTE_TITLE;
+    if (!selectedNote.value) {
+      return notes.value.length ? EMPTY_SELECTED_NOTE_TITLE : EMPTY_NOTE_GUIDE_TITLE;
+    }
 
-    return `${title} · ${noteEditorStateLabel.value}`;
+    return `${selectedNote.value.title || DEFAULT_NOTE_TITLE} · ${noteEditorStateLabel.value}`;
   });
 
   const syncDraft = (note: Note | null): void => {
