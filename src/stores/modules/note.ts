@@ -8,6 +8,7 @@ import {
   moveNoteToFolder,
   updateNote,
   type Note,
+  type NoteQuery,
 } from "@/request/apis/notes";
 import { useFolderStore } from "./folder";
 
@@ -112,17 +113,29 @@ export const useNoteStore = defineStore("note", () => {
     markdownEditorMode.value = "preview";
   };
 
+  const createNoteQuery = (): NoteQuery => {
+    const activeFolderId = folderStore.activeFolderId;
+
+    if (!activeFolderId) {
+      return {
+        page: 1,
+        page_size: NOTE_PAGE_SIZE,
+      };
+    }
+
+    return {
+      folder_id: activeFolderId,
+      root_only: false,
+      page: 1,
+      page_size: NOTE_PAGE_SIZE,
+    };
+  };
+
   const loadNotes = async (): Promise<void> => {
     loadingNotes.value = true;
 
     try {
-      const activeFolderId = folderStore.activeFolderId;
-      const result = await listNotes({
-        folder_id: activeFolderId,
-        root_only: activeFolderId === null,
-        page: 1,
-        page_size: NOTE_PAGE_SIZE,
-      });
+      const result = await listNotes(createNoteQuery());
       notes.value = result.items;
 
       if (!notes.value.some((note) => note.id === activeNoteId.value)) {
