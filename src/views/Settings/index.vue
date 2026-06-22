@@ -53,9 +53,6 @@
       </aside>
 
       <section class="h_settings_content">
-        <div v-if="errorMessage" class="h_settings_message h_settings_message_error">{{ errorMessage }}</div>
-        <div v-if="successMessage" class="h_settings_message h_settings_message_success">{{ successMessage }}</div>
-
         <article v-if="activeDrawer === 'theme'" class="h_settings_drawer">
           <div class="h_settings_drawer_header">
             <span class="h_settings_drawer_badge">Theme</span>
@@ -190,7 +187,6 @@ const {
   createRootFolder,
   editingFolderName,
   editingFolderParentId,
-  errorMessage,
   folderName,
   folderParentId,
   folderTreeNodes,
@@ -205,7 +201,6 @@ const {
   startDragWindow,
   startEditFolder,
   startListenShortcut,
-  successMessage,
   themeDraft,
   themeOptions,
 } = useHSettings();
