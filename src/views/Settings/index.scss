@@ -451,8 +451,10 @@ body,
 .h_settings_folder_form {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 12px;
+  width: 100%;
+  min-width: 0;
 }
 
 .h_settings_folder_form + .h_settings_folder_form {
@@ -460,9 +462,15 @@ body,
   border-top: 1px solid var(--h_window_border);
 }
 
+.h_settings_folder_form :deep(.h_select_tree) {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 .h_settings_control {
+  flex: 0 0 220px;
   height: 34px;
-  min-width: 160px;
+  min-width: 0;
   padding: 0 12px;
   border: 1px solid var(--h_window_border_strong);
   border-radius: 11px;
@@ -474,7 +482,6 @@ body,
 }
 
 .h_settings_folder_tree_card {
-  min-height: 180px;
   padding: 12px;
   border: 1px solid var(--h_window_border);
   border-radius: 16px;
