@@ -2,6 +2,8 @@ import { listen, type UnlistenFn } from "@tauri-apps/api/event";
 import { storeToRefs } from "pinia";
 import { onBeforeUnmount, onMounted } from "vue";
 import { APP_EVENTS } from "@/constants/events";
+import { useFolderStore } from "@/stores/modules/folder";
+import { useNoteStore } from "@/stores/modules/note";
 import { useSystemStore } from "@/stores/modules/system";
 
 interface OpenNotePayload {
@@ -9,17 +11,30 @@ interface OpenNotePayload {
 }
 
 export const useBootstrap = () => {
+  const folderStore = useFolderStore();
+  const noteStore = useNoteStore();
   const systemStore = useSystemStore();
+  const folderRefs = storeToRefs(folderStore);
+  const noteRefs = storeToRefs(noteStore);
   const systemRefs = storeToRefs(systemStore);
 
   let unlistenFoldersChanged: UnlistenFn | undefined;
   let unlistenOpenNote: UnlistenFn | undefined;
 
+  const selectFolder = async (node: Parameters<typeof folderStore.selectFolder>[0]): Promise<void> => {
+    folderStore.selectFolder(node);
+    noteStore.resetActiveNote();
+    await noteStore.loadNotes();
+  };
+
   onMounted(async () => {
-    await systemStore.initializeSystemData();
+    await folderStore.loadFolders();
+    await noteStore.loadNotes();
 
     unlistenFoldersChanged = await listen(APP_EVENTS.foldersChanged, async () => {
-      await systemStore.syncFoldersChanged();
+      await folderStore.syncFoldersChanged();
+      noteStore.resetActiveNote();
+      await noteStore.loadNotes();
     });
 
     unlistenOpenNote = await listen<OpenNotePayload>("open-note", async (event) => {
@@ -27,7 +42,7 @@ export const useBootstrap = () => {
 
       if (!noteId) return;
 
-      await systemStore.openNoteById(noteId);
+      await noteStore.openNoteById(noteId);
     });
   });
 
@@ -37,18 +52,20 @@ export const useBootstrap = () => {
   });
 
   return {
+    ...folderRefs,
+    ...noteRefs,
     ...systemRefs,
-    createNewNote: systemStore.createNewNote,
-    deleteCurrentNote: systemStore.deleteCurrentNote,
-    formatNoteTime: systemStore.formatNoteTime,
-    getNoteDescription: systemStore.getNoteDescription,
-    loadFolders: systemStore.loadFolders,
-    loadNotes: systemStore.loadNotes,
-    moveCurrentNoteToFolder: systemStore.moveCurrentNoteToFolder,
-    openNoteById: systemStore.openNoteById,
-    saveCurrentNote: systemStore.saveCurrentNote,
-    selectFolder: systemStore.selectFolder,
-    selectNote: systemStore.selectNote,
-    toggleCurrentNoteReadonly: systemStore.toggleCurrentNoteReadonly,
+    createNewNote: noteStore.createNewNote,
+    deleteCurrentNote: noteStore.deleteCurrentNote,
+    formatNoteTime: noteStore.formatNoteTime,
+    getNoteDescription: noteStore.getNoteDescription,
+    loadFolders: folderStore.loadFolders,
+    loadNotes: noteStore.loadNotes,
+    moveCurrentNoteToFolder: noteStore.moveCurrentNoteToFolder,
+    openNoteById: noteStore.openNoteById,
+    saveCurrentNote: noteStore.saveCurrentNote,
+    selectFolder,
+    selectNote: noteStore.selectNote,
+    toggleCurrentNoteReadonly: noteStore.toggleCurrentNoteReadonly,
   };
 };
