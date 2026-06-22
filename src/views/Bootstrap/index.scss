@@ -2,8 +2,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 5px;
-  height: 28px;
+  gap: 4px;
+  height: 26px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -20,8 +20,8 @@
 }
 
 .h_bootstrap_title_new_note svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 .h_bootstrap {
@@ -43,7 +43,7 @@
   min-height: 0;
   overflow: hidden;
   background:
-    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--h_color_primary) 26%, transparent), transparent 36%),
+    radial-gradient(circle at 100% 0%, color-mix(in srgb, var(--h_color_primary) 24%, transparent), transparent 34%),
     linear-gradient(135deg, var(--h_main_bg_start), var(--h_main_bg_end));
   color: var(--h_main_text);
 }
@@ -57,10 +57,10 @@
 
 .h_bootstrap_notes_panel {
   display: flex;
-  flex: 0 0 310px;
+  flex: 0 0 280px;
   flex-direction: column;
-  gap: 14px;
-  padding: 22px 28px 24px;
+  gap: 10px;
+  padding: 16px 20px 18px;
   border-right: 1px solid var(--h_main_border);
   background: color-mix(in srgb, var(--h_main_surface_deep) 52%, transparent);
 }
@@ -85,19 +85,19 @@
 }
 
 .h_bootstrap_quick_actions :deep(.h_select_tree_trigger) {
-  grid-template-columns: 16px minmax(0, 1fr) 16px;
-  height: 36px;
+  grid-template-columns: 15px minmax(0, 1fr) 15px;
+  height: 32px;
   border-color: transparent;
-  border-radius: 999px;
+  border-radius: 10px;
   background: var(--h_main_surface);
   color: var(--h_main_text_secondary);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 650;
 }
 
 .h_bootstrap_quick_actions :deep(.h_select_tree_trigger_icon) {
-  width: 15px;
-  height: 15px;
+  width: 14px;
+  height: 14px;
   color: var(--h_main_text_secondary);
 }
 
@@ -119,9 +119,9 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   min-height: 0;
-  padding-top: 12px;
+  padding-top: 10px;
   border-top: 1px solid var(--h_main_border);
   overflow: auto;
 }
@@ -134,10 +134,10 @@
   align-items: flex-start;
   width: 100%;
   min-width: 0;
-  min-height: 66px;
-  padding: 12px 14px;
+  min-height: 58px;
+  padding: 10px 12px;
   border: 1px solid color-mix(in srgb, var(--h_color_primary) 12%, #1c2d38);
-  border-radius: 14px;
+  border-radius: 10px;
   box-sizing: border-box;
   background: color-mix(in srgb, var(--h_main_surface) 72%, transparent);
   color: var(--h_main_text_secondary);
@@ -147,7 +147,7 @@
 .h_bootstrap_note_item:hover,
 .h_bootstrap_note_item_active {
   border-color: var(--h_color_primary);
-  background: color-mix(in srgb, var(--h_color_primary) 28%, transparent);
+  background: color-mix(in srgb, var(--h_color_primary) 26%, transparent);
 }
 
 .h_bootstrap_note_item strong,
@@ -163,40 +163,40 @@
 
 .h_bootstrap_note_item strong {
   color: var(--h_main_text);
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
-  line-height: 19px;
+  line-height: 17px;
 }
 
 .h_bootstrap_note_item em {
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--h_main_text_muted);
   font-size: 10px;
-  line-height: 15px;
+  line-height: 14px;
 }
 
 .h_bootstrap_note_item > span:not(.h_bootstrap_note_actions) {
-  margin-top: 5px;
-  padding-right: 114px;
+  margin-top: 4px;
+  padding-right: 106px;
   color: var(--h_main_text_secondary);
-  font-size: 11px;
-  line-height: 16px;
+  font-size: 10px;
+  line-height: 14px;
 }
 
 .h_bootstrap_note_actions {
   position: absolute;
-  right: 12px;
-  bottom: 10px;
+  right: 10px;
+  bottom: 8px;
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  max-width: calc(100% - 24px);
-  padding: 3px;
+  gap: 4px;
+  max-width: calc(100% - 20px);
+  padding: 2px;
   border: 1px solid color-mix(in srgb, var(--h_color_primary) 22%, #263a46);
-  border-radius: 10px;
+  border-radius: 8px;
   background: color-mix(in srgb, var(--h_main_surface_deep) 72%, transparent);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.16);
   backdrop-filter: blur(10px);
 }
 
@@ -204,10 +204,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   padding: 0;
-  border-radius: 7px;
+  border-radius: 6px;
   background: transparent;
 }
 
@@ -254,17 +254,17 @@
 }
 
 .h_bootstrap_note_actions svg {
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
 }
 
 .h_bootstrap_empty {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 120px;
+  min-height: 96px;
   color: var(--h_main_text_muted);
-  font-size: 12px;
+  font-size: 11px;
 }
 
 .h_bootstrap_editor_panel {
@@ -272,7 +272,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 24px 30px 28px;
+  padding: 18px 22px 20px;
   background: color-mix(in srgb, var(--h_main_surface_deep) 36%, transparent);
 }
 
@@ -291,41 +291,41 @@
   flex-direction: column;
   min-height: 0;
   border: 1px dashed var(--h_main_border_strong);
-  border-radius: 18px;
+  border-radius: 12px;
   color: var(--h_main_text_muted);
   text-align: center;
 }
 
 .h_bootstrap_editor_empty svg {
-  width: 36px;
-  height: 36px;
-  margin-bottom: 12px;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 10px;
   color: var(--h_color_primary);
 }
 
 .h_bootstrap_editor_empty strong {
   color: var(--h_main_text);
-  font-size: 15px;
-  line-height: 22px;
+  font-size: 14px;
+  line-height: 20px;
 }
 
 .h_bootstrap_editor_empty span {
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 18px;
+  margin-top: 3px;
+  font-size: 11px;
+  line-height: 16px;
 }
 
 .h_bootstrap_status {
   position: absolute;
-  right: 30px;
-  bottom: 28px;
+  right: 22px;
+  bottom: 20px;
   z-index: 2;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid color-mix(in srgb, var(--h_color_primary) 25%, transparent);
-  border-radius: 999px;
+  border-radius: 10px;
   background: color-mix(in srgb, var(--h_color_primary) 12%, transparent);
   color: var(--h_color_primary);
-  font-size: 11px;
+  font-size: 10px;
 }
 
 .h_bootstrap_status_readonly {
@@ -337,19 +337,19 @@
 .h_bootstrap_note_meta_form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
 .h_bootstrap_note_meta_form label {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
   min-width: 0;
 }
 
 .h_bootstrap_note_meta_form span {
   color: var(--h_window_text_secondary);
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   line-height: 1;
 }
@@ -364,24 +364,24 @@
   width: 100%;
   min-width: 0;
   border: 1px solid var(--h_window_border_strong);
-  border-radius: 12px;
+  border-radius: 8px;
   box-sizing: border-box;
   outline: none;
   background: color-mix(in srgb, var(--h_window_surface_deep) 68%, transparent);
   color: var(--h_window_text);
   font-family: inherit;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .h_bootstrap_note_meta_form input {
-  height: 36px;
-  padding: 0 12px;
+  height: 32px;
+  padding: 0 10px;
 }
 
 .h_bootstrap_note_meta_form textarea {
-  height: 96px;
-  padding: 10px 12px;
-  line-height: 18px;
+  height: 82px;
+  padding: 8px 10px;
+  line-height: 17px;
   resize: none;
 }
 
@@ -408,12 +408,12 @@
   }
 
   .h_bootstrap_notes_panel {
-    max-height: 420px;
+    max-height: 360px;
     border-right: 0;
     border-bottom: 1px solid var(--h_main_border);
   }
 
   .h_bootstrap_editor_panel {
-    min-height: 520px;
+    min-height: 460px;
   }
 }
