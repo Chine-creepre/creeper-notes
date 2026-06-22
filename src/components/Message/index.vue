@@ -22,7 +22,7 @@ const messageStore = useMessageStore();
 const { visibleMessages } = storeToRefs(messageStore);
 
 const getMessageStyle = (index: number): Record<string, string | number> => ({
-  transform: `translateX(${index * 14}px)`,
+  width: `calc(100% - ${index * 14}px)`,
   opacity: 1 - index * 0.22,
   zIndex: 10 - index,
 });
