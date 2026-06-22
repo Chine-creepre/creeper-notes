@@ -1,0 +1,35 @@
+.h_themed_icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 30px;
+  height: 30px;
+  border: 1px solid color-mix(in srgb, var(--h_color_primary) 22%, var(--h_window_border));
+  border-radius: 12px;
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--h_color_primary) 10%, var(--h_window_surface_deep));
+  color: color-mix(in srgb, var(--h_color_primary) 34%, var(--h_window_text_secondary));
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--h_color_primary) 10%, transparent),
+    0 8px 18px color-mix(in srgb, var(--h_color_primary) 10%, transparent);
+  transition:
+    background 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.h_themed_icon_active {
+  border-color: color-mix(in srgb, var(--h_color_primary) 58%, var(--h_window_border_strong));
+  background: color-mix(in srgb, var(--h_color_primary) 24%, var(--h_window_surface));
+  color: var(--h_color_primary);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--h_color_primary) 20%, transparent),
+    0 10px 24px color-mix(in srgb, var(--h_color_primary) 18%, transparent);
+}
+
+.h_themed_icon svg {
+  width: 17px;
+  height: 17px;
+}
