@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
+import HModal from "@/components/Modal/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
@@ -9,23 +10,29 @@ const {
   activeFolderId,
   activeNoteId,
   appVersionText,
-  createNewNote,
   deleteCurrentNote,
   draft,
   folderTreeNodes,
   formatNoteTime,
   getNoteDescription,
   hasDraftChanged,
+  isNoteMetaConfirmDisabled,
   loadingNotes,
   markdownEditorMode,
   noteEditorState,
+  noteMetaDraft,
+  noteMetaModalTitle,
+  noteMetaModalVisible,
   notes,
+  openCreateNoteModal,
+  openEditNoteMetaModal,
   saveCurrentNote,
   saving,
   selectFolder,
   selectNote,
   selectedNote,
   statusMessage,
+  submitNoteMetaModal,
   toggleCurrentNoteReadonly,
   windowTitle,
 } = useBootstrap();
@@ -34,7 +41,7 @@ const {
 <template>
   <HAppLayout :title="windowTitle" :title-right-text="appVersionText">
     <template #title-right>
-      <button class="h_bootstrap_title_new_note" type="button" @click="createNewNote">
+      <button class="h_bootstrap_title_new_note" type="button" @click="openCreateNoteModal">
         <Icon icon="lucide:plus" />
         <span>新建笔记</span>
       </button>
@@ -72,6 +79,9 @@ const {
                 <button class="h_bootstrap_note_action_save" type="button" title="保存" :disabled="saving || !hasDraftChanged" @click="saveCurrentNote">
                   <Icon icon="lucide:save" />
                 </button>
+                <button class="h_bootstrap_note_action_edit" type="button" title="编辑名称和摘要" :disabled="saving" @click="openEditNoteMetaModal(note)">
+                  <Icon icon="lucide:pencil" />
+                </button>
                 <button class="h_bootstrap_note_action_delete" type="button" title="删除" @click="deleteCurrentNote">
                   <Icon icon="lucide:trash-2" />
                 </button>
@@ -89,13 +99,6 @@ const {
       <section class="h_bootstrap_editor_panel">
         <template v-if="selectedNote">
           <main class="h_bootstrap_editor_body">
-            <div class="h_bootstrap_note_header">
-              <div class="h_bootstrap_note_fields">
-                <input v-model="draft.title" class="h_bootstrap_title_input" placeholder="未命名笔记" />
-                <input v-model="draft.describe" class="h_bootstrap_desc_input" placeholder="描述 / 摘要" />
-              </div>
-            </div>
-
             <HMarkdownEditor
               v-model="draft.content"
               v-model:mode="markdownEditorMode"
@@ -115,6 +118,24 @@ const {
         <div v-if="statusMessage" :class="['h_bootstrap_status', `h_bootstrap_status_${noteEditorState}`]">{{ statusMessage }}</div>
       </section>
     </div>
+
+    <HModal
+      v-model="noteMetaModalVisible"
+      :title="noteMetaModalTitle"
+      :confirm-disabled="isNoteMetaConfirmDisabled"
+      @confirm="submitNoteMetaModal"
+    >
+      <form class="h_bootstrap_note_meta_form" @submit.prevent="submitNoteMetaModal">
+        <label>
+          <span>名称 <em>*</em></span>
+          <input v-model="noteMetaDraft.title" placeholder="请输入笔记名称" autocomplete="off" />
+        </label>
+        <label>
+          <span>摘要</span>
+          <textarea v-model="noteMetaDraft.describe" placeholder="请输入笔记摘要"></textarea>
+        </label>
+      </form>
+    </HModal>
   </HAppLayout>
 </template>
 
