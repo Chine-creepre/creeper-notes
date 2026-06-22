@@ -1,0 +1,30 @@
+.h_textarea {
+  display: block;
+  width: 100%;
+  height: 78px;
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid var(--h_window_border_strong);
+  border-radius: 7px;
+  box-sizing: border-box;
+  outline: none;
+  background: color-mix(in srgb, var(--h_window_surface_deep) 72%, transparent);
+  color: var(--h_window_text);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 17px;
+  resize: none;
+}
+
+.h_textarea:focus {
+  border-color: var(--h_color_primary);
+}
+
+.h_textarea::placeholder {
+  color: var(--h_window_text_muted);
+}
+
+.h_textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
