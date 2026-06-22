@@ -4,6 +4,7 @@ import App from "./App.vue";
 import "@/styles/reset.css";
 import "@/styles/variable.css";
 import "@/styles/theme.css";
+import "@/styles/compact.css";
 
 import { router } from "@/router";
 import { initializeTheme, listenAppConfigChanged } from "@/services/theme";
