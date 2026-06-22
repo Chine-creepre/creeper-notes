@@ -268,6 +268,7 @@ body,
   border-radius: 11px;
   font-size: 12px;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .h_settings_drawer > .h_settings_primary,
@@ -465,6 +466,12 @@ body,
 .h_settings_folder_form :deep(.h_select_tree) {
   flex: 1 1 auto;
   min-width: 0;
+}
+
+.h_settings_folder_form .h_settings_primary,
+.h_settings_folder_form .h_settings_secondary {
+  flex: 0 0 auto;
+  min-width: 96px;
 }
 
 .h_settings_control {
