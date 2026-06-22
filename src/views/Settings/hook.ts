@@ -23,6 +23,7 @@ import {
 } from "@/services/theme";
 import { useFolderStore } from "@/stores/modules/folder";
 import { useMessageStore } from "@/stores/modules/message";
+import { sleep } from "@/utils/sleep";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
 const FOLDER_TREE_ICON = "lucide:folder";
@@ -156,7 +157,9 @@ export const useHSettings = () => {
     saving.value = true;
 
     try {
-      config.value = await updateConfig(config.value);
+      const nextConfig = await updateConfig(config.value);
+      await sleep();
+      config.value = nextConfig;
       syncThemeDraft();
       applyAppConfig(config.value);
       messageStore.success(SETTINGS_MESSAGES.success.saved);
@@ -183,7 +186,9 @@ export const useHSettings = () => {
     resetPageState();
 
     try {
-      config.value = await resetConfig();
+      const nextConfig = await resetConfig();
+      await sleep();
+      config.value = nextConfig;
       syncThemeDraft();
       applyAppConfig(config.value);
       messageStore.success(SETTINGS_MESSAGES.success.reset);
