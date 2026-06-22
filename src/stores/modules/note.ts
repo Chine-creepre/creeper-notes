@@ -253,7 +253,12 @@ export const useNoteStore = defineStore("note", () => {
   const saveCurrentNote = async (): Promise<void> => {
     const currentNote = selectedNote.value;
 
-    if (!currentNote || !hasDraftChanged.value) return;
+    if (!currentNote) return;
+
+    if (!hasDraftChanged.value) {
+      markdownEditorMode.value = "preview";
+      return;
+    }
 
     saving.value = true;
 
