@@ -17,6 +17,7 @@ const DEFAULT_NOTE_TITLE = "未命名笔记";
 
 type MarkdownEditorMode = "edit" | "preview";
 type NoteEditorState = MarkdownEditorMode | "readonly";
+type NoteMetaModalMode = "create" | "edit";
 
 interface DraftSnapshot {
   title: string;
@@ -24,6 +25,11 @@ interface DraftSnapshot {
   content: string;
   readonly: boolean;
   folderId: string | null;
+}
+
+interface NoteMetaDraft {
+  title: string;
+  describe: string;
 }
 
 const NOTE_EDITOR_STATE_LABELS: Record<NoteEditorState, string> = {
@@ -64,6 +70,9 @@ export const useNoteStore = defineStore("note", () => {
   const statusMessage = ref("");
   const markdownEditorMode = ref<MarkdownEditorMode>("preview");
   const savedDraftSnapshot = ref<DraftSnapshot>(createDraftSnapshot(null));
+  const noteMetaModalVisible = ref(false);
+  const noteMetaModalMode = ref<NoteMetaModalMode>("create");
+  const editingMetaNoteId = ref<string | null>(null);
 
   const draft = reactive<DraftSnapshot>({
     title: "",
@@ -73,6 +82,11 @@ export const useNoteStore = defineStore("note", () => {
     folderId: null,
   });
 
+  const noteMetaDraft = reactive<NoteMetaDraft>({
+    title: "",
+    describe: "",
+  });
+
   let statusTimer: number | undefined;
 
   const selectedNote = computed(() => notes.value.find((note) => note.id === activeNoteId.value) ?? null);
@@ -80,6 +94,8 @@ export const useNoteStore = defineStore("note", () => {
   const hasDraftChanged = computed(() => !isSameDraftSnapshot(draft, savedDraftSnapshot.value));
   const noteEditorState = computed<NoteEditorState>(() => (draft.readonly ? "readonly" : markdownEditorMode.value));
   const noteEditorStateLabel = computed(() => NOTE_EDITOR_STATE_LABELS[noteEditorState.value]);
+  const noteMetaModalTitle = computed(() => (noteMetaModalMode.value === "create" ? "新建笔记" : "编辑笔记信息"));
+  const isNoteMetaConfirmDisabled = computed(() => !noteMetaDraft.title.trim() || saving.value);
   const windowTitle = computed(() => {
     const title = selectedNote.value?.title || draft.title || DEFAULT_NOTE_TITLE;
 
@@ -157,19 +173,90 @@ export const useNoteStore = defineStore("note", () => {
     activeNoteId.value = null;
   };
 
-  const createNewNote = async (): Promise<void> => {
-    const note = await createNote({
-      title: DEFAULT_NOTE_TITLE,
-      describe: null,
-      content: "",
-      readonly: false,
-      folder_id: folderStore.activeFolderId,
-    });
+  const openCreateNoteModal = (): void => {
+    noteMetaModalMode.value = "create";
+    editingMetaNoteId.value = null;
+    noteMetaDraft.title = "";
+    noteMetaDraft.describe = "";
+    noteMetaModalVisible.value = true;
+  };
 
-    notes.value = [note, ...notes.value];
-    selectNote(note);
-    markdownEditorMode.value = "edit";
-    showStatusMessage("已新建笔记");
+  const openEditNoteMetaModal = (note: Note): void => {
+    noteMetaModalMode.value = "edit";
+    editingMetaNoteId.value = note.id;
+    noteMetaDraft.title = note.title;
+    noteMetaDraft.describe = note.describe ?? "";
+    noteMetaModalVisible.value = true;
+  };
+
+  const closeNoteMetaModal = (): void => {
+    noteMetaModalVisible.value = false;
+  };
+
+  const submitNoteMetaModal = async (): Promise<void> => {
+    const title = noteMetaDraft.title.trim();
+
+    if (!title) return;
+
+    if (noteMetaModalMode.value === "create") {
+      await createNewNote(title, noteMetaDraft.describe.trim() || null);
+      return;
+    }
+
+    await updateNoteMeta(title, noteMetaDraft.describe.trim() || null);
+  };
+
+  const createNewNote = async (title: string, describe: string | null): Promise<void> => {
+    saving.value = true;
+
+    try {
+      const note = await createNote({
+        title,
+        describe,
+        content: "",
+        readonly: false,
+        folder_id: folderStore.activeFolderId,
+      });
+
+      notes.value = [note, ...notes.value];
+      selectNote(note);
+      markdownEditorMode.value = "edit";
+      closeNoteMetaModal();
+      showStatusMessage("已新建笔记");
+    } finally {
+      saving.value = false;
+    }
+  };
+
+  const updateNoteMeta = async (title: string, describe: string | null): Promise<void> => {
+    const note = notes.value.find((item) => item.id === editingMetaNoteId.value);
+
+    if (!note) return;
+
+    saving.value = true;
+
+    try {
+      const currentDraft = note.id === activeNoteId.value ? draft : createDraftSnapshot(note);
+      const updatedNote = await updateNote({
+        id: note.id,
+        title,
+        describe,
+        content: currentDraft.content,
+        readonly: currentDraft.readonly,
+        folder_id: currentDraft.folderId,
+      });
+
+      notes.value = notes.value.map((item) => (item.id === updatedNote.id ? updatedNote : item));
+
+      if (updatedNote.id === activeNoteId.value) {
+        selectNote(updatedNote);
+      }
+
+      closeNoteMetaModal();
+      showStatusMessage("已更新笔记信息");
+    } finally {
+      saving.value = false;
+    }
   };
 
   const saveCurrentNote = async (): Promise<void> => {
@@ -283,12 +370,13 @@ export const useNoteStore = defineStore("note", () => {
 
   return {
     activeNoteId,
-    createNewNote,
+    closeNoteMetaModal,
     deleteCurrentNote,
     draft,
     formatNoteTime,
     getNoteDescription,
     hasDraftChanged,
+    isNoteMetaConfirmDisabled,
     loadNotes,
     loadingNotes,
     markdownEditorMode,
@@ -296,7 +384,13 @@ export const useNoteStore = defineStore("note", () => {
     noteCountText,
     noteEditorState,
     noteEditorStateLabel,
+    noteMetaDraft,
+    noteMetaModalMode,
+    noteMetaModalTitle,
+    noteMetaModalVisible,
     notes,
+    openCreateNoteModal,
+    openEditNoteMetaModal,
     openNoteById,
     resetActiveNote,
     saveCurrentNote,
@@ -304,6 +398,7 @@ export const useNoteStore = defineStore("note", () => {
     selectNote,
     selectedNote,
     statusMessage,
+    submitNoteMetaModal,
     toggleCurrentNoteReadonly,
     windowTitle,
   };
