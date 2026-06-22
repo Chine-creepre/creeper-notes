@@ -6,25 +6,25 @@
 
 .h_select_tree_trigger {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 14px;
+  grid-template-columns: minmax(0, 1fr) 14px !important;
   align-items: center;
   width: 100%;
-  height: 28px;
-  padding: 0 10px;
+  height: 28px !important;
+  padding: 0 10px !important;
   border: 1px solid var(--h_window_border_strong);
-  border-radius: 7px;
+  border-radius: 7px !important;
   box-sizing: border-box;
   background: color-mix(in srgb, var(--h_window_surface_deep) 72%, transparent);
   color: var(--h_window_text_secondary);
   font-family: inherit;
-  font-size: 12px;
+  font-size: 12px !important;
   line-height: 28px;
   text-align: left;
   cursor: pointer;
 }
 
 .h_select_tree_trigger:has(.h_select_tree_trigger_icon) {
-  grid-template-columns: 14px minmax(0, 1fr) 14px;
+  grid-template-columns: 14px minmax(0, 1fr) 14px !important;
   column-gap: 7px;
 }
 
@@ -37,13 +37,14 @@
 .h_select_tree_trigger span {
   overflow: hidden;
   min-width: 0;
+  color: var(--h_window_text_secondary) !important;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .h_select_tree_trigger svg {
-  width: 14px;
-  height: 14px;
+  width: 14px !important;
+  height: 14px !important;
   color: var(--h_window_text_muted);
 }
 
@@ -56,7 +57,7 @@
   max-height: 220px;
   padding: 6px;
   border: 1px solid var(--h_window_border);
-  border-radius: 9px;
+  border-radius: 9px !important;
   box-sizing: border-box;
   overflow: auto;
   background: var(--h_window_surface);
