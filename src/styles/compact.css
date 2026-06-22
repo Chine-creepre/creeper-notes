@@ -55,28 +55,6 @@
   bottom: 6px;
 }
 
-.h_bootstrap_empty_notes {
-  align-items: flex-start;
-  justify-content: flex-start;
-  min-height: auto;
-  padding: 8px 2px;
-  text-align: left;
-}
-
-.h_bootstrap_empty_notes strong {
-  color: var(--h_main_text_secondary);
-  font-size: 12px;
-  line-height: 17px;
-}
-
-.h_bootstrap_empty_notes span {
-  display: block;
-  margin-top: 4px;
-  color: var(--h_main_text_muted);
-  font-size: 10px;
-  line-height: 15px;
-}
-
 .h_settings_header {
   height: 48px;
   padding: 0 12px;
