@@ -11,7 +11,6 @@ import {
 import type { FolderTreeNode } from "@/request/apis/notes";
 import type { HTreeNode } from "@/components/Tree/types";
 import {
-  MESSAGE_VISIBLE_DURATION,
   SETTINGS_ERROR_MESSAGE_RULES,
   SETTINGS_MESSAGES,
 } from "@/constants/message";
@@ -23,6 +22,7 @@ import {
   type AppTheme,
 } from "@/services/theme";
 import { useFolderStore } from "@/stores/modules/folder";
+import { useMessageStore } from "@/stores/modules/message";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
 const FOLDER_TREE_ICON = "lucide:folder";
@@ -103,13 +103,12 @@ const getShortcutFromKeyboardEvent = (event: KeyboardEvent): string => {
 
 export const useHSettings = () => {
   const folderStore = useFolderStore();
+  const messageStore = useMessageStore();
   const { folders } = storeToRefs(folderStore);
   const appVersionText = ref(APP_VERSION_TEXT);
   const config = ref<AppConfig>();
   const activeDrawer = ref("theme");
   const saving = ref(false);
-  const errorMessage = ref("");
-  const successMessage = ref("");
   const themeDraft = ref<AppTheme>(DEFAULT_APP_THEME);
   const listeningShortcutField = ref<ShortcutField | null>(null);
   const folderName = ref(DEFAULT_FOLDER_NAME);
@@ -117,8 +116,6 @@ export const useHSettings = () => {
   const editingFolderId = ref<string | null>(null);
   const editingFolderName = ref("");
   const editingFolderParentId = ref<string | null>(null);
-
-  let messageTimer: number | undefined;
 
   const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
   const isEditingFolder = computed(() => Boolean(editingFolderId.value));
@@ -135,28 +132,8 @@ export const useHSettings = () => {
     applyAppConfig(config.value);
   };
 
-  const clearMessage = (): void => {
-    if (messageTimer) {
-      window.clearTimeout(messageTimer);
-      messageTimer = undefined;
-    }
-
-    errorMessage.value = "";
-    successMessage.value = "";
-  };
-
-  const showSuccessMessage = (message: string): void => {
-    clearMessage();
-    successMessage.value = message;
-
-    messageTimer = window.setTimeout(clearMessage, MESSAGE_VISIBLE_DURATION);
-  };
-
   const showErrorMessage = (error: unknown): void => {
-    clearMessage();
-    errorMessage.value = normalizeErrorMessage(error);
-
-    messageTimer = window.setTimeout(clearMessage, MESSAGE_VISIBLE_DURATION);
+    messageStore.error(normalizeErrorMessage(error));
   };
 
   const resetFolderEditState = (): void => {
@@ -166,7 +143,6 @@ export const useHSettings = () => {
   };
 
   const resetPageState = (): void => {
-    clearMessage();
     stopListenShortcut();
     syncThemeDraft();
     folderName.value = DEFAULT_FOLDER_NAME;
@@ -178,13 +154,12 @@ export const useHSettings = () => {
     if (!config.value) return;
 
     saving.value = true;
-    clearMessage();
 
     try {
       config.value = await updateConfig(config.value);
       syncThemeDraft();
       applyAppConfig(config.value);
-      showSuccessMessage(SETTINGS_MESSAGES.success.saved);
+      messageStore.success(SETTINGS_MESSAGES.success.saved);
     } catch (error) {
       showErrorMessage(error);
     } finally {
@@ -211,7 +186,7 @@ export const useHSettings = () => {
       config.value = await resetConfig();
       syncThemeDraft();
       applyAppConfig(config.value);
-      showSuccessMessage(SETTINGS_MESSAGES.success.reset);
+      messageStore.success(SETTINGS_MESSAGES.success.reset);
     } catch (error) {
       showErrorMessage(error);
     } finally {
@@ -221,7 +196,6 @@ export const useHSettings = () => {
 
   const startListenShortcut = (field: ShortcutField): void => {
     listeningShortcutField.value = field;
-    clearMessage();
   };
 
   function stopListenShortcut(): void {
@@ -267,7 +241,7 @@ export const useHSettings = () => {
 
       folderName.value = DEFAULT_FOLDER_NAME;
       folderParentId.value = null;
-      showSuccessMessage(SETTINGS_MESSAGES.success.folderCreated);
+      messageStore.success(SETTINGS_MESSAGES.success.folderCreated);
     } catch (error) {
       showErrorMessage(error);
     }
@@ -278,7 +252,6 @@ export const useHSettings = () => {
 
     if (!folder) return;
 
-    clearMessage();
     editingFolderId.value = folder.id;
     editingFolderName.value = folder.name;
     editingFolderParentId.value = folder.parent_id;
@@ -306,7 +279,7 @@ export const useHSettings = () => {
       });
 
       resetFolderEditState();
-      showSuccessMessage(SETTINGS_MESSAGES.success.folderUpdated);
+      messageStore.success(SETTINGS_MESSAGES.success.folderUpdated);
     } catch (error) {
       showErrorMessage(error);
     }
@@ -323,7 +296,7 @@ export const useHSettings = () => {
   const removeFolder = async (id: string): Promise<void> => {
     try {
       await folderStore.deleteFolderItem(id);
-      showSuccessMessage(SETTINGS_MESSAGES.success.folderDeleted);
+      messageStore.success(SETTINGS_MESSAGES.success.folderDeleted);
     } catch (error) {
       showErrorMessage(error);
     }
@@ -355,7 +328,6 @@ export const useHSettings = () => {
     editingFolderId,
     editingFolderName,
     editingFolderParentId,
-    errorMessage,
     folderName,
     folderParentId,
     folderTreeNodes,
@@ -374,7 +346,6 @@ export const useHSettings = () => {
     startEditFolder,
     startListenShortcut,
     stopListenShortcut,
-    successMessage,
     themeDraft,
     themeOptions: APP_THEME_OPTIONS,
   };
