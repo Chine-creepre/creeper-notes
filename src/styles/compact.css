@@ -89,14 +89,6 @@
   line-height: 23px;
 }
 
-.h_settings_primary,
-.h_settings_secondary,
-.h_settings_danger {
-  height: 28px;
-  padding: 0 11px;
-  border-radius: var(--h_compact_radius_sm);
-}
-
 .h_settings_theme_card {
   min-height: 92px;
   padding: 10px;
@@ -117,6 +109,20 @@
 .h_settings_folder_tree_card {
   padding: 8px;
   border-radius: var(--h_compact_radius_md);
+}
+
+.h_settings_folder_form .h_input {
+  flex: 0 0 200px;
+}
+
+.h_settings_folder_form .h_select_tree {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.h_settings_folder_form .h_button {
+  flex: 0 0 auto;
+  min-width: 86px;
 }
 
 .h_modal_panel {
