@@ -1,0 +1,125 @@
+:root {
+  --h_compact_radius_sm: 6px;
+  --h_compact_radius_md: 8px;
+  --h_compact_radius_lg: 10px;
+  --h_compact_gap: 8px;
+}
+
+.h_window_title_bar {
+  height: 36px;
+}
+
+.h_window_title_bar_drag {
+  gap: 12px;
+  padding: 0 8px 0 14px;
+}
+
+.h_window_title_bar_current_note {
+  font-size: 11px;
+}
+
+.h_window_title_bar_window_action {
+  width: 24px;
+  height: 24px;
+  border-radius: var(--h_compact_radius_sm);
+}
+
+.h_window_title_bar_window_action svg {
+  width: 13px;
+  height: 13px;
+}
+
+.h_bootstrap_notes_panel {
+  flex-basis: 260px;
+  gap: 8px;
+  padding: 12px 16px 14px;
+}
+
+.h_bootstrap_editor_panel {
+  padding: 14px 18px 16px;
+}
+
+.h_bootstrap_note_item {
+  min-height: 52px;
+  padding: 8px 10px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_bootstrap_note_list {
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.h_bootstrap_note_actions {
+  right: 8px;
+  bottom: 6px;
+}
+
+.h_settings_header {
+  height: 48px;
+  padding: 0 12px;
+}
+
+.h_settings_main {
+  padding: 8px;
+  gap: 8px;
+}
+
+.h_settings_nav {
+  padding: 7px;
+  border-radius: var(--h_compact_radius_lg);
+}
+
+.h_settings_nav_item {
+  min-height: 40px;
+  margin-bottom: 5px;
+  padding: 5px 7px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_settings_drawer {
+  row-gap: 10px;
+  padding: 12px;
+  border-radius: var(--h_compact_radius_lg);
+}
+
+.h_settings_drawer_header h2 {
+  margin-top: 6px;
+  font-size: 17px;
+  line-height: 23px;
+}
+
+.h_settings_primary,
+.h_settings_secondary,
+.h_settings_danger {
+  height: 28px;
+  padding: 0 11px;
+  border-radius: var(--h_compact_radius_sm);
+}
+
+.h_settings_theme_card {
+  min-height: 92px;
+  padding: 10px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_settings_setting_card {
+  padding: 10px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_settings_shortcut_capture {
+  min-height: 42px;
+  padding: 0 10px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_settings_folder_tree_card {
+  padding: 8px;
+  border-radius: var(--h_compact_radius_md);
+}
+
+.h_modal_panel {
+  width: min(340px, 100%);
+  border-radius: var(--h_compact_radius_lg);
+}
