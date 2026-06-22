@@ -12,16 +12,15 @@ export const useBootstrap = () => {
   const systemStore = useSystemStore();
   const systemRefs = storeToRefs(systemStore);
 
+  let unlistenFoldersChanged: UnlistenFn | undefined;
   let unlistenOpenNote: UnlistenFn | undefined;
-
-  const syncFoldersChanged = async (): Promise<void> => {
-    await systemStore.loadFolders();
-    await systemStore.loadNotes();
-  };
 
   onMounted(async () => {
     await systemStore.initializeSystemData();
-    window.addEventListener(APP_EVENTS.foldersChanged, syncFoldersChanged);
+
+    unlistenFoldersChanged = await listen(APP_EVENTS.foldersChanged, async () => {
+      await systemStore.syncFoldersChanged();
+    });
 
     unlistenOpenNote = await listen<OpenNotePayload>("open-note", async (event) => {
       const noteId = event.payload?.id;
@@ -33,7 +32,7 @@ export const useBootstrap = () => {
   });
 
   onBeforeUnmount(() => {
-    window.removeEventListener(APP_EVENTS.foldersChanged, syncFoldersChanged);
+    unlistenFoldersChanged?.();
     unlistenOpenNote?.();
   });
 
