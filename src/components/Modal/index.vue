@@ -15,8 +15,8 @@
         </main>
 
         <footer class="h_modal_footer">
-          <button class="h_modal_cancel" type="button" @click="emitClose">取消</button>
-          <button class="h_modal_confirm" type="button" :disabled="confirmDisabled" @click="emitConfirm">确认</button>
+          <HButton variant="secondary" @click="emitClose">取消</HButton>
+          <HButton :disabled="confirmDisabled" @click="emitConfirm">确认</HButton>
         </footer>
       </section>
     </div>
@@ -25,6 +25,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import HButton from "@/components/Button/index.vue";
 import "./index.scss";
 
 withDefaults(
