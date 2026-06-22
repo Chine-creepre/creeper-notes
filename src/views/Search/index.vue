@@ -1,8 +1,13 @@
 <template>
   <div class="h_search">
     <section class="h_search_panel">
+      <header class="h_search_header" @mousedown.left="startDragWindow">
+        <span>快速搜索</span>
+        <em>搜索笔记标题、摘要和正文</em>
+      </header>
+
       <main class="h_search_body">
-        <div class="h_search_input_card" @mousedown.left="startDragWindow">
+        <div class="h_search_input_card">
           <Icon class="h_search_input_icon" icon="lucide:search" />
           <input
             ref="inputRef"
