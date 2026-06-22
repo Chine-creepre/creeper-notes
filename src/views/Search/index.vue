@@ -43,9 +43,7 @@
               @mouseenter="activeIndex = index"
               @click="selectSuggestion(suggestion)"
             >
-              <span class="h_search_result_icon">
-                <Icon icon="lucide:file-text" />
-              </span>
+              <HThemedIcon icon="lucide:file-text" :active="index === activeIndex" />
               <span class="h_search_result_content">
                 <strong>{{ suggestion.title }}</strong>
                 <em>{{ suggestion.describe || suggestion.content || "打开这条笔记" }}</em>
@@ -57,7 +55,7 @@
           </div>
 
           <div v-else-if="isEmptyResult" class="h_search_empty">
-            <Icon icon="lucide:file-x-2" />
+            <HThemedIcon icon="lucide:file-x-2" />
             <strong>没有找到结果</strong>
             <span>换一个关键词试试。</span>
           </div>
@@ -69,6 +67,7 @@
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import "./index.scss";
 import { useHSearch } from "./hook";
 
