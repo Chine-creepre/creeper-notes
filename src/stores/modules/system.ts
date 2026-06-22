@@ -34,6 +34,9 @@ const NOTE_EDITOR_STATE_LABELS: Record<NoteEditorState, string> = {
   readonly: "只读",
 };
 
+const hasFolder = (folders: FolderTreeNode[], id: string): boolean =>
+  folders.some((folder) => folder.id === id || hasFolder(folder.children, id));
+
 const mapFolderToTreeNode = (folder: FolderTreeNode): HTreeNode => ({
   id: folder.id,
   label: folder.name,
@@ -149,6 +152,14 @@ export const useSystemStore = defineStore("system", () => {
     folders.value = await listFolderTree();
   };
 
+  const normalizeActiveFolder = (): void => {
+    if (!activeFolderId.value) return;
+    if (hasFolder(folders.value, activeFolderId.value)) return;
+
+    activeFolderId.value = null;
+    activeNoteId.value = null;
+  };
+
   const loadNotes = async (): Promise<void> => {
     loadingNotes.value = true;
 
@@ -171,6 +182,12 @@ export const useSystemStore = defineStore("system", () => {
     }
   };
 
+  const syncFoldersChanged = async (): Promise<void> => {
+    await loadFolders();
+    normalizeActiveFolder();
+    await loadNotes();
+  };
+
   const initializeSystemData = async (): Promise<void> => {
     await Promise.all([loadFolders(), loadNotes()]);
   };
@@ -187,15 +204,15 @@ export const useSystemStore = defineStore("system", () => {
   };
 
   const createNewNote = async (): Promise<void> => {
+    const folderId = activeFolderId.value;
     const note = await createNote({
       title: DEFAULT_NOTE_TITLE,
       describe: null,
       content: "",
       readonly: false,
-      folder_id: null,
+      folder_id: folderId,
     });
 
-    activeFolderId.value = null;
     notes.value = [note, ...notes.value];
     selectNote(note);
     markdownEditorMode.value = "edit";
@@ -322,6 +339,7 @@ export const useSystemStore = defineStore("system", () => {
     selectNote,
     selectedNote,
     statusMessage,
+    syncFoldersChanged,
     toggleCurrentNoteReadonly,
     windowTitle,
   };
