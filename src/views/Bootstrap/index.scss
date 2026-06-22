@@ -177,7 +177,7 @@
 
 .h_bootstrap_note_item > span:not(.h_bootstrap_note_actions) {
   margin-top: 5px;
-  padding-right: 86px;
+  padding-right: 114px;
   color: var(--h_main_text_secondary);
   font-size: 11px;
   line-height: 16px;
@@ -223,6 +223,15 @@
 .h_bootstrap_note_action_save:hover {
   background: var(--h_color_success_weak);
   color: var(--h_color_success);
+}
+
+.h_bootstrap_note_action_edit {
+  color: var(--h_color_primary);
+}
+
+.h_bootstrap_note_action_edit:hover {
+  background: var(--h_color_primary_weak);
+  color: var(--h_color_primary);
 }
 
 .h_bootstrap_note_action_delete {
@@ -274,49 +283,6 @@
   min-height: 0;
 }
 
-.h_bootstrap_note_header {
-  flex: 0 0 auto;
-  margin-bottom: 18px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--h_main_border);
-}
-
-.h_bootstrap_note_fields {
-  min-width: 0;
-}
-
-.h_bootstrap_title_input,
-.h_bootstrap_desc_input {
-  width: 100%;
-  min-width: 0;
-  border: 0;
-  outline: none;
-  box-sizing: border-box;
-  background: transparent;
-  color: var(--h_main_text);
-  font-family: inherit;
-}
-
-.h_bootstrap_title_input {
-  height: 40px;
-  margin-bottom: 6px;
-  font-size: 20px;
-  font-weight: 760;
-  line-height: 40px;
-}
-
-.h_bootstrap_title_input::placeholder,
-.h_bootstrap_desc_input::placeholder {
-  color: var(--h_main_text_muted);
-}
-
-.h_bootstrap_desc_input {
-  height: 28px;
-  color: var(--h_main_text_secondary);
-  font-size: 12px;
-  line-height: 28px;
-}
-
 .h_bootstrap_editor_empty {
   display: flex;
   align-items: center;
@@ -362,22 +328,71 @@
   font-size: 11px;
 }
 
-.h_bootstrap_status_dirty {
-  border-color: rgba(217, 119, 6, 0.28);
-  background: rgba(217, 119, 6, 0.12);
-  color: #d97706;
-}
-
-.h_bootstrap_status_saving {
-  border-color: color-mix(in srgb, var(--h_color_primary) 35%, transparent);
-  background: color-mix(in srgb, var(--h_color_primary) 16%, transparent);
+.h_bootstrap_status_readonly {
+  border-color: color-mix(in srgb, var(--h_color_primary) 28%, transparent);
+  background: var(--h_color_primary_weak);
   color: var(--h_color_primary);
 }
 
-.h_bootstrap_status_saved {
-  border-color: color-mix(in srgb, var(--h_color_success) 30%, transparent);
-  background: var(--h_color_success_weak);
-  color: var(--h_color_success);
+.h_bootstrap_note_meta_form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.h_bootstrap_note_meta_form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.h_bootstrap_note_meta_form span {
+  color: var(--h_window_text_secondary);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.h_bootstrap_note_meta_form em {
+  color: var(--h_color_danger);
+  font-style: normal;
+}
+
+.h_bootstrap_note_meta_form input,
+.h_bootstrap_note_meta_form textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid var(--h_window_border_strong);
+  border-radius: 12px;
+  box-sizing: border-box;
+  outline: none;
+  background: color-mix(in srgb, var(--h_window_surface_deep) 68%, transparent);
+  color: var(--h_window_text);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.h_bootstrap_note_meta_form input {
+  height: 36px;
+  padding: 0 12px;
+}
+
+.h_bootstrap_note_meta_form textarea {
+  height: 96px;
+  padding: 10px 12px;
+  line-height: 18px;
+  resize: none;
+}
+
+.h_bootstrap_note_meta_form input:focus,
+.h_bootstrap_note_meta_form textarea:focus {
+  border-color: var(--h_color_primary);
+}
+
+.h_bootstrap_note_meta_form input::placeholder,
+.h_bootstrap_note_meta_form textarea::placeholder {
+  color: var(--h_window_text_muted);
 }
 
 @media (max-width: 920px) {
