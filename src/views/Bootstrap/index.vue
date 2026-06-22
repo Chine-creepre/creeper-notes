@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
+import HButton from "@/components/Button/index.vue";
+import HInput from "@/components/Input/index.vue";
 import HMarkdownEditor from "@/components/MarkdownEditor/index.vue";
 import HModal from "@/components/Modal/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
+import HTextarea from "@/components/Textarea/index.vue";
 import HAppLayout from "@/layouts/HAppLayout/index.vue";
 import { useBootstrap } from "./hook";
 
@@ -41,10 +44,10 @@ const {
 <template>
   <HAppLayout :title="windowTitle" :title-right-text="appVersionText">
     <template #title-right>
-      <button class="h_bootstrap_title_new_note" type="button" @click="openCreateNoteModal">
+      <HButton variant="ghost" size="sm" @click="openCreateNoteModal">
         <Icon icon="lucide:plus" />
         <span>新建笔记</span>
-      </button>
+      </HButton>
     </template>
 
     <div class="h_bootstrap">
@@ -128,11 +131,11 @@ const {
       <form class="h_bootstrap_note_meta_form" @submit.prevent="submitNoteMetaModal">
         <label>
           <span>名称 <em>*</em></span>
-          <input v-model="noteMetaDraft.title" placeholder="请输入笔记名称" autocomplete="off" />
+          <HInput v-model="noteMetaDraft.title" placeholder="请输入笔记名称" autocomplete="off" />
         </label>
         <label>
           <span>摘要</span>
-          <textarea v-model="noteMetaDraft.describe" placeholder="请输入笔记摘要"></textarea>
+          <HTextarea v-model="noteMetaDraft.describe" placeholder="请输入笔记摘要" />
         </label>
       </form>
     </HModal>
