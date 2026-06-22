@@ -4,9 +4,9 @@ const MAIN_WINDOW_LABEL: &str = "main";
 const SEARCH_WINDOW_LABEL: &str = "search";
 const SEARCH_WINDOW_URL: &str = "/search";
 const SEARCH_WINDOW_FOCUS_EVENT: &str = "focus-search-input";
-const SEARCH_WINDOW_WIDTH: f64 = 620.0;
-const SEARCH_WINDOW_COLLAPSED_HEIGHT: f64 = 76.0;
-const SEARCH_WINDOW_EXPANDED_HEIGHT: f64 = 420.0;
+const SEARCH_WINDOW_WIDTH: f64 = 560.0;
+const SEARCH_WINDOW_COLLAPSED_HEIGHT: f64 = 66.0;
+const SEARCH_WINDOW_EXPANDED_HEIGHT: f64 = 360.0;
 const SETTINGS_WINDOW_LABEL: &str = "settings";
 const SETTINGS_WINDOW_URL: &str = "/settings";
 
