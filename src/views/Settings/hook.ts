@@ -1,4 +1,4 @@
-import { emit } from "@tauri-apps/api/event";
+import { storeToRefs } from "pinia";
 import { computed, onMounted, ref, watch } from "vue";
 import {
   closeSettingsWindow,
@@ -8,15 +8,8 @@ import {
   updateConfig,
   type AppConfig,
 } from "@/request/apis/config";
-import {
-  createFolder,
-  deleteFolder,
-  listFolderTree,
-  updateFolder,
-  type FolderTreeNode,
-} from "@/request/apis/notes";
+import type { FolderTreeNode } from "@/request/apis/notes";
 import type { HTreeNode } from "@/components/Tree/types";
-import { APP_EVENTS } from "@/constants/events";
 import {
   MESSAGE_VISIBLE_DURATION,
   SETTINGS_ERROR_MESSAGE_RULES,
@@ -29,6 +22,7 @@ import {
   isAppTheme,
   type AppTheme,
 } from "@/services/theme";
+import { useFolderStore } from "@/stores/modules/folder";
 
 const DEFAULT_FOLDER_NAME = "新建分类";
 const FOLDER_TREE_ICON = "lucide:folder";
@@ -108,9 +102,10 @@ const getShortcutFromKeyboardEvent = (event: KeyboardEvent): string => {
 };
 
 export const useHSettings = () => {
+  const folderStore = useFolderStore();
+  const { folders } = storeToRefs(folderStore);
   const appVersionText = ref(APP_VERSION_TEXT);
   const config = ref<AppConfig>();
-  const folders = ref<FolderTreeNode[]>([]);
   const activeDrawer = ref("theme");
   const saving = ref(false);
   const errorMessage = ref("");
@@ -128,10 +123,6 @@ export const useHSettings = () => {
   const folderTreeNodes = computed(() => folders.value.map(mapFolderToTreeNode));
   const isEditingFolder = computed(() => Boolean(editingFolderId.value));
 
-  const emitFoldersChanged = async (): Promise<void> => {
-    await emit(APP_EVENTS.foldersChanged);
-  };
-
   const syncThemeDraft = (): void => {
     if (!config.value) return;
 
@@ -142,10 +133,6 @@ export const useHSettings = () => {
     config.value = await getConfig();
     syncThemeDraft();
     applyAppConfig(config.value);
-  };
-
-  const loadFolders = async (): Promise<void> => {
-    folders.value = await listFolderTree();
   };
 
   const clearMessage = (): void => {
@@ -272,7 +259,7 @@ export const useHSettings = () => {
     if (!name) return;
 
     try {
-      await createFolder({
+      await folderStore.createFolderItem({
         parent_id: folderParentId.value,
         name,
         sort_order: getNextSortOrder(folders.value),
@@ -280,8 +267,6 @@ export const useHSettings = () => {
 
       folderName.value = DEFAULT_FOLDER_NAME;
       folderParentId.value = null;
-      await loadFolders();
-      await emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderCreated);
     } catch (error) {
       showErrorMessage(error);
@@ -313,7 +298,7 @@ export const useHSettings = () => {
     if (!folder) return;
 
     try {
-      await updateFolder({
+      await folderStore.updateFolderItem({
         id: editingFolderId.value,
         parent_id: editingFolderParentId.value,
         name,
@@ -321,8 +306,6 @@ export const useHSettings = () => {
       });
 
       resetFolderEditState();
-      await loadFolders();
-      await emitFoldersChanged();
       showSuccessMessage(SETTINGS_MESSAGES.success.folderUpdated);
     } catch (error) {
       showErrorMessage(error);
@@ -339,9 +322,7 @@ export const useHSettings = () => {
 
   const removeFolder = async (id: string): Promise<void> => {
     try {
-      await deleteFolder(id);
-      await loadFolders();
-      await emitFoldersChanged();
+      await folderStore.deleteFolderItem(id);
       showSuccessMessage(SETTINGS_MESSAGES.success.folderDeleted);
     } catch (error) {
       showErrorMessage(error);
@@ -359,7 +340,7 @@ export const useHSettings = () => {
   watch(activeDrawer, resetPageState);
 
   onMounted(async () => {
-    await Promise.all([loadConfig(), loadFolders()]);
+    await Promise.all([loadConfig(), folderStore.loadFolders()]);
   });
 
   return {
@@ -381,7 +362,7 @@ export const useHSettings = () => {
     folders,
     isEditingFolder,
     listeningShortcutField,
-    loadFolders,
+    loadFolders: folderStore.loadFolders,
     removeFolder,
     removeFolderByNode,
     resetSettings,
