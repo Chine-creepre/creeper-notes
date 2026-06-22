@@ -10,6 +10,7 @@ import {
   type Note,
   type NoteQuery,
 } from "@/request/apis/notes";
+import { sleep } from "@/utils/sleep";
 import { useMessageStore } from "./message";
 import { useFolderStore } from "./folder";
 
@@ -201,6 +202,7 @@ export const useNoteStore = defineStore("note", () => {
         readonly: false,
         folder_id: folderStore.activeFolderId,
       });
+      await sleep();
 
       notes.value = [note, ...notes.value];
       selectNote(note);
@@ -229,6 +231,7 @@ export const useNoteStore = defineStore("note", () => {
         readonly: currentDraft.readonly,
         folder_id: currentDraft.folderId,
       });
+      await sleep();
 
       notes.value = notes.value.map((item) => (item.id === updatedNote.id ? updatedNote : item));
 
@@ -259,6 +262,7 @@ export const useNoteStore = defineStore("note", () => {
         readonly: draft.readonly,
         folder_id: draft.folderId,
       });
+      await sleep();
 
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
@@ -286,6 +290,7 @@ export const useNoteStore = defineStore("note", () => {
         readonly: nextReadonly,
         folder_id: draft.folderId,
       });
+      await sleep();
 
       notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
       selectNote(updatedNote);
@@ -302,6 +307,7 @@ export const useNoteStore = defineStore("note", () => {
     if (!currentNote) return;
 
     await deleteNote(currentNote.id);
+    await sleep();
     notes.value = notes.value.filter((note) => note.id !== currentNote.id);
     activeNoteId.value = notes.value[0]?.id ?? null;
     syncDraft(selectedNote.value);
@@ -314,6 +320,7 @@ export const useNoteStore = defineStore("note", () => {
     if (!currentNote) return;
 
     const updatedNote = await moveNoteToFolder(currentNote.id, folderId);
+    await sleep();
     notes.value = notes.value.map((note) => (note.id === updatedNote.id ? updatedNote : note));
     selectNote(updatedNote);
     messageStore.success("已移动笔记");
