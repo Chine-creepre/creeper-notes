@@ -1,11 +1,13 @@
 <template>
   <section :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]" @focusin="enterEditMode">
-    <Toolbar
-      class="h_markdown_editor_toolbar"
-      :editor="editorRef"
-      :default-config="toolbarConfig"
-      mode="default"
-    />
+    <div ref="toolbarRef" class="h_markdown_editor_toolbar_wrap">
+      <Toolbar
+        class="h_markdown_editor_toolbar"
+        :editor="editorRef"
+        :default-config="toolbarConfig"
+        mode="default"
+      />
+    </div>
 
     <Editor
       v-show="editorMode === 'edit'"
@@ -39,6 +41,13 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch 
 type MarkdownEditorMode = "edit" | "preview";
 
 const EMPTY_EDITOR_HTML = "<p><br></p>";
+const TOOLBAR_TIP_SELECTOR = [
+  ".title",
+  ".w-e-bar-tooltip",
+  ".w-e-tooltip",
+  ".w-e-menu-tooltip",
+  ".w-e-hover-bar",
+].join(",");
 
 const props = withDefaults(
   defineProps<{
@@ -60,8 +69,11 @@ const emit = defineEmits<{
   save: [];
 }>();
 
+const toolbarRef = ref<HTMLElement>();
 const editorRef = shallowRef<IDomEditor>();
 const editorValue = ref(props.modelValue || "");
+let toolbarTipObserver: MutationObserver | undefined;
+let toolbarCleanupTimer: number | undefined;
 
 const readonly = computed(() => props.readonly);
 const editorMode = computed<MarkdownEditorMode>({
@@ -93,6 +105,50 @@ const editorConfig: Partial<IEditorConfig> = {
 };
 
 const previewHtml = computed(() => editorValue.value || EMPTY_EDITOR_HTML);
+
+const clearToolbarTips = () => {
+  const toolbar = toolbarRef.value;
+
+  if (!toolbar) return;
+
+  toolbar.querySelectorAll("[title]").forEach((item) => {
+    item.removeAttribute("title");
+  });
+
+  toolbar.querySelectorAll("[data-title]").forEach((item) => {
+    item.removeAttribute("data-title");
+  });
+
+  toolbar.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
+    item.remove();
+  });
+};
+
+const scheduleClearToolbarTips = () => {
+  if (toolbarCleanupTimer) {
+    window.clearTimeout(toolbarCleanupTimer);
+  }
+
+  toolbarCleanupTimer = window.setTimeout(clearToolbarTips, 0);
+};
+
+const observeToolbarTips = async () => {
+  await nextTick();
+  clearToolbarTips();
+
+  const toolbar = toolbarRef.value;
+
+  if (!toolbar) return;
+
+  toolbarTipObserver?.disconnect();
+  toolbarTipObserver = new MutationObserver(scheduleClearToolbarTips);
+  toolbarTipObserver.observe(toolbar, {
+    subtree: true,
+    childList: true,
+    attributes: true,
+    attributeFilter: ["title", "data-title", "class", "style"],
+  });
+};
 
 const syncReadonlyState = () => {
   const editor = editorRef.value;
@@ -129,9 +185,10 @@ const enterEditMode = async () => {
   await setEditorMode("edit");
 };
 
-const handleCreated = (editor: IDomEditor) => {
+const handleCreated = async (editor: IDomEditor) => {
   editorRef.value = editor;
   syncReadonlyState();
+  await observeToolbarTips();
 };
 
 const handleFocus = () => {
@@ -190,12 +247,18 @@ watch(
   syncReadonlyState,
 );
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener("keydown", handleKeydown);
   syncReadonlyState();
+  await observeToolbarTips();
 });
 
 onBeforeUnmount(() => {
+  if (toolbarCleanupTimer) {
+    window.clearTimeout(toolbarCleanupTimer);
+  }
+
+  toolbarTipObserver?.disconnect();
   window.removeEventListener("keydown", handleKeydown);
   editorRef.value?.destroy();
 });
