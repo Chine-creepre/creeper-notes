@@ -5,6 +5,53 @@ import packageJson from "./package.json";
 // @ts-expect-error process is a nodejs global
 const host = process.env.TAURI_DEV_HOST;
 
+const getPackageName = (id: string) => {
+  const normalizedId = id.replace(/\\/g, "/");
+  const nodeModulesIndex = normalizedId.lastIndexOf("/node_modules/");
+
+  if (nodeModulesIndex < 0) return "";
+
+  const modulePath = normalizedId.slice(nodeModulesIndex + "/node_modules/".length);
+  const [firstSegment, secondSegment] = modulePath.split("/");
+
+  if (!firstSegment) return "";
+  if (firstSegment.startsWith("@") && secondSegment) return `${firstSegment}/${secondSegment}`;
+
+  return firstSegment;
+};
+
+const resolveManualChunk = (id: string) => {
+  const packageName = getPackageName(id);
+
+  if (!packageName) return undefined;
+
+  if (["vue", "vue-router", "pinia"].includes(packageName) || packageName.startsWith("@vue/")) {
+    return "vendor-vue";
+  }
+
+  if (packageName.startsWith("@wangeditor/")) {
+    return `vendor-${packageName.replace("@", "").replace("/", "-")}`;
+  }
+
+  if (["slate", "snabbdom"].includes(packageName) || packageName.startsWith("slate-")) {
+    return `vendor-${packageName}`;
+  }
+
+  if (packageName === "highlight.js") {
+    return "vendor-highlight";
+  }
+
+  if (packageName.startsWith("@tauri-apps/")) {
+    return "vendor-tauri";
+  }
+
+  if (packageName === "@iconify/vue") {
+    return "vendor-iconify";
+  }
+
+  return "vendor";
+};
+
 // https://vite.dev/config/
 export default defineConfig(async () => ({
   plugins: [vue()],
@@ -19,13 +66,7 @@ export default defineConfig(async () => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          "vendor-vue": ["vue", "vue-router", "pinia"],
-          "vendor-wangeditor": ["@wangeditor/editor", "@wangeditor/editor-for-vue"],
-          "vendor-highlight": ["highlight.js"],
-          "vendor-tauri": ["@tauri-apps/api", "@tauri-apps/plugin-opener"],
-          "vendor-iconify": ["@iconify/vue"],
-        },
+        manualChunks: resolveManualChunk,
       },
     },
   },
