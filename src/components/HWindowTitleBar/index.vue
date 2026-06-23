@@ -23,10 +23,11 @@ const { closeToTray, startDragWindow, toggleFullscreen } = useHWindowTitleBar();
   <header class="h_window_title_bar">
     <div
       class="h_window_title_bar_drag"
-      @mousedown.left="startDragWindow">
+      @mousedown.left="startDragWindow"
+      @dblclick.left.stop="toggleFullscreen">
       <span v-if="title" class="h_window_title_bar_current_note">{{ title }}</span>
 
-      <div class="h_window_title_bar_right" @mousedown.stop>
+      <div class="h_window_title_bar_right" @mousedown.stop @dblclick.stop>
         <template v-if="rightText || hasRightActions">
           <span v-if="rightText" class="h_window_title_bar_right_text">{{ rightText }}</span>
           <span v-if="rightText && hasRightActions" class="h_window_title_bar_separator"></span>
