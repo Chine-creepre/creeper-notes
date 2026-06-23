@@ -47,12 +47,19 @@ fn should_start_in_tray() -> bool {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    let start_in_tray = should_start_in_tray();
+
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_sql::Builder::default().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
-        .setup(|app| {
+        .setup(move |app| {
+            if start_in_tray {
+                window_service::hide_main_window(app.handle())
+                    .map_err(Box::<dyn std::error::Error>::from)?;
+            }
+
             database_service::initialize_database(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
@@ -64,11 +71,6 @@ pub fn run() {
 
             tray_service::initialize_tray(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
-
-            if should_start_in_tray() {
-                window_service::hide_main_window(app.handle())
-                    .map_err(Box::<dyn std::error::Error>::from)?;
-            }
 
             Ok(())
         })
