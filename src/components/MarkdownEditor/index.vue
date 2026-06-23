@@ -19,29 +19,28 @@
       </button>
     </header>
 
-    <textarea
-      v-if="editorMode === 'edit'"
-      ref="textareaRef"
-      class="h_markdown_editor_input"
-      :value="modelValue"
-      :readonly="readonly"
-      placeholder="使用 Markdown 记录内容..."
-      @blur="handleBlur"
-      @focus="focused = true"
-      @input="handleInput"
-      @keydown="handleKeydown"
-    ></textarea>
-
-    <article v-else class="h_markdown_editor_preview" tabindex="0" @focus="enterEditMode" @click="enterEditMode" v-html="previewHtml"></article>
+    <div v-show="editorMode === 'edit'" ref="editorRootRef" class="h_markdown_editor_codemirror"></div>
+    <article v-show="editorMode === 'preview'" class="h_markdown_editor_preview" tabindex="0" @focus="enterEditMode" @click="enterEditMode" v-html="previewHtml"></article>
   </section>
 </template>
 
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
-import { computed, nextTick, ref, watch } from "vue";
+import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
+import { markdown } from "@codemirror/lang-markdown";
+import { syntaxHighlighting, defaultHighlightStyle } from "@codemirror/language";
+import { EditorState, type Extension } from "@codemirror/state";
+import { EditorView, keymap, lineNumbers, placeholder, type ViewUpdate } from "@codemirror/view";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import "./index.scss";
 
 type MarkdownEditorMode = "edit" | "preview";
+
+interface ToolbarAction {
+  icon: string;
+  mark: string;
+  title: string;
+}
 
 const props = withDefaults(
   defineProps<{
@@ -63,15 +62,16 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const textareaRef = ref<HTMLTextAreaElement>();
-const focused = ref(false);
+const editorRootRef = ref<HTMLDivElement>();
+const editorView = ref<EditorView>();
+const isEditorFocused = ref(false);
 
 const editorMode = computed<MarkdownEditorMode>({
   get: () => props.mode,
   set: (value) => emit("update:mode", value),
 });
 
-const toolbarActions = [
+const toolbarActions: ToolbarAction[] = [
   { icon: "lucide:heading-1", mark: "# ", title: "一级标题" },
   { icon: "lucide:heading-2", mark: "## ", title: "二级标题" },
   { icon: "lucide:heading-3", mark: "### ", title: "三级标题" },
@@ -83,9 +83,9 @@ const toolbarActions = [
   { icon: "lucide:list-checks", mark: "- [ ] ", title: "任务" },
   { icon: "lucide:quote", mark: "> ", title: "引用" },
   { icon: "lucide:code", mark: "`code`", title: "代码" },
-] as const;
+];
 
-const escapeHtml = (value: string): string =>
+const escapeHtml = (value: string) =>
   value
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
@@ -93,7 +93,7 @@ const escapeHtml = (value: string): string =>
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
 
-const renderInlineMarkdown = (value: string): string =>
+const renderInlineMarkdown = (value: string) =>
   escapeHtml(value)
     .replace(/`([^`]+)`/g, "<code>$1</code>")
     .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
@@ -121,78 +121,192 @@ const previewHtml = computed(() => {
     .join("");
 });
 
-const focusTextarea = async (): Promise<void> => {
-  await nextTick();
-  textareaRef.value?.focus();
+const createEditorTheme = (): Extension =>
+  EditorView.theme({
+    "&": {
+      height: "100%",
+      background: "transparent",
+      color: "var(--h_window_text_secondary)",
+      fontSize: "13px",
+    },
+    ".cm-scroller": {
+      fontFamily: "Inter, PingFang SC, Microsoft YaHei, sans-serif",
+      lineHeight: "1.8",
+    },
+    ".cm-content": {
+      minHeight: "100%",
+      padding: "22px",
+      caretColor: "var(--h_color_primary)",
+    },
+    ".cm-line": {
+      padding: "0",
+    },
+    ".cm-gutters": {
+      borderRight: "1px solid var(--h_window_border)",
+      background: "color-mix(in srgb, var(--h_window_surface_deep) 32%, transparent)",
+      color: "var(--h_window_text_muted)",
+    },
+    ".cm-activeLine": {
+      background: "color-mix(in srgb, var(--h_color_primary) 8%, transparent)",
+    },
+    ".cm-activeLineGutter": {
+      background: "color-mix(in srgb, var(--h_color_primary) 10%, transparent)",
+      color: "var(--h_color_primary)",
+    },
+    ".cm-selectionBackground": {
+      background: "color-mix(in srgb, var(--h_color_primary) 24%, transparent) !important",
+    },
+    ".cm-placeholder": {
+      color: "var(--h_window_text_muted)",
+    },
+    "&.cm-focused": {
+      outline: "none",
+    },
+  });
+
+const syncEditorDocument = (value: string) => {
+  const view = editorView.value;
+
+  if (!view) return;
+  if (view.state.doc.toString() === value) return;
+
+  view.dispatch({
+    changes: {
+      from: 0,
+      to: view.state.doc.length,
+      insert: value,
+    },
+  });
 };
 
-const setEditorMode = async (mode: MarkdownEditorMode): Promise<void> => {
+const focusEditor = async () => {
+  await nextTick();
+  editorView.value?.focus();
+};
+
+const handleSaveShortcut = () => {
+  emit("save");
+  return true;
+};
+
+const handleEditorUpdate = (update: ViewUpdate) => {
+  if (update.focusChanged) {
+    isEditorFocused.value = update.view.hasFocus;
+
+    if (!update.view.hasFocus && !props.dirty) {
+      editorMode.value = "preview";
+    }
+  }
+
+  if (update.docChanged) {
+    emit("update:modelValue", update.state.doc.toString());
+  }
+};
+
+const createEditorState = () =>
+  EditorState.create({
+    doc: props.modelValue,
+    extensions: [
+      lineNumbers(),
+      history(),
+      markdown(),
+      syntaxHighlighting(defaultHighlightStyle),
+      placeholder("使用 Markdown 记录内容..."),
+      keymap.of([
+        { key: "Mod-s", run: handleSaveShortcut },
+        indentWithTab,
+        ...defaultKeymap,
+        ...historyKeymap,
+      ]),
+      EditorView.editable.of(!props.readonly),
+      EditorView.updateListener.of(handleEditorUpdate),
+      createEditorTheme(),
+    ],
+  });
+
+const createEditor = () => {
+  const root = editorRootRef.value;
+
+  if (!root) return;
+
+  editorView.value?.destroy();
+  editorView.value = new EditorView({
+    state: createEditorState(),
+    parent: root,
+  });
+};
+
+const rebuildEditor = async () => {
+  await nextTick();
+  createEditor();
+};
+
+const setEditorMode = async (mode: MarkdownEditorMode) => {
   if (mode === "edit" && props.readonly) return;
 
   editorMode.value = mode;
 
   if (mode === "edit") {
-    await focusTextarea();
+    await focusEditor();
   }
 };
 
-const enterEditMode = async (): Promise<void> => {
+const enterEditMode = async () => {
   if (props.readonly) return;
   if (editorMode.value === "edit") return;
 
   await setEditorMode("edit");
 };
 
-const handleBlur = (): void => {
-  focused.value = false;
-
-  if (!props.dirty) {
-    editorMode.value = "preview";
-  }
-};
-
-const handleInput = (event: Event): void => {
-  const target = event.target as HTMLTextAreaElement | null;
-
-  emit("update:modelValue", target?.value ?? "");
-};
-
-const handleKeydown = (event: KeyboardEvent): void => {
-  if (!focused.value) return;
-  if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "s") return;
-
-  event.preventDefault();
-  event.stopPropagation();
-  emit("save");
-};
-
-const insertMarkdown = async (mark: string): Promise<void> => {
+const insertMarkdown = async (mark: string) => {
   if (props.readonly) return;
 
   editorMode.value = "edit";
-  await nextTick();
+  await focusEditor();
 
-  const textarea = textareaRef.value;
+  const view = editorView.value;
 
-  if (!textarea) return;
+  if (!view) return;
 
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const nextValue = `${props.modelValue.slice(0, start)}${mark}${props.modelValue.slice(end)}`;
+  const range = view.state.selection.main;
 
-  emit("update:modelValue", nextValue);
-
-  await nextTick();
-  textarea.focus();
-  textarea.setSelectionRange(start + mark.length, start + mark.length);
+  view.dispatch({
+    changes: {
+      from: range.from,
+      to: range.to,
+      insert: mark,
+    },
+    selection: {
+      anchor: range.from + mark.length,
+    },
+  });
+  view.focus();
 };
+
+watch(
+  () => props.modelValue,
+  (value) => syncEditorDocument(value),
+);
 
 watch(
   () => props.mode,
   async (mode) => {
     if (mode === "edit" && !props.readonly) {
-      await focusTextarea();
+      await focusEditor();
     }
   },
 );
+
+watch(
+  () => props.readonly,
+  async () => {
+    await rebuildEditor();
+  },
+);
+
+onMounted(createEditor);
+
+onBeforeUnmount(() => {
+  editorView.value?.destroy();
+});
 </script>
