@@ -37,7 +37,13 @@ use commands::{
     update_folder,
     update_note,
 };
-use services::{config_service, database_service, shortcut_service, tray_service};
+use services::{config_service, database_service, shortcut_service, tray_service, window_service};
+
+const START_IN_TRAY_ARG: &str = "--start-in-tray";
+
+fn should_start_in_tray() -> bool {
+    std::env::args().any(|arg| arg == START_IN_TRAY_ARG)
+}
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
@@ -58,6 +64,11 @@ pub fn run() {
 
             tray_service::initialize_tray(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
+
+            if should_start_in_tray() {
+                window_service::hide_main_window(app.handle())
+                    .map_err(Box::<dyn std::error::Error>::from)?;
+            }
 
             Ok(())
         })
