@@ -31,6 +31,10 @@
   color: var(--h_window_text) !important;
 }
 
+.h_markdown_editor :deep(.w-e-text-container [data-slate-editor] pre > code) {
+  text-shadow: none !important;
+}
+
 .h_markdown_editor_toolbar_wrap {
   flex: 0 0 auto;
   min-width: 0;
