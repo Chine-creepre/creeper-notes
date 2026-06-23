@@ -1,0 +1,25 @@
+.h_markdown_editor_body :deep(.w-e-scroll) {
+  padding: 0 8px;
+}
+
+.h_markdown_editor_body :deep([data-slate-editor] pre),
+.h_markdown_editor_body :deep(pre) {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.h_markdown_editor_body :deep([data-slate-editor] pre code),
+.h_markdown_editor_body :deep(pre code) {
+  display: inline;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  white-space: pre-wrap;
+}
