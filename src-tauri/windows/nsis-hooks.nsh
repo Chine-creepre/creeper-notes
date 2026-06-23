@@ -30,13 +30,20 @@ Function HAutoStartPageLeave
 FunctionEnd
 
 !macro NSIS_HOOK_POSTINSTALL
+  SetShellVarContext current
+
+  ; Clear older registry-based auto start entries from previous installers.
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
+
   ${If} $HAutoStartState == ${BST_CHECKED}
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes" '"$INSTDIR\creeper-notes.exe"'
+    CreateShortCut "$SMSTARTUP\creeper-notes.lnk" "$INSTDIR\creeper-notes.exe" "" "$INSTDIR\creeper-notes.exe" 0
   ${Else}
-    DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
+    Delete "$SMSTARTUP\creeper-notes.lnk"
   ${EndIf}
 !macroend
 
 !macro NSIS_HOOK_PREUNINSTALL
+  SetShellVarContext current
+  Delete "$SMSTARTUP\creeper-notes.lnk"
   DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
 !macroend
