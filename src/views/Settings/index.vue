@@ -93,9 +93,9 @@
               <strong>开机自启动</strong>
               <p>开启后，系统启动时会自动运行 Creeper Notes。</p>
             </div>
-            <label class="h_settings_switch">
-              <input v-if="config" v-model="config.auto_start_enabled" type="checkbox" />
-              <span></span>
+            <label v-if="config" class="h_settings_checkbox">
+              <input v-model="config.auto_start_enabled" type="checkbox" />
+              <span>开机自启</span>
             </label>
           </div>
 
