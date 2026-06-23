@@ -8,8 +8,10 @@
     "build": "vue-tsc --noEmit && vite build",
     "preview": "vite preview",
     "tauri": "tauri",
-    "build:win": "tauri build --bundles nsis",
-    "build:mac": "tauri build --bundles dmg"
+    "tauri:build:win": "tauri build --bundles nsis",
+    "tauri:build:mac": "tauri build --bundles app,dmg",
+    "build:win": "pnpm tauri:build:win",
+    "build:mac": "pnpm tauri:build:mac"
   },
   "dependencies": {
     "@iconify/vue": "^4.3.0",
