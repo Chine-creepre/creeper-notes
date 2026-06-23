@@ -57,6 +57,17 @@
   color: var(--h_color_primary);
 }
 
+.h_markdown_editor_toolbar :deep(.w-e-bar-item .title),
+.h_markdown_editor_toolbar :deep(.w-e-bar-item .title::before),
+.h_markdown_editor_toolbar :deep(.w-e-bar-item .title::after),
+.h_markdown_editor_toolbar :deep(.w-e-bar-tooltip),
+.h_markdown_editor_toolbar :deep(.w-e-tooltip) {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .h_markdown_editor_toolbar :deep(.w-e-drop-panel),
 .h_markdown_editor_toolbar :deep(.w-e-select-list),
 .h_markdown_editor_toolbar :deep(.w-e-panel-content),
@@ -110,12 +121,14 @@
 .h_markdown_editor_body :deep(.w-e-scroll) {
   height: 100%;
   min-height: 0;
+  padding: 10px 12px;
+  box-sizing: border-box;
   overflow: auto;
 }
 
 .h_markdown_editor_body :deep([data-slate-editor]) {
   min-height: 100%;
-  padding: 10px 12px;
+  padding: 0;
   box-sizing: border-box;
   color: var(--h_window_text_secondary);
   font-family:
@@ -125,6 +138,19 @@
     sans-serif;
   font-size: 13px;
   line-height: 1.8;
+}
+
+.h_markdown_editor_body :deep([data-slate-placeholder]) {
+  top: 0 !important;
+  left: 0 !important;
+  color: var(--h_window_text_muted) !important;
+  font-family:
+    Inter,
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif !important;
+  font-size: 13px !important;
+  line-height: 1.8 !important;
 }
 
 .h_markdown_editor_body :deep([data-slate-editor] p) {
