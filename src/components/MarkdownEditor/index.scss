@@ -27,6 +27,10 @@
   background: color-mix(in srgb, var(--h_window_surface) 64%, transparent);
 }
 
+.h_markdown_editor :deep(.w-e-menu-tooltip-v5::before) {
+  color: var(--h_window_text);
+}
+
 .h_markdown_editor_toolbar_wrap {
   flex: 0 0 auto;
   min-width: 0;
