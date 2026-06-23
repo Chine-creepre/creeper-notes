@@ -14,14 +14,11 @@
     "build:mac": "pnpm tauri:build:mac"
   },
   "dependencies": {
-    "@codemirror/commands": "^6.8.1",
-    "@codemirror/lang-markdown": "^6.3.2",
-    "@codemirror/language": "^6.11.2",
-    "@codemirror/state": "^6.5.2",
-    "@codemirror/view": "^6.37.2",
     "@iconify/vue": "^4.3.0",
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-opener": "^2",
+    "@wangeditor/editor": "^5.1.23",
+    "@wangeditor/editor-for-vue": "^5.1.12",
     "pinia": "^3.0.4",
     "vue": "^3.5.13",
     "vue-router": "^5.1.0"
