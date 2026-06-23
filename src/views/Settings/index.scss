@@ -388,43 +388,29 @@ body,
   font-size: 11px;
 }
 
-.h_settings_switch {
-  position: relative;
+.h_settings_checkbox {
   display: inline-flex;
-  width: 42px;
-  height: 24px;
+  align-items: center;
+  gap: 7px;
+  flex: 0 0 auto;
+  height: 28px;
+  color: var(--h_window_text_secondary);
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  user-select: none;
 }
 
-.h_settings_switch input {
-  position: absolute;
-  opacity: 0;
+.h_settings_checkbox input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--h_color_primary);
+  cursor: pointer;
 }
 
-.h_settings_switch span {
-  width: 100%;
-  border-radius: 999px;
-  background: var(--h_window_surface_muted);
-}
-
-.h_settings_switch span::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 18px;
-  height: 18px;
-  border-radius: 999px;
-  background: var(--h_window_text_muted);
-  transition: left 0.16s ease;
-}
-
-.h_settings_switch input:checked + span {
-  background: var(--h_color_primary_weak);
-}
-
-.h_settings_switch input:checked + span::after {
-  left: 21px;
-  background: var(--h_color_primary);
+.h_settings_checkbox span {
+  white-space: nowrap;
 }
 
 .h_settings_shortcut_capture {
