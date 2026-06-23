@@ -21,15 +21,11 @@
       @on-change="handleChange"
     />
 
-    <article
-      ref="previewRef"
+    <MarkdownPreview
       v-show="editorMode === 'preview'"
-      class="h_markdown_editor_preview"
-      tabindex="0"
-      @focus="enterEditMode"
-      @click="enterEditMode"
-      v-html="previewHtml"
-    ></article>
+      :model-value="previewHtml"
+      @activate="enterEditMode"
+    />
   </section>
 </template>
 
@@ -37,53 +33,20 @@
 import "@wangeditor/editor/dist/css/style.css";
 import type { IDomEditor, IEditorConfig, IToolbarConfig } from "@wangeditor/editor";
 import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import hljs from "highlight.js/lib/core";
-import bash from "highlight.js/lib/languages/bash";
-import css from "highlight.js/lib/languages/css";
-import javascript from "highlight.js/lib/languages/javascript";
-import json from "highlight.js/lib/languages/json";
-import markdown from "highlight.js/lib/languages/markdown";
-import rust from "highlight.js/lib/languages/rust";
-import typescript from "highlight.js/lib/languages/typescript";
-import xml from "highlight.js/lib/languages/xml";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
+import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
 
 type MarkdownEditorMode = "edit" | "preview";
 
 const EMPTY_EDITOR_HTML = "<p><br></p>";
-const CODE_LANGUAGE_CLASS_PREFIX = "language-";
 const TOOLBAR_TIP_SELECTOR = [
-  ".title",
+  ".w-e-bar-item .title",
+  ".w-e-bar-item-tooltip",
   ".w-e-bar-tooltip",
   ".w-e-tooltip",
   ".w-e-menu-tooltip",
   ".w-e-hover-bar",
 ].join(",");
-const HIGHLIGHT_LANGUAGE_ALIAS: Record<string, string> = {
-  cjs: "javascript",
-  htm: "xml",
-  html: "xml",
-  js: "javascript",
-  jsx: "javascript",
-  md: "markdown",
-  mjs: "javascript",
-  rs: "rust",
-  shell: "bash",
-  sh: "bash",
-  ts: "typescript",
-  tsx: "typescript",
-  vue: "xml",
-  xml: "xml",
-};
-
-hljs.registerLanguage("bash", bash);
-hljs.registerLanguage("css", css);
-hljs.registerLanguage("javascript", javascript);
-hljs.registerLanguage("json", json);
-hljs.registerLanguage("markdown", markdown);
-hljs.registerLanguage("rust", rust);
-hljs.registerLanguage("typescript", typescript);
-hljs.registerLanguage("xml", xml);
 
 const props = withDefaults(
   defineProps<{
@@ -106,11 +69,11 @@ const emit = defineEmits<{
 }>();
 
 const toolbarRef = ref<HTMLElement>();
-const previewRef = ref<HTMLElement>();
 const editorRef = shallowRef<IDomEditor>();
 const editorValue = ref(props.modelValue || "");
 let focusDraftSnapshot = editorValue.value;
 let toolbarTipObserver: MutationObserver | undefined;
+let documentTipObserver: MutationObserver | undefined;
 let toolbarCleanupTimer: number | undefined;
 
 const readonly = computed(() => props.readonly);
@@ -153,63 +116,26 @@ const syncFocusDraftSnapshot = () => {
 const hasFocusDraftChanged = () =>
   normalizeEditorValue(editorValue.value) !== normalizeEditorValue(focusDraftSnapshot);
 
-const normalizeHighlightLanguage = (language: string | null) => {
-  if (!language) return "";
-
-  const normalizedLanguage = language.trim().toLowerCase();
-
-  return HIGHLIGHT_LANGUAGE_ALIAS[normalizedLanguage] ?? normalizedLanguage;
-};
-
-const getCodeBlockLanguage = (codeBlock: HTMLElement) => {
-  const classLanguage = Array.from(codeBlock.classList)
-    .find((className) => className.startsWith(CODE_LANGUAGE_CLASS_PREFIX))
-    ?.replace(CODE_LANGUAGE_CLASS_PREFIX, "");
-  const dataLanguage = codeBlock.dataset.language ?? codeBlock.closest("pre")?.getAttribute("data-language");
-
-  return normalizeHighlightLanguage(classLanguage ?? dataLanguage ?? "");
-};
-
-const highlightCodeBlock = (codeBlock: HTMLElement) => {
-  const code = codeBlock.textContent ?? "";
-
-  if (!code.trim()) return;
-
-  const language = getCodeBlockLanguage(codeBlock);
-  const result = language && hljs.getLanguage(language)
-    ? hljs.highlight(code, { language, ignoreIllegals: true })
-    : hljs.highlightAuto(code);
-
-  codeBlock.innerHTML = result.value;
-  codeBlock.classList.add("hljs");
-
-  if (result.language) {
-    codeBlock.classList.add(`${CODE_LANGUAGE_CLASS_PREFIX}${result.language}`);
-  }
-};
-
-const highlightPreviewCode = async () => {
-  await nextTick();
-
-  if (editorMode.value !== "preview") return;
-
-  previewRef.value?.querySelectorAll<HTMLElement>("pre code").forEach(highlightCodeBlock);
-};
-
 const clearToolbarTips = () => {
   const toolbar = toolbarRef.value;
 
-  if (!toolbar) return;
-
-  toolbar.querySelectorAll("[title]").forEach((item) => {
+  toolbar?.querySelectorAll("[title]").forEach((item) => {
     item.removeAttribute("title");
   });
 
-  toolbar.querySelectorAll("[data-title]").forEach((item) => {
+  toolbar?.querySelectorAll("[data-title]").forEach((item) => {
     item.removeAttribute("data-title");
   });
 
-  toolbar.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
+  toolbar?.querySelectorAll("[data-tooltip]").forEach((item) => {
+    item.removeAttribute("data-tooltip");
+  });
+
+  toolbar?.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
+    item.remove();
+  });
+
+  document.body.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
     item.remove();
   });
 };
@@ -228,15 +154,25 @@ const observeToolbarTips = async () => {
 
   const toolbar = toolbarRef.value;
 
-  if (!toolbar) return;
-
   toolbarTipObserver?.disconnect();
-  toolbarTipObserver = new MutationObserver(scheduleClearToolbarTips);
-  toolbarTipObserver.observe(toolbar, {
+  documentTipObserver?.disconnect();
+
+  if (toolbar) {
+    toolbarTipObserver = new MutationObserver(scheduleClearToolbarTips);
+    toolbarTipObserver.observe(toolbar, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ["title", "data-title", "data-tooltip", "class", "style"],
+    });
+  }
+
+  documentTipObserver = new MutationObserver(scheduleClearToolbarTips);
+  documentTipObserver.observe(document.body, {
     subtree: true,
     childList: true,
     attributes: true,
-    attributeFilter: ["title", "data-title", "class", "style"],
+    attributeFilter: ["class", "style"],
   });
 };
 
@@ -270,8 +206,6 @@ const setEditorMode = async (mode: MarkdownEditorMode) => {
   if (mode === "edit") {
     await focusEditor();
   }
-
-  await highlightPreviewCode();
 };
 
 const enterEditMode = async () => {
@@ -285,7 +219,6 @@ const handleCreated = async (editor: IDomEditor) => {
   editorRef.value = editor;
   syncReadonlyState();
   await observeToolbarTips();
-  await highlightPreviewCode();
 };
 
 const handleFocus = () => {
@@ -294,10 +227,9 @@ const handleFocus = () => {
   }
 };
 
-const handleBlur = async () => {
+const handleBlur = () => {
   if (!hasFocusDraftChanged() || !props.dirty) {
     editorMode.value = "preview";
-    await highlightPreviewCode();
   }
 };
 
@@ -322,7 +254,7 @@ const handleKeydown = (event: KeyboardEvent) => {
 
 watch(
   () => props.modelValue,
-  async (value) => {
+  (value) => {
     const nextValue = value || "";
 
     if (nextValue === editorValue.value) return;
@@ -331,7 +263,6 @@ watch(
 
     if (editorMode.value !== "edit") {
       syncFocusDraftSnapshot();
-      await highlightPreviewCode();
     }
   },
 );
@@ -342,17 +273,7 @@ watch(
     if (mode === "edit" && !readonly.value) {
       syncFocusDraftSnapshot();
       await focusEditor();
-      return;
     }
-
-    await highlightPreviewCode();
-  },
-);
-
-watch(
-  previewHtml,
-  async () => {
-    await highlightPreviewCode();
   },
 );
 
@@ -365,7 +286,6 @@ onMounted(async () => {
   window.addEventListener("keydown", handleKeydown);
   syncReadonlyState();
   await observeToolbarTips();
-  await highlightPreviewCode();
 });
 
 onBeforeUnmount(() => {
@@ -374,6 +294,7 @@ onBeforeUnmount(() => {
   }
 
   toolbarTipObserver?.disconnect();
+  documentTipObserver?.disconnect();
   window.removeEventListener("keydown", handleKeydown);
   editorRef.value?.destroy();
 });
