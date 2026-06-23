@@ -18,8 +18,9 @@ fn register_shortcuts(app: &AppHandle) -> Result<(), String> {
     let toggle_app_handle = app.clone();
     let search_app_handle = app.clone();
 
-    app.global_shortcut()
-        .on_shortcut(toggle_shortcut, move |_app, _shortcut, event| {
+    if let Err(error) = app.global_shortcut().on_shortcut(
+        toggle_shortcut,
+        move |_app, _shortcut, event| {
             if event.state() != ShortcutState::Pressed {
                 return;
             }
@@ -31,11 +32,17 @@ fn register_shortcuts(app: &AppHandle) -> Result<(), String> {
             if let Err(error) = window_service::toggle_main_window(&toggle_app_handle) {
                 eprintln!("failed to toggle main window: {}", error);
             }
-        })
-        .map_err(|error| error.to_string())?;
+        },
+    ) {
+        eprintln!(
+            "failed to register toggle shortcut {}: {}",
+            app_config.toggle_shortcut, error
+        );
+    }
 
-    app.global_shortcut()
-        .on_shortcut(search_shortcut, move |_app, _shortcut, event| {
+    if let Err(error) = app.global_shortcut().on_shortcut(
+        search_shortcut,
+        move |_app, _shortcut, event| {
             if event.state() != ShortcutState::Pressed {
                 return;
             }
@@ -47,8 +54,13 @@ fn register_shortcuts(app: &AppHandle) -> Result<(), String> {
             if let Err(error) = window_service::toggle_search_window(&search_app_handle) {
                 eprintln!("failed to toggle search window: {}", error);
             }
-        })
-        .map_err(|error| error.to_string())?;
+        },
+    ) {
+        eprintln!(
+            "failed to register search shortcut {}: {}",
+            app_config.search_shortcut, error
+        );
+    }
 
     Ok(())
 }
@@ -62,9 +74,9 @@ pub fn initialize_shortcuts(app: &AppHandle) -> Result<(), String> {
 pub fn reload_shortcuts(app: &AppHandle) -> Result<(), String> {
     use tauri_plugin_global_shortcut::GlobalShortcutExt;
 
-    app.global_shortcut()
-        .unregister_all()
-        .map_err(|error| error.to_string())?;
+    if let Err(error) = app.global_shortcut().unregister_all() {
+        eprintln!("failed to unregister global shortcuts: {}", error);
+    }
 
     register_shortcuts(app)
 }
