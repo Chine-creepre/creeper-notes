@@ -78,7 +78,6 @@ const toolbarConfig: Partial<IToolbarConfig> = {
     "through",
     "bulletedList",
     "numberedList",
-    "todo",
     "blockquote",
     "codeBlock",
     "divider",
