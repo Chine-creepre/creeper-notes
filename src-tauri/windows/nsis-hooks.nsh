@@ -33,7 +33,7 @@ FunctionEnd
   DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
 
   ${If} $HAutoStartState == ${BST_CHECKED}
-    CreateShortCut "$SMSTARTUP\creeper-notes.lnk" "$INSTDIR\creeper-notes.exe" "" "$INSTDIR\creeper-notes.exe" 0
+    CreateShortCut "$SMSTARTUP\creeper-notes.lnk" "$INSTDIR\creeper-notes.exe" "--start-in-tray" "$INSTDIR\creeper-notes.exe" 0
   ${Else}
     Delete "$SMSTARTUP\creeper-notes.lnk"
   ${EndIf}
