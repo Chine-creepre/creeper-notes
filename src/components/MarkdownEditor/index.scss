@@ -26,52 +26,66 @@
   background: color-mix(in srgb, var(--h_window_surface) 64%, transparent);
 }
 
-.h_markdown_editor_toolbar {
+.h_markdown_editor_toolbar_wrap {
   flex: 0 0 auto;
   min-width: 0;
   border-bottom: 1px solid var(--h_window_border);
   background: color-mix(in srgb, var(--h_window_surface_deep) 32%, transparent);
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-bar) {
+.h_markdown_editor_toolbar {
+  min-width: 0;
+  background: transparent;
+}
+
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar) {
   min-height: 42px;
   padding: 0 8px;
   box-sizing: border-box;
   background: transparent;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-bar-item) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item) {
   height: 42px;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-bar-item button) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item button) {
   min-width: 28px;
   height: 28px;
   border-radius: 8px;
   color: var(--h_window_text_muted);
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-bar-item button:hover),
-.h_markdown_editor_toolbar :deep(.w-e-bar-item button.active) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item button:hover),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item button.active) {
   background: var(--h_window_surface);
   color: var(--h_color_primary);
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-bar-item .title),
-.h_markdown_editor_toolbar :deep(.w-e-bar-item .title::before),
-.h_markdown_editor_toolbar :deep(.w-e-bar-item .title::after),
-.h_markdown_editor_toolbar :deep(.w-e-bar-tooltip),
-.h_markdown_editor_toolbar :deep(.w-e-tooltip) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item .title),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item .title::before),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-item .title::after),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-bar-tooltip),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-tooltip),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-menu-tooltip),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-hover-bar),
+:global(.w-e-bar-item .title),
+:global(.w-e-bar-item .title::before),
+:global(.w-e-bar-item .title::after),
+:global(.w-e-bar-tooltip),
+:global(.w-e-tooltip),
+:global(.w-e-menu-tooltip),
+:global(.w-e-hover-bar) {
   display: none !important;
   visibility: hidden !important;
   opacity: 0 !important;
   pointer-events: none !important;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-drop-panel),
-.h_markdown_editor_toolbar :deep(.w-e-select-list),
-.h_markdown_editor_toolbar :deep(.w-e-panel-content),
-.h_markdown_editor_toolbar :deep(.w-e-modal) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-drop-panel),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-select-list),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-panel-content),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-modal) {
   border: 1px solid var(--h_window_border) !important;
   border-radius: 8px !important;
   background: var(--h_window_surface_deep) !important;
@@ -79,23 +93,23 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22) !important;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-drop-panel::before),
-.h_markdown_editor_toolbar :deep(.w-e-drop-panel::after) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-drop-panel::before),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-drop-panel::after) {
   border-bottom-color: var(--h_window_surface_deep) !important;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-select-list ul),
-.h_markdown_editor_toolbar :deep(.w-e-select-list ol),
-.h_markdown_editor_toolbar :deep(.w-e-select-list li),
-.h_markdown_editor_toolbar :deep(.w-e-panel-content ul),
-.h_markdown_editor_toolbar :deep(.w-e-panel-content ol),
-.h_markdown_editor_toolbar :deep(.w-e-panel-content li) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-select-list ul),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-select-list ol),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-select-list li),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-panel-content ul),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-panel-content ol),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-panel-content li) {
   background: transparent !important;
   color: var(--h_window_text_secondary) !important;
 }
 
-.h_markdown_editor_toolbar :deep(.w-e-select-list li:hover),
-.h_markdown_editor_toolbar :deep(.w-e-panel-content li:hover) {
+.h_markdown_editor_toolbar_wrap :deep(.w-e-select-list li:hover),
+.h_markdown_editor_toolbar_wrap :deep(.w-e-panel-content li:hover) {
   background: var(--h_window_surface) !important;
   color: var(--h_color_primary) !important;
 }
@@ -155,6 +169,34 @@
 
 .h_markdown_editor_body :deep([data-slate-editor] p) {
   margin: 0 0 8px;
+}
+
+.h_markdown_editor_body :deep(pre),
+.h_markdown_editor_body :deep([data-slate-editor] pre) {
+  overflow: auto;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--h_color_primary) 14%, var(--h_window_border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--h_window_surface_deep) 86%, transparent);
+}
+
+.h_markdown_editor_body :deep(pre code),
+.h_markdown_editor_body :deep([data-slate-editor] pre code) {
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--h_window_text_secondary);
+  font-family:
+    "JetBrains Mono",
+    "Fira Code",
+    Consolas,
+    "Courier New",
+    monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre;
 }
 
 .h_markdown_editor_preview {
@@ -236,9 +278,28 @@
 
 .h_markdown_editor_preview :deep(pre) {
   overflow: auto;
-  padding: 10px;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border: 1px solid color-mix(in srgb, var(--h_color_primary) 14%, var(--h_window_border));
   border-radius: 10px;
-  background: var(--h_window_surface_deep);
+  background: color-mix(in srgb, var(--h_window_surface_deep) 86%, transparent);
+}
+
+.h_markdown_editor_preview :deep(pre code) {
+  display: block;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--h_window_text_secondary);
+  font-family:
+    "JetBrains Mono",
+    "Fira Code",
+    Consolas,
+    "Courier New",
+    monospace;
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre;
 }
 
 .h_markdown_editor_preview :deep(blockquote) {
@@ -257,6 +318,6 @@
   margin: 4px 0;
 }
 
-.h_markdown_editor_readonly .h_markdown_editor_toolbar {
+.h_markdown_editor_readonly .h_markdown_editor_toolbar_wrap {
   opacity: 0.72;
 }
