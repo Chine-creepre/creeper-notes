@@ -72,6 +72,7 @@ const emit = defineEmits<{
 const toolbarRef = ref<HTMLElement>();
 const editorRef = shallowRef<IDomEditor>();
 const editorValue = ref(props.modelValue || "");
+let focusDraftSnapshot = editorValue.value;
 let toolbarTipObserver: MutationObserver | undefined;
 let toolbarCleanupTimer: number | undefined;
 
@@ -105,6 +106,15 @@ const editorConfig: Partial<IEditorConfig> = {
 };
 
 const previewHtml = computed(() => editorValue.value || EMPTY_EDITOR_HTML);
+
+const normalizeEditorValue = (value: string) => value.trim() || EMPTY_EDITOR_HTML;
+
+const syncFocusDraftSnapshot = () => {
+  focusDraftSnapshot = editorValue.value;
+};
+
+const hasFocusDraftChanged = () =>
+  normalizeEditorValue(editorValue.value) !== normalizeEditorValue(focusDraftSnapshot);
 
 const clearToolbarTips = () => {
   const toolbar = toolbarRef.value;
@@ -171,6 +181,10 @@ const focusEditor = async () => {
 const setEditorMode = async (mode: MarkdownEditorMode) => {
   if (mode === "edit" && readonly.value) return;
 
+  if (mode === "edit" && editorMode.value !== "edit") {
+    syncFocusDraftSnapshot();
+  }
+
   editorMode.value = mode;
 
   if (mode === "edit") {
@@ -198,7 +212,7 @@ const handleFocus = () => {
 };
 
 const handleBlur = () => {
-  if (!props.dirty) {
+  if (!hasFocusDraftChanged() || !props.dirty) {
     editorMode.value = "preview";
   }
 };
@@ -230,6 +244,10 @@ watch(
     if (nextValue === editorValue.value) return;
 
     editorValue.value = nextValue;
+
+    if (editorMode.value !== "edit") {
+      syncFocusDraftSnapshot();
+    }
   },
 );
 
@@ -237,6 +255,7 @@ watch(
   () => props.mode,
   async (mode) => {
     if (mode === "edit" && !readonly.value) {
+      syncFocusDraftSnapshot();
       await focusEditor();
     }
   },
