@@ -301,3 +301,4 @@ onBeforeUnmount(() => {
 </script>
 
 <style lang="scss" scoped src="./index.scss"></style>
+<style lang="scss" scoped src="./editor.scss"></style>
