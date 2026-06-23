@@ -302,6 +302,60 @@
   white-space: pre;
 }
 
+.h_markdown_editor_preview :deep(.hljs) {
+  background: transparent;
+  color: #c9d7e3;
+}
+
+.h_markdown_editor_preview :deep(.hljs-keyword),
+.h_markdown_editor_preview :deep(.hljs-selector-tag),
+.h_markdown_editor_preview :deep(.hljs-built_in),
+.h_markdown_editor_preview :deep(.hljs-name),
+.h_markdown_editor_preview :deep(.hljs-tag) {
+  color: #7fb4ff;
+}
+
+.h_markdown_editor_preview :deep(.hljs-string),
+.h_markdown_editor_preview :deep(.hljs-title),
+.h_markdown_editor_preview :deep(.hljs-section),
+.h_markdown_editor_preview :deep(.hljs-attribute),
+.h_markdown_editor_preview :deep(.hljs-symbol),
+.h_markdown_editor_preview :deep(.hljs-bullet),
+.h_markdown_editor_preview :deep(.hljs-addition) {
+  color: #9ee493;
+}
+
+.h_markdown_editor_preview :deep(.hljs-comment),
+.h_markdown_editor_preview :deep(.hljs-quote),
+.h_markdown_editor_preview :deep(.hljs-meta) {
+  color: #6f8794;
+  font-style: italic;
+}
+
+.h_markdown_editor_preview :deep(.hljs-number),
+.h_markdown_editor_preview :deep(.hljs-literal),
+.h_markdown_editor_preview :deep(.hljs-variable),
+.h_markdown_editor_preview :deep(.hljs-template-variable),
+.h_markdown_editor_preview :deep(.hljs-deletion) {
+  color: #ffb86c;
+}
+
+.h_markdown_editor_preview :deep(.hljs-regexp),
+.h_markdown_editor_preview :deep(.hljs-link),
+.h_markdown_editor_preview :deep(.hljs-operator),
+.h_markdown_editor_preview :deep(.hljs-selector-attr),
+.h_markdown_editor_preview :deep(.hljs-selector-pseudo) {
+  color: #7dd3fc;
+}
+
+.h_markdown_editor_preview :deep(.hljs-emphasis) {
+  font-style: italic;
+}
+
+.h_markdown_editor_preview :deep(.hljs-strong) {
+  font-weight: 700;
+}
+
 .h_markdown_editor_preview :deep(blockquote) {
   padding-left: 12px;
   border-left: 3px solid var(--h_color_primary);
