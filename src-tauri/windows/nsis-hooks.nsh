@@ -15,10 +15,7 @@ Function HAutoStartPage
     Abort
   ${EndIf}
 
-  ${NSD_CreateLabel} 0 0 100% 28u "是否在登录 Windows 后自动启动 creeper-notes？"
-  Pop $0
-
-  ${NSD_CreateCheckbox} 0 36u 100% 18u "开机自启，进入桌面后自动运行 Creeper Notes"
+  ${NSD_CreateCheckbox} 0 36u 100% 18u "开机自启"
   Pop $HAutoStartCheckbox
   ${NSD_SetState} $HAutoStartCheckbox ${BST_UNCHECKED}
 
