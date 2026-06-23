@@ -1,68 +1,32 @@
 <template>
-  <section
-    :class="[
-      'h_markdown_editor',
-      {
-        h_markdown_editor_edit_mode: editorMode === 'edit',
-        h_markdown_editor_preview_mode: editorMode === 'preview',
-        h_markdown_editor_readonly: readonly,
-      },
-    ]"
-  >
-    <header class="h_markdown_editor_header">
-      <div class="h_markdown_editor_tabs">
-        <button
-          :class="['h_markdown_editor_tab', { h_markdown_editor_tab_active: editorMode === 'edit' }]"
-          :disabled="readonly"
-          type="button"
-          @click="setEditorMode('edit')"
-        >
-          编辑
-        </button>
-        <button
-          :class="['h_markdown_editor_tab', { h_markdown_editor_tab_active: editorMode === 'preview' }]"
-          type="button"
-          @click="setEditorMode('preview')"
-        >
-          预览
-        </button>
-      </div>
-
-      <div class="h_markdown_editor_state">
-        <span v-if="readonly">只读</span>
-        <span v-else-if="dirty">未保存</span>
-        <span v-else>已同步</span>
-      </div>
-    </header>
-
+  <section :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]" @focusin="enterEditMode">
     <Toolbar
-      v-show="editorMode === 'edit' && !readonly"
       class="h_markdown_editor_toolbar"
       :editor="editorRef"
       :default-config="toolbarConfig"
       mode="default"
     />
 
-    <div class="h_markdown_editor_content">
-      <Editor
-        v-show="editorMode === 'edit'"
-        v-model="editorValue"
-        class="h_markdown_editor_body"
-        :default-config="editorConfig"
-        mode="default"
-        @on-created="handleCreated"
-        @on-focus="handleFocus"
-        @on-change="handleChange"
-      />
+    <Editor
+      v-show="editorMode === 'edit'"
+      v-model="editorValue"
+      class="h_markdown_editor_body"
+      :default-config="editorConfig"
+      mode="default"
+      @on-blur="handleBlur"
+      @on-created="handleCreated"
+      @on-focus="handleFocus"
+      @on-change="handleChange"
+    />
 
-      <article v-show="editorMode === 'preview'" class="h_markdown_editor_preview" tabindex="0">
-        <div v-if="isPreviewEmpty" class="h_markdown_editor_empty">
-          <strong>暂无内容</strong>
-          <span>切换到编辑后开始记录。</span>
-        </div>
-        <div v-else class="h_markdown_editor_preview_content" v-html="previewHtml"></div>
-      </article>
-    </div>
+    <article
+      v-show="editorMode === 'preview'"
+      class="h_markdown_editor_preview"
+      tabindex="0"
+      @focus="enterEditMode"
+      @click="enterEditMode"
+      v-html="previewHtml"
+    ></article>
   </section>
 </template>
 
@@ -100,7 +64,6 @@ const editorRef = shallowRef<IDomEditor>();
 const editorValue = ref(props.modelValue || "");
 
 const readonly = computed(() => props.readonly);
-const dirty = computed(() => props.dirty);
 const editorMode = computed<MarkdownEditorMode>({
   get: () => props.mode,
   set: (value) => emit("update:mode", value),
@@ -129,32 +92,9 @@ const editorConfig: Partial<IEditorConfig> = {
   scroll: true,
 };
 
-const isBlankHtml = (html: string) => {
-  const trimmedHtml = html.trim();
-
-  if (!trimmedHtml || trimmedHtml === EMPTY_EDITOR_HTML) return true;
-
-  const hasRichContent = /<(img|video|audio|table|ul|ol|blockquote|pre|code)\b/i.test(trimmedHtml);
-
-  if (hasRichContent) return false;
-
-  const text = trimmedHtml
-    .replace(/<[^>]+>/g, "")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, "")
-    .trim();
-
-  return !text;
-};
-
-const isPreviewEmpty = computed(() => isBlankHtml(editorValue.value));
-const previewHtml = computed(() => (isPreviewEmpty.value ? EMPTY_EDITOR_HTML : editorValue.value));
+const previewHtml = computed(() => editorValue.value || EMPTY_EDITOR_HTML);
 
 const syncReadonlyState = () => {
-  if (readonly.value && editorMode.value === "edit") {
-    editorMode.value = "preview";
-  }
-
   const editor = editorRef.value;
 
   if (!editor) return;
@@ -182,6 +122,13 @@ const setEditorMode = async (mode: MarkdownEditorMode) => {
   }
 };
 
+const enterEditMode = async () => {
+  if (readonly.value) return;
+  if (editorMode.value === "edit") return;
+
+  await setEditorMode("edit");
+};
+
 const handleCreated = (editor: IDomEditor) => {
   editorRef.value = editor;
   syncReadonlyState();
@@ -190,6 +137,12 @@ const handleCreated = (editor: IDomEditor) => {
 const handleFocus = () => {
   if (!readonly.value) {
     editorMode.value = "edit";
+  }
+};
+
+const handleBlur = () => {
+  if (!props.dirty) {
+    editorMode.value = "preview";
   }
 };
 
