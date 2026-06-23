@@ -16,6 +16,19 @@ export default defineConfig(async () => ({
       "@": "/src",
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          "vendor-vue": ["vue", "vue-router", "pinia"],
+          "vendor-wangeditor": ["@wangeditor/editor", "@wangeditor/editor-for-vue"],
+          "vendor-highlight": ["highlight.js"],
+          "vendor-tauri": ["@tauri-apps/api", "@tauri-apps/plugin-opener"],
+          "vendor-iconify": ["@iconify/vue"],
+        },
+      },
+    },
+  },
 
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
