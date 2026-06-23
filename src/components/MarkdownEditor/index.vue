@@ -1,6 +1,6 @@
 <template>
   <section :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]" @focusin="enterEditMode">
-    <div ref="toolbarRef" class="h_markdown_editor_toolbar_wrap">
+    <div class="h_markdown_editor_toolbar_wrap">
       <Toolbar
         class="h_markdown_editor_toolbar"
         :editor="editorRef"
@@ -39,14 +39,6 @@ import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
 type MarkdownEditorMode = "edit" | "preview";
 
 const EMPTY_EDITOR_HTML = "<p><br></p>";
-const TOOLBAR_TIP_SELECTOR = [
-  ".w-e-bar-item .title",
-  ".w-e-bar-item-tooltip",
-  ".w-e-bar-tooltip",
-  ".w-e-tooltip",
-  ".w-e-menu-tooltip",
-  ".w-e-hover-bar",
-].join(",");
 
 const props = withDefaults(
   defineProps<{
@@ -68,13 +60,9 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const toolbarRef = ref<HTMLElement>();
 const editorRef = shallowRef<IDomEditor>();
 const editorValue = ref(props.modelValue || "");
 let focusDraftSnapshot = editorValue.value;
-let toolbarTipObserver: MutationObserver | undefined;
-let documentTipObserver: MutationObserver | undefined;
-let toolbarCleanupTimer: number | undefined;
 
 const readonly = computed(() => props.readonly);
 const editorMode = computed<MarkdownEditorMode>({
@@ -116,66 +104,6 @@ const syncFocusDraftSnapshot = () => {
 const hasFocusDraftChanged = () =>
   normalizeEditorValue(editorValue.value) !== normalizeEditorValue(focusDraftSnapshot);
 
-const clearToolbarTips = () => {
-  const toolbar = toolbarRef.value;
-
-  toolbar?.querySelectorAll("[title]").forEach((item) => {
-    item.removeAttribute("title");
-  });
-
-  toolbar?.querySelectorAll("[data-title]").forEach((item) => {
-    item.removeAttribute("data-title");
-  });
-
-  toolbar?.querySelectorAll("[data-tooltip]").forEach((item) => {
-    item.removeAttribute("data-tooltip");
-  });
-
-  toolbar?.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
-    item.remove();
-  });
-
-  document.body.querySelectorAll(TOOLBAR_TIP_SELECTOR).forEach((item) => {
-    item.remove();
-  });
-};
-
-const scheduleClearToolbarTips = () => {
-  if (toolbarCleanupTimer) {
-    window.clearTimeout(toolbarCleanupTimer);
-  }
-
-  toolbarCleanupTimer = window.setTimeout(clearToolbarTips, 0);
-};
-
-const observeToolbarTips = async () => {
-  await nextTick();
-  clearToolbarTips();
-
-  const toolbar = toolbarRef.value;
-
-  toolbarTipObserver?.disconnect();
-  documentTipObserver?.disconnect();
-
-  if (toolbar) {
-    toolbarTipObserver = new MutationObserver(scheduleClearToolbarTips);
-    toolbarTipObserver.observe(toolbar, {
-      subtree: true,
-      childList: true,
-      attributes: true,
-      attributeFilter: ["title", "data-title", "data-tooltip", "class", "style"],
-    });
-  }
-
-  documentTipObserver = new MutationObserver(scheduleClearToolbarTips);
-  documentTipObserver.observe(document.body, {
-    subtree: true,
-    childList: true,
-    attributes: true,
-    attributeFilter: ["class", "style"],
-  });
-};
-
 const syncReadonlyState = () => {
   const editor = editorRef.value;
 
@@ -215,10 +143,9 @@ const enterEditMode = async () => {
   await setEditorMode("edit");
 };
 
-const handleCreated = async (editor: IDomEditor) => {
+const handleCreated = (editor: IDomEditor) => {
   editorRef.value = editor;
   syncReadonlyState();
-  await observeToolbarTips();
 };
 
 const handleFocus = () => {
@@ -282,23 +209,15 @@ watch(
   syncReadonlyState,
 );
 
-onMounted(async () => {
+onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
   syncReadonlyState();
-  await observeToolbarTips();
 });
 
 onBeforeUnmount(() => {
-  if (toolbarCleanupTimer) {
-    window.clearTimeout(toolbarCleanupTimer);
-  }
-
-  toolbarTipObserver?.disconnect();
-  documentTipObserver?.disconnect();
   window.removeEventListener("keydown", handleKeydown);
   editorRef.value?.destroy();
 });
 </script>
 
 <style lang="scss" scoped src="./index.scss"></style>
-<style lang="scss" scoped src="./editor.scss"></style>
