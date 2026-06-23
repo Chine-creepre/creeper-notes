@@ -26,6 +26,76 @@
   background: color-mix(in srgb, var(--h_window_surface) 64%, transparent);
 }
 
+.h_markdown_editor_header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 0 0 auto;
+  gap: 12px;
+  min-width: 0;
+  height: 42px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--h_window_border);
+  box-sizing: border-box;
+  background: color-mix(in srgb, var(--h_window_surface_deep) 44%, transparent);
+}
+
+.h_markdown_editor_tabs {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 4px;
+  min-width: 0;
+  padding: 3px;
+  border: 1px solid color-mix(in srgb, var(--h_color_primary) 16%, var(--h_window_border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--h_window_surface_deep) 62%, transparent);
+}
+
+.h_markdown_editor_tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-width: 54px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--h_window_text_muted);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.h_markdown_editor_tab:hover {
+  color: var(--h_window_text_secondary);
+}
+
+.h_markdown_editor_tab_active {
+  background: var(--h_color_primary_weak);
+  color: var(--h_color_primary);
+}
+
+.h_markdown_editor_tab:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.h_markdown_editor_state {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 1;
+  min-width: 0;
+  color: var(--h_window_text_muted);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
 .h_markdown_editor_toolbar {
   flex: 0 0 auto;
   min-width: 0;
@@ -57,6 +127,15 @@
   color: var(--h_color_primary);
 }
 
+.h_markdown_editor_content {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
 .h_markdown_editor_body,
 .h_markdown_editor_preview {
   flex: 1;
@@ -76,7 +155,9 @@
 }
 
 .h_markdown_editor_body :deep(.w-e-scroll) {
+  height: 100%;
   min-height: 0;
+  overflow: auto;
 }
 
 .h_markdown_editor_body :deep([data-slate-editor]) {
@@ -100,6 +181,7 @@
 .h_markdown_editor_preview {
   overflow: auto;
   padding: 22px;
+  outline: none;
   color: var(--h_window_text_secondary);
   font-family:
     Inter,
@@ -110,67 +192,130 @@
   line-height: 1.8;
 }
 
-.h_markdown_editor_preview :deep(h1),
-.h_markdown_editor_preview :deep(h2),
-.h_markdown_editor_preview :deep(h3),
-.h_markdown_editor_preview :deep(h4),
-.h_markdown_editor_preview :deep(h5),
-.h_markdown_editor_preview :deep(p),
-.h_markdown_editor_preview :deep(blockquote) {
+.h_markdown_editor_preview:focus {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--h_color_primary) 32%, transparent);
+}
+
+.h_markdown_editor_empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 100%;
+  color: var(--h_window_text_muted);
+  text-align: center;
+}
+
+.h_markdown_editor_empty strong {
+  color: var(--h_window_text_secondary);
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.h_markdown_editor_empty span {
+  margin-top: 4px;
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.h_markdown_editor_preview_content {
+  min-width: 0;
+}
+
+.h_markdown_editor_preview_content :deep(h1),
+.h_markdown_editor_preview_content :deep(h2),
+.h_markdown_editor_preview_content :deep(h3),
+.h_markdown_editor_preview_content :deep(h4),
+.h_markdown_editor_preview_content :deep(h5),
+.h_markdown_editor_preview_content :deep(p),
+.h_markdown_editor_preview_content :deep(blockquote) {
   margin: 0 0 12px;
 }
 
-.h_markdown_editor_preview :deep(h1),
-.h_markdown_editor_preview :deep(h2),
-.h_markdown_editor_preview :deep(h3),
-.h_markdown_editor_preview :deep(h4),
-.h_markdown_editor_preview :deep(h5) {
+.h_markdown_editor_preview_content :deep(h1),
+.h_markdown_editor_preview_content :deep(h2),
+.h_markdown_editor_preview_content :deep(h3),
+.h_markdown_editor_preview_content :deep(h4),
+.h_markdown_editor_preview_content :deep(h5) {
   color: var(--h_window_text);
 }
 
-.h_markdown_editor_preview :deep(h1) {
+.h_markdown_editor_preview_content :deep(h1) {
   font-size: 24px;
   line-height: 1.35;
 }
 
-.h_markdown_editor_preview :deep(h2) {
+.h_markdown_editor_preview_content :deep(h2) {
   font-size: 20px;
   line-height: 1.4;
 }
 
-.h_markdown_editor_preview :deep(h3) {
+.h_markdown_editor_preview_content :deep(h3) {
   font-size: 17px;
   line-height: 1.45;
 }
 
-.h_markdown_editor_preview :deep(h4) {
+.h_markdown_editor_preview_content :deep(h4) {
   font-size: 15px;
   line-height: 1.5;
 }
 
-.h_markdown_editor_preview :deep(h5) {
+.h_markdown_editor_preview_content :deep(h5) {
   font-size: 13px;
   line-height: 1.55;
 }
 
-.h_markdown_editor_preview :deep(strong) {
+.h_markdown_editor_preview_content :deep(strong) {
   color: var(--h_window_text);
 }
 
-.h_markdown_editor_preview :deep(em) {
+.h_markdown_editor_preview_content :deep(em) {
   color: color-mix(in srgb, var(--h_window_text) 78%, var(--h_color_primary));
   font-style: italic;
 }
 
-.h_markdown_editor_preview :deep(code) {
+.h_markdown_editor_preview_content :deep(code) {
   padding: 2px 6px;
   border-radius: 6px;
   background: var(--h_window_surface_deep);
   color: var(--h_color_primary);
 }
 
-.h_markdown_editor_preview :deep(blockquote) {
+.h_markdown_editor_preview_content :deep(pre) {
+  overflow: auto;
+  padding: 12px;
+  border-radius: 10px;
+  background: var(--h_window_surface_deep);
+}
+
+.h_markdown_editor_preview_content :deep(blockquote) {
   padding-left: 12px;
   border-left: 3px solid var(--h_color_primary);
   color: var(--h_window_text_secondary);
+}
+
+.h_markdown_editor_preview_content :deep(ul),
+.h_markdown_editor_preview_content :deep(ol) {
+  margin: 0 0 12px;
+  padding-left: 22px;
+}
+
+.h_markdown_editor_preview_content :deep(li) {
+  margin: 4px 0;
+}
+
+.h_markdown_editor_readonly .h_markdown_editor_state {
+  color: var(--h_color_primary);
+}
+
+@media (max-width: 920px) {
+  .h_markdown_editor_header {
+    height: auto;
+    min-height: 42px;
+    padding: 8px 10px;
+  }
+
+  .h_markdown_editor_tabs {
+    flex-wrap: wrap;
+  }
 }
