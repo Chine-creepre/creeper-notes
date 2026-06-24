@@ -29,6 +29,18 @@ const resolveManualChunk = (id: string) => {
     return "vendor-vue";
   }
 
+  if (packageName === "md-editor-v3" || packageName.startsWith("@vavt/")) {
+    return "vendor-md-editor";
+  }
+
+  if (packageName === "codemirror" || packageName.startsWith("@codemirror/") || packageName.startsWith("@lezer/")) {
+    return "vendor-md-editor-codemirror";
+  }
+
+  if (["marked", "medium-zoom", "screenfull", "cropperjs", "xss"].includes(packageName)) {
+    return "vendor-md-editor-markdown";
+  }
+
   if (packageName.startsWith("@wangeditor/")) {
     return `vendor-${packageName.replace("@", "").replace("/", "-")}`;
   }
