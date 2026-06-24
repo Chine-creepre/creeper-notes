@@ -3,7 +3,7 @@
   flex: 1;
   min-width: 0;
   min-height: 0;
-  padding: 0 8px;
+  padding: 4px 8px;
   outline: none;
   box-sizing: border-box;
   color: var(--h_window_text_secondary);
@@ -51,6 +51,10 @@
 .h_markdown_preview :deep(.md-editor-preview code:not(pre code)) {
   background: var(--h_window_surface_deep);
   color: var(--h_color_primary);
+}
+
+.h_markdown_preview :deep(.md-editor-preview .md-editor-code) {
+  margin: 8px 0;
 }
 
 .h_markdown_preview :deep(.md-editor-preview pre) {
