@@ -2,7 +2,7 @@
   <div class="h_settings" @keydown="captureShortcut">
     <header class="h_settings_header" @mousedown.left="startDragWindow">
       <div class="h_settings_header_left">
-        <img class="h_settings_header_icon" :src="appIconSrc" alt="Creeper Notes" draggable="false" />
+        <HSystemIcon class="h_settings_header_icon" />
         <div class="h_settings_header_title_group">
           <h1 class="h_settings_title">设置中心</h1>
           <p class="h_settings_subtitle">主题、快捷键与系统设置 · {{ appVersionText }}</p>
@@ -174,9 +174,9 @@
 import HButton from "@/components/Button/index.vue";
 import HInput from "@/components/Input/index.vue";
 import HSelectTree from "@/components/SelectTree/index.vue";
+import HSystemIcon from "@/components/SystemIcon/index.vue";
 import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import HTree from "@/components/Tree/index.vue";
-import appIconSrc from "@/assets/icons/32x32.png";
 import "./index.scss";
 import "./headerIcon.scss";
 import { useHSettings } from "./hook";
