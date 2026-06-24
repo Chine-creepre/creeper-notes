@@ -1,0 +1,20 @@
+.h_settings_header_left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.h_settings_header_icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.h_settings_header_title_group {
+  min-width: 0;
+}
