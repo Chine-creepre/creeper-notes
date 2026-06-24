@@ -30,12 +30,12 @@ export const APP_THEME_OPTIONS: AppThemeOption[] = [
     preview: "linear-gradient(135deg, #b91c1c, #92400e)",
   },
   {
-    label: "棕色主题",
+    label: "木棕主题",
     value: "brown",
     preview: "linear-gradient(135deg, #7c4a2d, #b08968)",
   },
   {
-    label: "黄色主题",
+    label: "金黄主题",
     value: "yellow",
     preview: "linear-gradient(135deg, #ca8a04, #facc15)",
   },
