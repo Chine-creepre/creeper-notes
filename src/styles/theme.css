@@ -98,6 +98,72 @@
   --h_window_shadow: rgba(0, 0, 0, 0.38);
 }
 
+:root[data-theme="brown"] {
+  --h_color_background: #faf7f2;
+  --h_color_surface: #ffffff;
+  --h_color_surface_muted: #f2ebe2;
+  --h_color_border: rgba(92, 64, 51, 0.1);
+  --h_color_border_strong: rgba(92, 64, 51, 0.16);
+  --h_color_text: #24160f;
+  --h_color_text_secondary: #594235;
+  --h_color_text_muted: #806b5e;
+  --h_color_primary: #8b5e34;
+  --h_color_primary_weak: #f0e4d7;
+  --h_color_scrollbar_track: rgba(92, 64, 51, 0.05);
+  --h_color_scrollbar_thumb: rgba(139, 94, 52, 0.34);
+  --h_color_scrollbar_thumb_hover: rgba(139, 94, 52, 0.5);
+  --h_color_danger: #dc2626;
+  --h_color_danger_weak: rgba(239, 68, 68, 0.1);
+  --h_color_success: #15803d;
+  --h_color_success_weak: rgba(34, 197, 94, 0.12);
+  --h_color_warning: #d97706;
+  --h_color_warning_weak: rgba(217, 119, 6, 0.12);
+  --h_window_background_start: color-mix(in srgb, var(--h_color_primary) 14%, #20150f);
+  --h_window_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #100905);
+  --h_window_surface: color-mix(in srgb, var(--h_color_primary) 10%, #2a1c14);
+  --h_window_surface_muted: color-mix(in srgb, var(--h_color_primary) 16%, #35241a);
+  --h_window_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #100905);
+  --h_window_border: color-mix(in srgb, var(--h_color_primary) 24%, #3a2a20);
+  --h_window_border_strong: color-mix(in srgb, var(--h_color_primary) 42%, #4f3a2d);
+  --h_window_text: #fff6ed;
+  --h_window_text_secondary: color-mix(in srgb, var(--h_color_primary) 20%, #bfa997);
+  --h_window_text_muted: color-mix(in srgb, var(--h_color_primary) 14%, #958072);
+  --h_window_shadow: rgba(0, 0, 0, 0.38);
+}
+
+:root[data-theme="yellow"] {
+  --h_color_background: #fffdf2;
+  --h_color_surface: #ffffff;
+  --h_color_surface_muted: #fff7d6;
+  --h_color_border: rgba(133, 77, 14, 0.1);
+  --h_color_border_strong: rgba(133, 77, 14, 0.16);
+  --h_color_text: #241805;
+  --h_color_text_secondary: #5b4616;
+  --h_color_text_muted: #856f3a;
+  --h_color_primary: #ca8a04;
+  --h_color_primary_weak: #fff1b8;
+  --h_color_scrollbar_track: rgba(133, 77, 14, 0.05);
+  --h_color_scrollbar_thumb: rgba(202, 138, 4, 0.34);
+  --h_color_scrollbar_thumb_hover: rgba(202, 138, 4, 0.5);
+  --h_color_danger: #dc2626;
+  --h_color_danger_weak: rgba(239, 68, 68, 0.1);
+  --h_color_success: #15803d;
+  --h_color_success_weak: rgba(34, 197, 94, 0.12);
+  --h_color_warning: #d97706;
+  --h_color_warning_weak: rgba(217, 119, 6, 0.12);
+  --h_window_background_start: color-mix(in srgb, var(--h_color_primary) 13%, #201606);
+  --h_window_background_end: color-mix(in srgb, var(--h_color_primary) 6%, #100a02);
+  --h_window_surface: color-mix(in srgb, var(--h_color_primary) 10%, #2a1d08);
+  --h_window_surface_muted: color-mix(in srgb, var(--h_color_primary) 16%, #38270c);
+  --h_window_surface_deep: color-mix(in srgb, var(--h_color_primary) 5%, #100a02);
+  --h_window_border: color-mix(in srgb, var(--h_color_primary) 24%, #3d2d12);
+  --h_window_border_strong: color-mix(in srgb, var(--h_color_primary) 42%, #5c4318);
+  --h_window_text: #fff8dd;
+  --h_window_text_secondary: color-mix(in srgb, var(--h_color_primary) 20%, #c5ad70);
+  --h_window_text_muted: color-mix(in srgb, var(--h_color_primary) 14%, #998853);
+  --h_window_shadow: rgba(0, 0, 0, 0.38);
+}
+
 :root {
   --h_dark_background_start: var(--h_window_background_start);
   --h_dark_background_end: var(--h_window_background_end);
