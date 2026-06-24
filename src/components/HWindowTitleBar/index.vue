@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Icon } from "@iconify/vue";
 import { computed, useSlots } from "vue";
-import { APP_ICON_SRC } from "@/constants/appIcon";
+import appIconSrc from "@/assets/icons/32x32.png";
 import { useHWindowTitleBar } from "./hook";
 
 withDefaults(
@@ -27,7 +27,7 @@ const { closeToTray, startDragWindow, toggleFullscreen } = useHWindowTitleBar();
       @mousedown.left="startDragWindow"
       @dblclick.left.stop="toggleFullscreen">
       <div class="h_window_title_bar_left">
-        <img class="h_window_title_bar_icon" :src="APP_ICON_SRC" alt="Creeper Notes" draggable="false" />
+        <img class="h_window_title_bar_icon" :src="appIconSrc" alt="Creeper Notes" draggable="false" />
         <span v-if="title" class="h_window_title_bar_current_note">{{ title }}</span>
       </div>
 
