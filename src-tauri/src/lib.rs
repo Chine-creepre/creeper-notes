@@ -63,13 +63,13 @@ pub fn run() {
             database_service::initialize_database(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
-            config_service::initialize_config(app.handle())
+            let app_config = config_service::initialize_config(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             shortcut_service::initialize_shortcuts(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
-            tray_service::initialize_tray(app.handle())
+            tray_service::initialize_tray(app.handle(), &app_config)
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             Ok(())
