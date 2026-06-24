@@ -75,7 +75,7 @@
               type="button"
               @click="themeDraft = themeOption.value"
             >
-              <span class="h_settings_theme_preview"></span>
+              <span class="h_settings_theme_preview" :style="{ background: themeOption.preview }"></span>
               <strong>{{ themeOption.label }}</strong>
               <em>{{ themeDraft === themeOption.value ? "当前选择" : "点击选择" }}</em>
             </button>
