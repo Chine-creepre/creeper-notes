@@ -5,8 +5,8 @@
     @focusin="enterEditMode"
   >
     <MdEditor
+      v-if="editorMode === 'edit'"
       ref="mdEditorRef"
-      v-show="editorMode === 'edit'"
       v-model="editorValue"
       class="h_markdown_editor_body"
       language="zh-CN"
@@ -16,16 +16,16 @@
       code-theme="atom"
       :preview="false"
       :html-preview="false"
-      :read-only="readonly"
+      :readOnly="readonly"
       :toolbars="editorToolbars"
       :footers="[]"
       :no-upload-img="true"
-      @on-focus="handleFocus"
-      @on-blur="handleBlur"
+      @onFocus="handleFocus"
+      @onBlur="handleBlur"
     />
 
     <MarkdownPreview
-      v-show="editorMode === 'preview'"
+      v-else
       :model-value="previewMarkdown"
       @activate="enterEditMode"
     />
@@ -78,14 +78,14 @@ const editorToolbars = [
   "bold",
   "underline",
   "italic",
-  "strike-through",
+  "strikeThrough",
   "title",
   "sub",
   "sup",
   "quote",
-  "unordered-list",
-  "ordered-list",
-  "code-row",
+  "unorderedList",
+  "orderedList",
+  "codeRow",
   "code",
   "table",
   "revoke",
