@@ -10,6 +10,9 @@
       :model-value="previewMarkdown"
       :editor-id="previewEditorId"
       language="zh-CN"
+      theme="dark"
+      preview-theme="github"
+      code-theme="atom"
     />
   </article>
 </template>
