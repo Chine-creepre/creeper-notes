@@ -179,6 +179,7 @@ import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import HTree from "@/components/Tree/index.vue";
 import "./index.scss";
 import "./headerIcon.scss";
+import "./themeGrid.scss";
 import { useHSettings } from "./hook";
 
 const {
