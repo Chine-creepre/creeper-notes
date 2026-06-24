@@ -34,7 +34,7 @@
 </template>
 
 <script setup lang="ts">
-import { MdEditor, type ExposeParam } from "md-editor-v3";
+import { MdEditor, type ExposeParam, type ToolbarNames } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
@@ -76,7 +76,7 @@ const editorMode = computed<MarkdownEditorMode>({
 });
 const previewMarkdown = computed(() => editorValue.value || EMPTY_MARKDOWN);
 
-const editorToolbars = [
+const editorToolbars: ToolbarNames[] = [
   "bold",
   "underline",
   "italic",
@@ -92,7 +92,7 @@ const editorToolbars = [
   "table",
   "revoke",
   "next",
-] as const;
+];
 
 const normalizeEditorValue = (value: string) => value.trim();
 
