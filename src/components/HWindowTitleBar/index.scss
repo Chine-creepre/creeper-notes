@@ -16,8 +16,26 @@
   flex: 1;
   min-width: 0;
   height: 100%;
-  padding: 0 10px 0 18px;
+  padding: 0 10px 0 14px;
   box-sizing: border-box;
+}
+
+.h_window_title_bar_left {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex: 1;
+  min-width: 0;
+}
+
+.h_window_title_bar_icon {
+  display: block;
+  flex: 0 0 auto;
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  user-select: none;
+  -webkit-user-drag: none;
 }
 
 .h_window_title_bar_current_note {
