@@ -1,44 +1,42 @@
 <template>
-  <section :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]" @focusin="enterEditMode">
-    <div class="h_markdown_editor_toolbar_wrap">
-      <Toolbar
-        class="h_markdown_editor_toolbar"
-        :editor="editorRef"
-        :default-config="toolbarConfig"
-        mode="default"
-      />
-    </div>
-
-    <Editor
+  <section
+    ref="editorShellRef"
+    :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]"
+    @focusin="enterEditMode"
+    @focusout.capture="handleFocusOut"
+  >
+    <MdEditor
       v-show="editorMode === 'edit'"
       v-model="editorValue"
       class="h_markdown_editor_body"
-      :default-config="editorConfig"
-      mode="default"
-      @on-blur="handleBlur"
-      @on-created="handleCreated"
+      language="zh-CN"
+      placeholder="记录内容..."
+      :preview="false"
+      :html-preview="false"
+      :read-only="readonly"
+      :toolbars="editorToolbars"
+      :footers="[]"
+      :no-upload-img="true"
       @on-focus="handleFocus"
-      @on-change="handleChange"
     />
 
     <MarkdownPreview
       v-show="editorMode === 'preview'"
-      :model-value="previewHtml"
+      :model-value="previewMarkdown"
       @activate="enterEditMode"
     />
   </section>
 </template>
 
 <script setup lang="ts">
-import "@wangeditor/editor/dist/css/style.css";
-import type { IDomEditor, IEditorConfig, IToolbarConfig } from "@wangeditor/editor";
-import { Editor, Toolbar } from "@wangeditor/editor-for-vue";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowRef, watch } from "vue";
+import { MdEditor } from "md-editor-v3";
+import "md-editor-v3/lib/style.css";
+import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
 
 type MarkdownEditorMode = "edit" | "preview";
 
-const EMPTY_EDITOR_HTML = "<p><br></p>";
+const EMPTY_MARKDOWN = "";
 
 const props = withDefaults(
   defineProps<{
@@ -60,8 +58,8 @@ const emit = defineEmits<{
   save: [];
 }>();
 
-const editorRef = shallowRef<IDomEditor>();
-const editorValue = ref(props.modelValue || "");
+const editorShellRef = ref<HTMLElement>();
+const editorValue = ref(props.modelValue || EMPTY_MARKDOWN);
 let focusDraftSnapshot = editorValue.value;
 
 const readonly = computed(() => props.readonly);
@@ -69,32 +67,27 @@ const editorMode = computed<MarkdownEditorMode>({
   get: () => props.mode,
   set: (value) => emit("update:mode", value),
 });
+const previewMarkdown = computed(() => editorValue.value || EMPTY_MARKDOWN);
 
-const toolbarConfig: Partial<IToolbarConfig> = {
-  toolbarKeys: [
-    "headerSelect",
-    "bold",
-    "italic",
-    "through",
-    "bulletedList",
-    "numberedList",
-    "blockquote",
-    "codeBlock",
-    "divider",
-    "undo",
-    "redo",
-  ],
-};
+const editorToolbars = [
+  "bold",
+  "underline",
+  "italic",
+  "strikeThrough",
+  "title",
+  "sub",
+  "sup",
+  "quote",
+  "unorderedList",
+  "orderedList",
+  "codeRow",
+  "code",
+  "table",
+  "revoke",
+  "next",
+] as const;
 
-const editorConfig: Partial<IEditorConfig> = {
-  placeholder: "记录内容...",
-  autoFocus: false,
-  scroll: true,
-};
-
-const previewHtml = computed(() => editorValue.value || EMPTY_EDITOR_HTML);
-
-const normalizeEditorValue = (value: string) => value.trim() || EMPTY_EDITOR_HTML;
+const normalizeEditorValue = (value: string) => value.trim();
 
 const syncFocusDraftSnapshot = () => {
   focusDraftSnapshot = editorValue.value;
@@ -103,22 +96,9 @@ const syncFocusDraftSnapshot = () => {
 const hasFocusDraftChanged = () =>
   normalizeEditorValue(editorValue.value) !== normalizeEditorValue(focusDraftSnapshot);
 
-const syncReadonlyState = () => {
-  const editor = editorRef.value;
-
-  if (!editor) return;
-
-  if (readonly.value) {
-    editor.disable();
-    return;
-  }
-
-  editor.enable();
-};
-
 const focusEditor = async () => {
   await nextTick();
-  editorRef.value?.focus(true);
+  editorShellRef.value?.querySelector<HTMLTextAreaElement>("textarea")?.focus();
 };
 
 const setEditorMode = async (mode: MarkdownEditorMode) => {
@@ -142,11 +122,6 @@ const enterEditMode = async () => {
   await setEditorMode("edit");
 };
 
-const handleCreated = (editor: IDomEditor) => {
-  editorRef.value = editor;
-  syncReadonlyState();
-};
-
 const handleFocus = () => {
   if (!readonly.value) {
     editorMode.value = "edit";
@@ -159,13 +134,16 @@ const handleBlur = () => {
   }
 };
 
-const handleChange = (editor: IDomEditor) => {
-  const html = editor.getHtml();
+const handleFocusOut = async (event: FocusEvent) => {
+  await nextTick();
 
-  if (html === props.modelValue) return;
+  const nextFocusedNode = event.relatedTarget instanceof Node
+    ? event.relatedTarget
+    : document.activeElement;
 
-  editorValue.value = html;
-  emit("update:modelValue", html);
+  if (nextFocusedNode && editorShellRef.value?.contains(nextFocusedNode)) return;
+
+  handleBlur();
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -179,9 +157,18 @@ const handleKeydown = (event: KeyboardEvent) => {
 };
 
 watch(
+  editorValue,
+  (value) => {
+    if (value === props.modelValue) return;
+
+    emit("update:modelValue", value);
+  },
+);
+
+watch(
   () => props.modelValue,
   (value) => {
-    const nextValue = value || "";
+    const nextValue = value || EMPTY_MARKDOWN;
 
     if (nextValue === editorValue.value) return;
 
@@ -203,19 +190,12 @@ watch(
   },
 );
 
-watch(
-  () => props.readonly,
-  syncReadonlyState,
-);
-
 onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
-  syncReadonlyState();
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeydown);
-  editorRef.value?.destroy();
 });
 </script>
 
