@@ -178,6 +178,7 @@ import HThemedIcon from "@/components/ThemedIcon/index.vue";
 import HTree from "@/components/Tree/index.vue";
 import { APP_ICON_SRC } from "@/constants/appIcon";
 import "./index.scss";
+import "./headerIcon.scss";
 import { useHSettings } from "./hook";
 
 const {
