@@ -2,14 +2,44 @@ use tauri::menu::{Menu, MenuItem};
 use tauri::tray::{MouseButton, MouseButtonState, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, WindowEvent};
 
+use crate::models::app_config::AppConfig;
 use crate::services::window_service;
 
+const APP_NAME: &str = "creeper-notes";
 const MAIN_WINDOW_LABEL: &str = "main";
 const TRAY_ID: &str = "main-tray";
 const TRAY_TOGGLE_MAIN_ID: &str = "toggle_main_window";
 const TRAY_TOGGLE_SEARCH_ID: &str = "toggle_search_window";
 const TRAY_OPEN_SETTINGS_ID: &str = "open_settings_window";
 const TRAY_QUIT_ID: &str = "quit_app";
+
+fn get_app_version(app: &AppHandle) -> String {
+    app
+        .config()
+        .version
+        .clone()
+        .unwrap_or_else(|| app.package_info().version.to_string())
+}
+
+fn create_tray_tooltip(app: &AppHandle, app_config: &AppConfig) -> String {
+    format!(
+        "{} v{}\n主窗口快捷键：{}\n搜索窗口快捷键：{}",
+        APP_NAME,
+        get_app_version(app),
+        app_config.toggle_shortcut,
+        app_config.search_shortcut,
+    )
+}
+
+pub fn sync_tray_tooltip(app: &AppHandle, app_config: &AppConfig) -> Result<(), String> {
+    let Some(tray) = app.tray_by_id(TRAY_ID) else {
+        return Ok(());
+    };
+
+    tray
+        .set_tooltip(Some(create_tray_tooltip(app, app_config)))
+        .map_err(|error| error.to_string())
+}
 
 fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     let toggle_main_item = MenuItem::with_id(
@@ -100,7 +130,7 @@ fn initialize_main_window_close_handler(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-pub fn initialize_tray(app: &AppHandle) -> Result<(), String> {
+pub fn initialize_tray(app: &AppHandle, app_config: &AppConfig) -> Result<(), String> {
     let menu = create_tray_menu(app)?;
     let icon = app
         .default_window_icon()
@@ -108,7 +138,7 @@ pub fn initialize_tray(app: &AppHandle) -> Result<(), String> {
         .clone();
 
     TrayIconBuilder::with_id(TRAY_ID)
-        .tooltip("creeper-notes")
+        .tooltip(create_tray_tooltip(app, app_config))
         .icon(icon)
         .menu(&menu)
         .show_menu_on_left_click(false)
