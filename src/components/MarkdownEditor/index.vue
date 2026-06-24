@@ -5,6 +5,7 @@
     @focusin="enterEditMode"
   >
     <MdEditor
+      ref="mdEditorRef"
       v-show="editorMode === 'edit'"
       v-model="editorValue"
       class="h_markdown_editor_body"
@@ -32,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-import { MdEditor } from "md-editor-v3";
+import { MdEditor, type ExposeParam } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import { computed, nextTick, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
@@ -62,6 +63,7 @@ const emit = defineEmits<{
 }>();
 
 const editorShellRef = ref<HTMLElement>();
+const mdEditorRef = ref<ExposeParam>();
 const editorValue = ref(props.modelValue || EMPTY_MARKDOWN);
 let focusDraftSnapshot = editorValue.value;
 
@@ -76,14 +78,14 @@ const editorToolbars = [
   "bold",
   "underline",
   "italic",
-  "strikeThrough",
+  "strike-through",
   "title",
   "sub",
   "sup",
   "quote",
-  "unorderedList",
-  "orderedList",
-  "codeRow",
+  "unordered-list",
+  "ordered-list",
+  "code-row",
   "code",
   "table",
   "revoke",
@@ -101,7 +103,7 @@ const hasFocusDraftChanged = () =>
 
 const focusEditor = async () => {
   await nextTick();
-  editorShellRef.value?.querySelector<HTMLTextAreaElement>("textarea")?.focus();
+  mdEditorRef.value?.focus();
 };
 
 const setEditorMode = async (mode: MarkdownEditorMode) => {
@@ -131,7 +133,13 @@ const handleFocus = () => {
   }
 };
 
-const handleBlur = () => {
+const handleBlur = async () => {
+  await nextTick();
+
+  const activeNode = document.activeElement;
+
+  if (activeNode && editorShellRef.value?.contains(activeNode)) return;
+
   if (!hasFocusDraftChanged() || !props.dirty) {
     editorMode.value = "preview";
   }
