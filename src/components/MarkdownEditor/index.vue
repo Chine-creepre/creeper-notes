@@ -3,7 +3,6 @@
     ref="editorShellRef"
     :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]"
     @focusin="enterEditMode"
-    @focusout.capture="handleFocusOut"
   >
     <MdEditor
       v-show="editorMode === 'edit'"
@@ -18,6 +17,7 @@
       :footers="[]"
       :no-upload-img="true"
       @on-focus="handleFocus"
+      @on-blur="handleBlur"
     />
 
     <MarkdownPreview
@@ -132,18 +132,6 @@ const handleBlur = () => {
   if (!hasFocusDraftChanged() || !props.dirty) {
     editorMode.value = "preview";
   }
-};
-
-const handleFocusOut = async (event: FocusEvent) => {
-  await nextTick();
-
-  const nextFocusedNode = event.relatedTarget instanceof Node
-    ? event.relatedTarget
-    : document.activeElement;
-
-  if (nextFocusedNode && editorShellRef.value?.contains(nextFocusedNode)) return;
-
-  handleBlur();
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
