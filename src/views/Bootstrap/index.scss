@@ -272,7 +272,7 @@
   display: flex;
   flex: 1;
   flex-direction: column;
-  padding: 18px 22px 20px;
+  padding: 4px;
   background: color-mix(in srgb, var(--h_main_surface_deep) 36%, transparent);
 }
 
@@ -395,25 +395,13 @@
   color: var(--h_window_text_muted);
 }
 
-@media (max-width: 920px) {
-  .h_bootstrap {
-    flex-direction: column;
-    overflow: auto;
-  }
-
-  .h_bootstrap_notes_panel,
-  .h_bootstrap_editor_panel {
-    flex: 0 0 auto;
-    width: 100%;
-  }
-
+@media (width <= 860px) {
   .h_bootstrap_notes_panel {
-    max-height: 360px;
-    border-right: 0;
-    border-bottom: 1px solid var(--h_main_border);
+    flex-basis: 230px;
+    padding: 12px;
   }
 
   .h_bootstrap_editor_panel {
-    min-height: 460px;
+    padding: 4px;
   }
 }
