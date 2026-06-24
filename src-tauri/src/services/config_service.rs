@@ -7,6 +7,7 @@ use crate::constants::config_constants::{
     DEFAULT_TOGGLE_SHORTCUT,
 };
 use crate::models::app_config::AppConfig;
+use crate::models::app_paths::AppPaths;
 use crate::repositories::config_repository;
 use crate::services::{auto_start_service, path_service, shortcut_service};
 
@@ -55,12 +56,30 @@ fn sanitize_config(app: &AppHandle, mut app_config: AppConfig) -> Result<AppConf
     Ok(app_config)
 }
 
+fn sync_auto_start_state(
+    app: &AppHandle,
+    app_paths: &AppPaths,
+    mut app_config: AppConfig,
+) -> Result<AppConfig, String> {
+    let auto_start_enabled = auto_start_service::is_auto_start_enabled(app)?;
+
+    if app_config.auto_start_enabled == auto_start_enabled {
+        return Ok(app_config);
+    }
+
+    app_config.auto_start_enabled = auto_start_enabled;
+    config_repository::write_config(app_paths, &app_config)?;
+
+    Ok(app_config)
+}
+
 pub fn initialize_config(app: &AppHandle) -> Result<AppConfig, String> {
     let app_paths = path_service::get_app_data_path(app)?;
     let default_config = create_default_config(app)?;
     let app_config = config_repository::initialize_config(&app_paths, &default_config)?;
+    let app_config = sanitize_config(app, app_config)?;
 
-    sanitize_config(app, app_config)
+    sync_auto_start_state(app, &app_paths, app_config)
 }
 
 pub fn get_config(app: &AppHandle) -> Result<AppConfig, String> {
