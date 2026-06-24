@@ -1,21 +1,4 @@
 .h_markdown_editor {
-  --w-e-textarea-bg-color: transparent;
-  --w-e-textarea-color: var(--h_window_text_secondary);
-  --w-e-textarea-border-color: var(--h_window_border);
-  --w-e-textarea-slight-border-color: var(--h_window_border);
-  --w-e-textarea-slight-color: var(--h_window_text_muted);
-  --w-e-textarea-slight-bg-color: color-mix(in srgb, var(--h_window_surface_deep) 72%, transparent);
-  --w-e-textarea-selected-border-color: var(--h_color_primary);
-  --w-e-textarea-handler-bg-color: var(--h_color_primary);
-  --w-e-toolbar-color: var(--h_window_text_secondary);
-  --w-e-toolbar-bg-color: transparent;
-  --w-e-toolbar-active-color: var(--h_color_primary);
-  --w-e-toolbar-active-bg-color: var(--h_window_surface);
-  --w-e-toolbar-disabled-color: var(--h_window_text_muted);
-  --w-e-toolbar-border-color: var(--h_window_border);
-  --w-e-modal-button-bg-color: var(--h_color_primary);
-  --w-e-modal-button-border-color: var(--h_color_primary);
-
   display: flex;
   flex: 1;
   flex-direction: column;
@@ -27,31 +10,54 @@
   background: color-mix(in srgb, var(--h_window_surface) 64%, transparent);
 }
 
-:global(.w-e-menu-tooltip-v5::before) {
-  color: var(--h_window_text) !important;
-}
-
-.h_markdown_editor :deep(.w-e-text-container [data-slate-editor] pre > code) {
-  text-shadow: none !important;
-}
-
-.h_markdown_editor_toolbar_wrap {
-  flex: 0 0 auto;
-  min-width: 0;
-  border-bottom: 1px solid var(--h_window_border);
-}
-
-.h_markdown_editor_toolbar {
-  min-width: 0;
-}
-
 .h_markdown_editor_body {
   flex: 1;
   min-width: 0;
   min-height: 0;
-  overflow: hidden;
+  border: 0;
+  background: transparent;
 }
 
-.h_markdown_editor_readonly .h_markdown_editor_toolbar_wrap {
-  opacity: 0.72;
+.h_markdown_editor :deep(.md-editor) {
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--h_window_text_secondary);
+}
+
+.h_markdown_editor :deep(.md-editor-toolbar-wrapper) {
+  border-bottom: 1px solid var(--h_window_border);
+  background: transparent;
+}
+
+.h_markdown_editor :deep(.md-editor-toolbar) {
+  background: transparent;
+}
+
+.h_markdown_editor :deep(.md-editor-toolbar-item) {
+  color: var(--h_window_text_muted);
+}
+
+.h_markdown_editor :deep(.md-editor-toolbar-item:hover),
+.h_markdown_editor :deep(.md-editor-toolbar-item.active) {
+  background: var(--h_window_surface);
+  color: var(--h_color_primary);
+}
+
+.h_markdown_editor :deep(.md-editor-input-wrapper) {
+  background: transparent;
+}
+
+.h_markdown_editor :deep(.md-editor-input) {
+  color: var(--h_window_text_secondary);
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.h_markdown_editor :deep(.md-editor-input::placeholder) {
+  color: var(--h_window_text_muted);
+}
+
+.h_markdown_editor_readonly {
+  opacity: 0.9;
 }
