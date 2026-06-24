@@ -1,4 +1,11 @@
 .h_markdown_preview {
+  --h_markdown_inline_code_bg: var(--h_window_surface_deep);
+  --h_markdown_inline_code_color: var(--h_color_primary);
+  --h_markdown_code_block_bg: color-mix(in srgb, var(--h_window_surface_deep) 86%, transparent);
+  --h_markdown_code_block_border: color-mix(in srgb, var(--h_color_primary) 14%, var(--h_window_border));
+  --h_markdown_code_block_color: var(--h_window_text_secondary);
+  --h_markdown_code_font_family: "JetBrains Mono", "Fira Code", Consolas, "Courier New", monospace;
+
   overflow: auto;
   flex: 1;
   min-width: 0;
@@ -75,17 +82,20 @@
 .h_markdown_preview :deep(code) {
   padding: 2px 6px;
   border-radius: 6px;
-  background: var(--h_window_surface_deep);
-  color: var(--h_color_primary);
+  background: var(--h_markdown_inline_code_bg);
+  color: var(--h_markdown_inline_code_color);
+  font-family: var(--h_markdown_code_font_family);
+  font-size: 0.92em;
+  line-height: inherit;
 }
 
 .h_markdown_preview :deep(pre) {
   overflow: auto;
-  margin: 8px 0;
+  margin: 8px 0 10px;
   padding: 10px 12px;
-  border: 1px solid color-mix(in srgb, var(--h_color_primary) 14%, var(--h_window_border));
+  border: 1px solid var(--h_markdown_code_block_border);
   border-radius: 10px;
-  background: color-mix(in srgb, var(--h_window_surface_deep) 86%, transparent);
+  background: var(--h_markdown_code_block_bg);
 }
 
 .h_markdown_preview :deep(pre code) {
@@ -93,13 +103,8 @@
   padding: 0;
   border-radius: 0;
   background: transparent;
-  color: var(--h_window_text_secondary);
-  font-family:
-    "JetBrains Mono",
-    "Fira Code",
-    Consolas,
-    "Courier New",
-    monospace;
+  color: var(--h_markdown_code_block_color);
+  font-family: var(--h_markdown_code_font_family);
   font-size: 12px;
   line-height: 1.7;
   white-space: pre;
