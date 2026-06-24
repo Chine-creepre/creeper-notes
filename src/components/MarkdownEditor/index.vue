@@ -3,6 +3,7 @@
     ref="editorShellRef"
     :class="['h_markdown_editor', { h_markdown_editor_readonly: readonly }]"
     @focusin="enterEditMode"
+    @pointerdown.capture="handleEditorPointerDown"
   >
     <MdEditor
       v-if="editorMode === 'edit'"
@@ -66,6 +67,7 @@ const editorShellRef = ref<HTMLElement>();
 const mdEditorRef = ref<ExposeParam>();
 const editorValue = ref(props.modelValue || EMPTY_MARKDOWN);
 let focusDraftSnapshot = editorValue.value;
+let isInternalPointerDown = false;
 
 const readonly = computed(() => props.readonly);
 const editorMode = computed<MarkdownEditorMode>({
@@ -101,6 +103,14 @@ const syncFocusDraftSnapshot = () => {
 const hasFocusDraftChanged = () =>
   normalizeEditorValue(editorValue.value) !== normalizeEditorValue(focusDraftSnapshot);
 
+const shouldExitEditMode = () => !hasFocusDraftChanged() || !props.dirty;
+
+const exitEditMode = () => {
+  if (shouldExitEditMode()) {
+    editorMode.value = "preview";
+  }
+};
+
 const focusEditor = async () => {
   await nextTick();
   mdEditorRef.value?.focus();
@@ -127,6 +137,24 @@ const enterEditMode = async () => {
   await setEditorMode("edit");
 };
 
+const handleEditorPointerDown = () => {
+  isInternalPointerDown = true;
+};
+
+const handleWindowPointerDown = (event: PointerEvent) => {
+  const targetNode = event.target instanceof Node ? event.target : null;
+
+  if (!targetNode || editorShellRef.value?.contains(targetNode)) return;
+  if (editorMode.value !== "edit") return;
+
+  isInternalPointerDown = false;
+  exitEditMode();
+};
+
+const handleWindowPointerUp = () => {
+  isInternalPointerDown = false;
+};
+
 const handleFocus = () => {
   if (!readonly.value) {
     editorMode.value = "edit";
@@ -136,13 +164,13 @@ const handleFocus = () => {
 const handleBlur = async () => {
   await nextTick();
 
+  if (isInternalPointerDown) return;
+
   const activeNode = document.activeElement;
 
   if (activeNode && editorShellRef.value?.contains(activeNode)) return;
 
-  if (!hasFocusDraftChanged() || !props.dirty) {
-    editorMode.value = "preview";
-  }
+  exitEditMode();
 };
 
 const handleKeydown = (event: KeyboardEvent) => {
@@ -191,10 +219,14 @@ watch(
 
 onMounted(() => {
   window.addEventListener("keydown", handleKeydown);
+  window.addEventListener("pointerdown", handleWindowPointerDown);
+  window.addEventListener("pointerup", handleWindowPointerUp);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener("keydown", handleKeydown);
+  window.removeEventListener("pointerdown", handleWindowPointerDown);
+  window.removeEventListener("pointerup", handleWindowPointerUp);
 });
 </script>
 
