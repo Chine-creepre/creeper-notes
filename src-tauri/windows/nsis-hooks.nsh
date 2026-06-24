@@ -29,13 +29,13 @@ FunctionEnd
 !macro NSIS_HOOK_POSTINSTALL
   SetShellVarContext current
 
-  ; Clear older registry-based auto start entries from previous installers.
-  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
+  ; Remove old startup-folder based auto start entries from previous installers.
+  Delete "$SMSTARTUP\creeper-notes.lnk"
 
   ${If} $HAutoStartState == ${BST_CHECKED}
-    CreateShortCut "$SMSTARTUP\creeper-notes.lnk" "$INSTDIR\creeper-notes.exe" "--start-in-tray" "$INSTDIR\creeper-notes.exe" 0
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes" '"$INSTDIR\creeper-notes.exe" --start-in-tray'
   ${Else}
-    Delete "$SMSTARTUP\creeper-notes.lnk"
+    DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
   ${EndIf}
 !macroend
 
