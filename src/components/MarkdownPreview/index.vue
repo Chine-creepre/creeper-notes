@@ -4,8 +4,7 @@
     class="h_markdown_preview"
     tabindex="0"
     @focus="handlePreviewFocus"
-    @click="handlePreviewClick"
-    @change.capture="handlePreviewChange"
+    @click.capture="handlePreviewClick"
   >
     <MdPreview
       class="h_markdown_preview_content"
@@ -22,7 +21,7 @@
 <script setup lang="ts">
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
-import { computed, nextTick, onMounted, ref, watch } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 const EMPTY_MARKDOWN = "";
 const PREVIEW_EDITOR_ID = "h-markdown-preview";
@@ -46,6 +45,7 @@ const emit = defineEmits<{
 const previewRef = ref<HTMLElement>();
 const previewMarkdown = computed(() => props.modelValue || EMPTY_MARKDOWN);
 const previewEditorId = PREVIEW_EDITOR_ID;
+let taskCheckboxObserver: MutationObserver | null = null;
 
 const isTaskCheckbox = (target: EventTarget | null): target is HTMLInputElement =>
   target instanceof HTMLInputElement && target.type === "checkbox";
@@ -56,14 +56,34 @@ const getTaskCheckboxes = (): HTMLInputElement[] =>
 const getTaskCheckboxIndex = (checkbox: HTMLInputElement): number =>
   getTaskCheckboxes().indexOf(checkbox);
 
-const syncReadonlyTaskCheckboxes = async () => {
-  await nextTick();
-
+const enableReadonlyTaskCheckboxes = () => {
   if (!props.readonly) return;
 
   getTaskCheckboxes().forEach((checkbox) => {
     checkbox.disabled = false;
     checkbox.removeAttribute("disabled");
+    checkbox.removeAttribute("aria-disabled");
+  });
+};
+
+const syncReadonlyTaskCheckboxes = async () => {
+  await nextTick();
+  enableReadonlyTaskCheckboxes();
+  window.requestAnimationFrame(enableReadonlyTaskCheckboxes);
+};
+
+const observeTaskCheckboxes = () => {
+  if (!previewRef.value) return;
+
+  taskCheckboxObserver?.disconnect();
+  taskCheckboxObserver = new MutationObserver(() => {
+    syncReadonlyTaskCheckboxes();
+  });
+  taskCheckboxObserver.observe(previewRef.value, {
+    attributes: true,
+    attributeFilter: ["disabled", "aria-disabled"],
+    childList: true,
+    subtree: true,
   });
 };
 
@@ -81,21 +101,22 @@ const handlePreviewClick = (event: MouseEvent) => {
 
   if (!isTaskCheckbox(event.target)) return;
 
+  event.preventDefault();
   event.stopPropagation();
-};
-
-const handlePreviewChange = (event: Event) => {
-  if (!props.readonly) return;
-  if (!isTaskCheckbox(event.target)) return;
-
-  event.stopPropagation();
-  emit("toggleTask", getTaskCheckboxIndex(event.target), event.target.checked);
+  emit("toggleTask", getTaskCheckboxIndex(event.target), !event.target.checked);
 };
 
 watch(previewMarkdown, syncReadonlyTaskCheckboxes);
 watch(() => props.readonly, syncReadonlyTaskCheckboxes);
 
-onMounted(syncReadonlyTaskCheckboxes);
+onMounted(() => {
+  observeTaskCheckboxes();
+  syncReadonlyTaskCheckboxes();
+});
+
+onBeforeUnmount(() => {
+  taskCheckboxObserver?.disconnect();
+});
 </script>
 
 <style lang="scss" scoped src="./index.scss"></style>
