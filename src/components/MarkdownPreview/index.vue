@@ -46,6 +46,7 @@ const previewRef = ref<HTMLElement>();
 const previewMarkdown = computed(() => props.modelValue || EMPTY_MARKDOWN);
 const previewEditorId = PREVIEW_EDITOR_ID;
 let taskCheckboxObserver: MutationObserver | null = null;
+let syncReadonlyTaskPending = false;
 
 const isTaskCheckbox = (target: EventTarget | null): target is HTMLInputElement =>
   target instanceof HTMLInputElement && target.type === "checkbox";
@@ -67,9 +68,15 @@ const enableReadonlyTaskCheckboxes = () => {
 };
 
 const syncReadonlyTaskCheckboxes = async () => {
+  if (syncReadonlyTaskPending) return;
+
+  syncReadonlyTaskPending = true;
   await nextTick();
   enableReadonlyTaskCheckboxes();
-  window.requestAnimationFrame(enableReadonlyTaskCheckboxes);
+  window.requestAnimationFrame(() => {
+    enableReadonlyTaskCheckboxes();
+    syncReadonlyTaskPending = false;
+  });
 };
 
 const observeTaskCheckboxes = () => {
