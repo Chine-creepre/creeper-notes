@@ -76,7 +76,10 @@ const syncReadonlyTaskCheckboxes = async () => {
   enableReadonlyTaskCheckboxes();
   window.requestAnimationFrame(() => {
     enableReadonlyTaskCheckboxes();
-    syncReadonlyTaskPending = false;
+    window.setTimeout(() => {
+      syncReadonlyTaskPending = false;
+      enableReadonlyTaskCheckboxes();
+    });
   });
 };
 
