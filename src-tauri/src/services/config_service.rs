@@ -61,6 +61,12 @@ fn sync_auto_start_state(
     app_paths: &AppPaths,
     mut app_config: AppConfig,
 ) -> Result<AppConfig, String> {
+    if app_config.auto_start_enabled {
+        auto_start_service::sync_auto_start(app, true)?;
+
+        return Ok(app_config);
+    }
+
     let auto_start_enabled = auto_start_service::is_auto_start_enabled(app)?;
 
     if app_config.auto_start_enabled == auto_start_enabled {
