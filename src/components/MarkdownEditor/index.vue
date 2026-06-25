@@ -28,7 +28,9 @@
     <MarkdownPreview
       v-else
       :model-value="previewMarkdown"
+      :readonly="readonly"
       @activate="enterEditMode"
+      @toggle-task="toggleTaskState"
     />
   </section>
 </template>
@@ -42,6 +44,7 @@ import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
 type MarkdownEditorMode = "edit" | "preview";
 
 const EMPTY_MARKDOWN = "";
+const TASK_MARKDOWN_PATTERN = /^(\s*[-*+]\s+\[)( |x|X)(\]\s*.*)$/;
 
 const props = withDefaults(
   defineProps<{
@@ -136,6 +139,38 @@ const enterEditMode = async () => {
   if (editorMode.value === "edit") return;
 
   await setEditorMode("edit");
+};
+
+const getTaskMarker = (checked: boolean): string => (checked ? "x" : " ");
+
+const toggleMarkdownTask = (markdown: string, targetTaskIndex: number, checked: boolean): string => {
+  let currentTaskIndex = -1;
+
+  return markdown
+    .split("\n")
+    .map((line) => {
+      const matchedTask = TASK_MARKDOWN_PATTERN.exec(line);
+
+      if (!matchedTask) return line;
+
+      currentTaskIndex += 1;
+
+      if (currentTaskIndex !== targetTaskIndex) return line;
+
+      return `${matchedTask[1]}${getTaskMarker(checked)}${matchedTask[3]}`;
+    })
+    .join("\n");
+};
+
+const toggleTaskState = (taskIndex: number, checked: boolean) => {
+  if (taskIndex < 0) return;
+
+  const nextValue = toggleMarkdownTask(editorValue.value, taskIndex, checked);
+
+  if (nextValue === editorValue.value) return;
+
+  editorValue.value = nextValue;
+  syncFocusDraftSnapshot();
 };
 
 const handleEditorPointerDown = () => {
