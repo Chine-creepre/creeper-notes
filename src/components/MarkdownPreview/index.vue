@@ -63,7 +63,6 @@ const enableReadonlyTaskCheckboxes = () => {
 
   getTaskCheckboxes().forEach((checkbox) => {
     checkbox.disabled = false;
-    checkbox.readOnly = true;
     checkbox.removeAttribute("disabled");
     checkbox.removeAttribute("aria-disabled");
   });
