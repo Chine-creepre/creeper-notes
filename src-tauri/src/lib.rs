@@ -55,11 +55,6 @@ pub fn run() {
         .plugin(tauri_plugin_sql::Builder::default().build())
         .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .setup(move |app| {
-            if start_in_tray {
-                window_service::hide_main_window(app.handle())
-                    .map_err(Box::<dyn std::error::Error>::from)?;
-            }
-
             database_service::initialize_database(app.handle())
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
@@ -71,6 +66,11 @@ pub fn run() {
 
             tray_service::initialize_tray(app.handle(), &app_config)
                 .map_err(Box::<dyn std::error::Error>::from)?;
+
+            if start_in_tray {
+                window_service::hide_main_window(app.handle())
+                    .map_err(Box::<dyn std::error::Error>::from)?;
+            }
 
             Ok(())
         })
