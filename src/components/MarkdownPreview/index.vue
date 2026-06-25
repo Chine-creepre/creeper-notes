@@ -69,6 +69,11 @@ const enableReadonlyTaskCheckboxes = () => {
   });
 };
 
+const releaseReadonlyTaskSync = () => {
+  syncReadonlyTaskPending = false;
+  enableReadonlyTaskCheckboxes();
+};
+
 const syncReadonlyTaskCheckboxes = async () => {
   if (syncReadonlyTaskPending) return;
 
@@ -77,10 +82,7 @@ const syncReadonlyTaskCheckboxes = async () => {
   enableReadonlyTaskCheckboxes();
   window.requestAnimationFrame(() => {
     enableReadonlyTaskCheckboxes();
-    syncReadonlyTaskTimer = window.setTimeout(() => {
-      syncReadonlyTaskPending = false;
-      enableReadonlyTaskCheckboxes();
-    });
+    syncReadonlyTaskTimer = window.setTimeout(releaseReadonlyTaskSync);
   });
 };
 
@@ -131,6 +133,8 @@ onBeforeUnmount(() => {
   if (syncReadonlyTaskTimer) {
     window.clearTimeout(syncReadonlyTaskTimer);
   }
+
+  syncReadonlyTaskPending = false;
 });
 </script>
 
