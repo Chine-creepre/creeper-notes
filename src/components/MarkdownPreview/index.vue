@@ -79,12 +79,17 @@ const syncReadonlyTaskCheckboxes = async () => {
   if (syncReadonlyTaskPending) return;
 
   syncReadonlyTaskPending = true;
-  await nextTick();
-  enableReadonlyTaskCheckboxes();
-  window.requestAnimationFrame(() => {
+
+  try {
+    await nextTick();
     enableReadonlyTaskCheckboxes();
-    syncReadonlyTaskTimer = window.setTimeout(releaseReadonlyTaskSync);
-  });
+    window.requestAnimationFrame(() => {
+      enableReadonlyTaskCheckboxes();
+      syncReadonlyTaskTimer = window.setTimeout(releaseReadonlyTaskSync);
+    });
+  } catch {
+    syncReadonlyTaskPending = false;
+  }
 };
 
 const observeTaskCheckboxes = () => {
