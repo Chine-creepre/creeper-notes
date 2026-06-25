@@ -54,6 +54,16 @@ fn get_registry_auto_start_value() -> Result<Option<String>, String> {
 }
 
 #[cfg(windows)]
+fn has_valid_registry_auto_start() -> Result<bool, String> {
+    let Some(registry_value) = get_registry_auto_start_value()? else {
+        return Ok(false);
+    };
+    let auto_start_command = get_auto_start_command()?;
+
+    Ok(registry_value == auto_start_command)
+}
+
+#[cfg(windows)]
 fn has_startup_shortcut() -> bool {
     get_startup_shortcut_path().is_some_and(|path| path.exists())
 }
@@ -75,7 +85,7 @@ fn remove_startup_shortcut() -> Result<(), String> {
 
 #[cfg(windows)]
 pub fn is_auto_start_enabled(_app: &AppHandle) -> Result<bool, String> {
-    Ok(get_registry_auto_start_value()?.is_some() || has_startup_shortcut())
+    Ok(has_valid_registry_auto_start()? || has_startup_shortcut())
 }
 
 #[cfg(not(windows))]
@@ -97,6 +107,12 @@ pub fn enable_auto_start(_app: &AppHandle) -> Result<(), String> {
     run_key
         .set_value(AUTO_START_REGISTRY_VALUE_NAME, &auto_start_command)
         .map_err(|error| error.to_string())?;
+
+    let registry_value = get_registry_auto_start_value()?;
+
+    if registry_value.as_deref() != Some(auto_start_command.as_str()) {
+        return Err("auto start registry value mismatch".to_string());
+    }
 
     remove_startup_shortcut()
 }
