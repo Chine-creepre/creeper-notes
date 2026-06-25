@@ -71,6 +71,7 @@ const enableReadonlyTaskCheckboxes = () => {
 
 const releaseReadonlyTaskSync = () => {
   syncReadonlyTaskPending = false;
+  syncReadonlyTaskTimer = undefined;
   enableReadonlyTaskCheckboxes();
 };
 
@@ -132,6 +133,7 @@ onBeforeUnmount(() => {
 
   if (syncReadonlyTaskTimer) {
     window.clearTimeout(syncReadonlyTaskTimer);
+    syncReadonlyTaskTimer = undefined;
   }
 
   syncReadonlyTaskPending = false;
