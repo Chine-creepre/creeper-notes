@@ -44,7 +44,8 @@ import MarkdownPreview from "@/components/MarkdownPreview/index.vue";
 type MarkdownEditorMode = "edit" | "preview";
 
 const EMPTY_MARKDOWN = "";
-const TASK_MARKDOWN_PATTERN = /^(\s*[-*+]\s+\[)( |x|X)(\]\s*.*)$/;
+const TASK_MARKDOWN_PATTERN = /^((?:\s*>\s*)*\s*(?:[-*+]|\d+[.)])\s+\[)( |x|X)(\]\s*.*)$/;
+const FENCED_CODE_BLOCK_PATTERN = /^\s*(```|~~~)/;
 
 const props = withDefaults(
   defineProps<{
@@ -145,10 +146,18 @@ const getTaskMarker = (checked: boolean): string => (checked ? "x" : " ");
 
 const toggleMarkdownTask = (markdown: string, targetTaskIndex: number, checked: boolean): string => {
   let currentTaskIndex = -1;
+  let isFencedCodeBlock = false;
 
   return markdown
     .split("\n")
     .map((line) => {
+      if (FENCED_CODE_BLOCK_PATTERN.test(line)) {
+        isFencedCodeBlock = !isFencedCodeBlock;
+        return line;
+      }
+
+      if (isFencedCodeBlock) return line;
+
       const matchedTask = TASK_MARKDOWN_PATTERN.exec(line);
 
       if (!matchedTask) return line;
