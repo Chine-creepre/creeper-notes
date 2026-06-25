@@ -62,6 +62,7 @@ const enableReadonlyTaskCheckboxes = () => {
 
   getTaskCheckboxes().forEach((checkbox) => {
     checkbox.disabled = false;
+    checkbox.readOnly = true;
     checkbox.removeAttribute("disabled");
     checkbox.removeAttribute("aria-disabled");
   });
@@ -108,9 +109,8 @@ const handlePreviewClick = (event: MouseEvent) => {
 
   if (!isTaskCheckbox(event.target)) return;
 
-  event.preventDefault();
   event.stopPropagation();
-  emit("toggleTask", getTaskCheckboxIndex(event.target), !event.target.checked);
+  emit("toggleTask", getTaskCheckboxIndex(event.target), event.target.checked);
 };
 
 watch(previewMarkdown, syncReadonlyTaskCheckboxes);
