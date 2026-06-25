@@ -15,9 +15,18 @@ Function HAutoStartPage
     Abort
   ${EndIf}
 
-  ${NSD_CreateCheckbox} 0 36u 100% 18u "开机自启"
+  ${NSD_CreateLabel} 0 0u 100% 18u "开机自启"
+  Pop $0
+
+  ${NSD_CreateLabel} 0 22u 100% 36u "开启后，creeper-notes 会在 Windows 登录后自动启动，并默认收起到系统托盘。这样可以随时通过托盘菜单或快捷键打开笔记。"
+  Pop $0
+
+  ${NSD_CreateCheckbox} 0 72u 100% 18u "安装后启用开机自启"
   Pop $HAutoStartCheckbox
   ${NSD_SetState} $HAutoStartCheckbox ${BST_UNCHECKED}
+
+  ${NSD_CreateLabel} 0 104u 100% 30u "该设置只会写入当前用户的启动项，不影响其他 Windows 用户。你也可以安装完成后在应用设置中心重新开启或关闭。"
+  Pop $0
 
   nsDialogs::Show
 FunctionEnd
