@@ -87,6 +87,7 @@ const editorToolbars: ToolbarNames[] = [
   "quote",
   "unorderedList",
   "orderedList",
+  "task",
   "codeRow",
   "code",
   "table",
