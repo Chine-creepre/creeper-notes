@@ -47,6 +47,7 @@ const previewMarkdown = computed(() => props.modelValue || EMPTY_MARKDOWN);
 const previewEditorId = PREVIEW_EDITOR_ID;
 let taskCheckboxObserver: MutationObserver | null = null;
 let syncReadonlyTaskPending = false;
+let syncReadonlyTaskTimer: number | undefined;
 
 const isTaskCheckbox = (target: EventTarget | null): target is HTMLInputElement =>
   target instanceof HTMLInputElement && target.type === "checkbox";
@@ -76,7 +77,7 @@ const syncReadonlyTaskCheckboxes = async () => {
   enableReadonlyTaskCheckboxes();
   window.requestAnimationFrame(() => {
     enableReadonlyTaskCheckboxes();
-    window.setTimeout(() => {
+    syncReadonlyTaskTimer = window.setTimeout(() => {
       syncReadonlyTaskPending = false;
       enableReadonlyTaskCheckboxes();
     });
@@ -126,6 +127,10 @@ onMounted(() => {
 
 onBeforeUnmount(() => {
   taskCheckboxObserver?.disconnect();
+
+  if (syncReadonlyTaskTimer) {
+    window.clearTimeout(syncReadonlyTaskTimer);
+  }
 });
 </script>
 
