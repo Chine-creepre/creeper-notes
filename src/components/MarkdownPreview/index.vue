@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { MdPreview } from "md-editor-v3";
 import "md-editor-v3/lib/preview.css";
-import { computed, nextTick, onMounted, watch } from "vue";
+import { computed, nextTick, onMounted, ref, watch } from "vue";
 
 const EMPTY_MARKDOWN = "";
 const PREVIEW_EDITOR_ID = "h-markdown-preview";
