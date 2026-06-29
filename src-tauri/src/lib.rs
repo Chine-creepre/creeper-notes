@@ -37,16 +37,47 @@ use commands::{
     update_folder,
     update_note,
 };
-use services::{config_service, database_service, shortcut_service, tray_service, window_service};
+use services::{
+    auto_start_service,
+    config_service,
+    database_service,
+    shortcut_service,
+    tray_service,
+    window_service,
+};
 
+const ENABLE_AUTO_START_ARG: &str = "--enable-auto-start";
 const START_IN_TRAY_ARG: &str = "--start-in-tray";
 
+fn has_arg(target_arg: &str) -> bool {
+    std::env::args().any(|arg| arg == target_arg)
+}
+
+fn should_enable_auto_start() -> bool {
+    has_arg(ENABLE_AUTO_START_ARG)
+}
+
 fn should_start_in_tray() -> bool {
-    std::env::args().any(|arg| arg == START_IN_TRAY_ARG)
+    has_arg(START_IN_TRAY_ARG)
+}
+
+fn handle_enable_auto_start_command() {
+    if !should_enable_auto_start() {
+        return;
+    }
+
+    if let Err(error) = auto_start_service::enable_auto_start_for_current_exe() {
+        eprintln!("failed to enable auto start: {}", error);
+        std::process::exit(1);
+    }
+
+    std::process::exit(0);
 }
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
+    handle_enable_auto_start_command();
+
     let start_in_tray = should_start_in_tray();
 
     tauri::Builder::default()
