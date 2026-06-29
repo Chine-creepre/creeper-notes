@@ -74,6 +74,12 @@ fn handle_enable_auto_start_command() {
     std::process::exit(0);
 }
 
+fn hide_main_window_for_tray_start(app: &tauri::AppHandle) {
+    if let Err(error) = window_service::hide_main_window(app) {
+        eprintln!("failed to hide main window for tray start: {}", error);
+    }
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     handle_enable_auto_start_command();
@@ -99,8 +105,7 @@ pub fn run() {
                 .map_err(Box::<dyn std::error::Error>::from)?;
 
             if start_in_tray {
-                window_service::hide_main_window(app.handle())
-                    .map_err(Box::<dyn std::error::Error>::from)?;
+                hide_main_window_for_tray_start(app.handle());
             }
 
             Ok(())
