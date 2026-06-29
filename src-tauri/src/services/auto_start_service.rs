@@ -94,7 +94,7 @@ pub fn is_auto_start_enabled(_app: &AppHandle) -> Result<bool, String> {
 }
 
 #[cfg(windows)]
-pub fn enable_auto_start(_app: &AppHandle) -> Result<(), String> {
+pub fn enable_auto_start_for_current_exe() -> Result<(), String> {
     use winreg::enums::HKEY_CURRENT_USER;
     use winreg::RegKey;
 
@@ -115,6 +115,16 @@ pub fn enable_auto_start(_app: &AppHandle) -> Result<(), String> {
     }
 
     remove_startup_shortcut()
+}
+
+#[cfg(not(windows))]
+pub fn enable_auto_start_for_current_exe() -> Result<(), String> {
+    Err("auto start is only supported on Windows now".to_string())
+}
+
+#[cfg(windows)]
+pub fn enable_auto_start(_app: &AppHandle) -> Result<(), String> {
+    enable_auto_start_for_current_exe()
 }
 
 #[cfg(not(windows))]
