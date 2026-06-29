@@ -42,6 +42,9 @@ FunctionEnd
   Delete "$SMSTARTUP\creeper-notes.lnk"
 
   ${If} $HAutoStartState == ${BST_CHECKED}
+    IfFileExists "$INSTDIR\creeper-notes.exe" 0 +3
+      ExecWait '"$INSTDIR\creeper-notes.exe" --enable-auto-start' $0
+      Goto +2
     WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes" '"$INSTDIR\creeper-notes.exe" --start-in-tray'
   ${Else}
     DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "creeper-notes"
